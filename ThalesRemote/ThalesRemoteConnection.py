@@ -35,21 +35,19 @@ class ThalesRemoteConnection(object):
     Class to handle the Thales remote connection.
     '''
     
-    term_port = 260     #The port used by Thales
-    socket_handle = None
-    
-    receivingWorker = None
-    receivedTelegrams = []
-    receivedTelegramsGuard = threading.Semaphore()
-    telegramsAvailableMutex = threading.Semaphore()
-    
-    _receiving_worker_is_running = False
-
-
     def __init__(self):
         """
         Constructor
         """
+        self.term_port = 260     #The port used by Thales
+        self.socket_handle = None
+        
+        self.receivingWorker = None
+        self.receivedTelegrams = []
+        self.receivedTelegramsGuard = threading.Semaphore()
+        self.telegramsAvailableMutex = threading.Semaphore()
+        
+        self._receiving_worker_is_running = False
                 
         
     def connectToTerm(self, address, connectionName):

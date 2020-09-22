@@ -40,7 +40,6 @@ class ThalesRemoteScriptWrapper(object):
     Wrapper that uses the ThalesRemoteConnection class.
     The commands are explained in http://zahner.de/pdf/Remote.pdf
     '''
-    remoteConnection = None
 
     def __init__(self, remoteConnection):
         '''Constructor
@@ -79,7 +78,7 @@ class ThalesRemoteScriptWrapper(object):
         
         \returns the current value as floating point value.
         '''
-        return self._requestValueAndParseUsingRegexp("CURRENT","current=\\s*(.*?)A?:")
+        return self._requestValueAndParseUsingRegexp("CURRENT","current=\s*(.*?)A?[\r\n]{0,2}$")
         
     
     def getPotential(self):
@@ -87,7 +86,7 @@ class ThalesRemoteScriptWrapper(object):
         
         \returns the potential value as floating point value.
         '''
-        return self._requestValueAndParseUsingRegexp("POTENTIAL","potential=\\s*(.*?)V?:")
+        return self._requestValueAndParseUsingRegexp("POTENTIAL","potential=\s*(.*?)V?[\r\n]{0,2}$")
         
     
     def setCurrent(self, current):
@@ -104,6 +103,60 @@ class ThalesRemoteScriptWrapper(object):
         \param [in] potential the output potential to set.
         '''
         return self.setValue("Pset",potential)    
+    
+    def setMaximumShunt(self, shunt):
+        ''' Set the maximum shunt for measurement.
+        
+        \param [in] shunt the number of the shunt.
+        '''
+        return self.setValue("Rmax",shunt)
+    
+    def setMinimumShunt(self, shunt):
+        ''' Set the minimum shunt for measurement.
+        
+        \param [in] shunt the number of the shunt.
+        '''
+        return self.setValue("Rmin",shunt)
+    
+    def setShuntIndex(self, shunt):
+        ''' Set the shunt for measurement.
+        
+        \param [in] shunt the number of the shunt.
+        '''
+        self.setMinimumShunt(shunt)
+        self.setMaximumShunt(shunt)
+        
+    def setVoltageRangeIndex(self, vrange):
+        ''' Set the voltage range for measurement.
+        
+        \param [in] vrange the number of the voltage range.
+        '''
+        return self.setValue("Potrange",vrange)
+        
+    def setDEVID(self,device):
+        ''' Set the device for output
+        
+        \param [in] device number of the device. 0 = Main.
+        '''
+        return self.setValue("DEV%",device)
+    
+    def getSerialNumber(self):
+        '''Get the serialnumber of the active device.
+        
+        \returns the device serial number.
+        '''
+        reply = self.executeRemoteCommand("ALLNUM")
+        match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
+        return match.group(2)
+    
+    def getDeviceName(self):
+        '''Get the name of the active device.
+        
+        \returns the device name.
+        '''
+        reply = self.executeRemoteCommand("ALLNUM")
+        match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
+        return match.group(3)
     
     
     def enablePotentiostat(self, enabled = True):

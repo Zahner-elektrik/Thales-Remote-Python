@@ -1,4 +1,4 @@
-"""
+'''
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -22,7 +22,7 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
+'''
 
 import socket
 import time
@@ -30,16 +30,17 @@ import struct
 import threading
 from _socket import SHUT_RD
 
+
 class ThalesRemoteConnection(object):
     '''
     Class to handle the Thales remote connection.
     '''
     
     def __init__(self):
-        """
+        '''
         Constructor
-        """
-        self.term_port = 260     #The port used by Thales
+        '''
+        self.term_port = 260  # The port used by Thales
         self.socket_handle = None
         
         self.receivingWorker = None
@@ -48,7 +49,6 @@ class ThalesRemoteConnection(object):
         self.telegramsAvailableMutex = threading.Semaphore()
         
         self._receiving_worker_is_running = False
-                
         
     def connectToTerm(self, address, connectionName):
         ''' Connect to Term (The Thales Terminal)
@@ -58,9 +58,9 @@ class ThalesRemoteConnection(object):
         
         \todo actually just hangs if the host is up but Term has not been started.
         '''
-        self.socket_handle = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.socket_handle = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.socket_handle.connect((address,self.term_port))
+            self.socket_handle.connect((address, self.term_port))
         except:
             self.socket_handle = None
             print("could not connect to term")
@@ -74,8 +74,8 @@ class ThalesRemoteConnection(object):
         
         registration_packet = bytearray()
         registration_packet += bytearray(struct.pack('H', payload_length))
-        registration_packet += bytearray([0x02,0xd0,0xff,0xff,0xff,0xff])
-        registration_packet += bytearray(connectionName,'ASCII')
+        registration_packet += bytearray([0x02, 0xd0, 0xff, 0xff, 0xff, 0xff])
+        registration_packet += bytearray(connectionName, 'ASCII')
         
         self.socket_handle.sendall(registration_packet)
         
@@ -99,9 +99,6 @@ class ThalesRemoteConnection(object):
         \returns true if connected, false if not.
         '''
         return self.socket_handle != None
-        
-    
-        
             
     def sendTelegram(self, payload, message_type):
         '''Send a telegram (data) to Term.
@@ -113,11 +110,11 @@ class ThalesRemoteConnection(object):
         data = bytearray()
         
         if(isinstance(payload, str)):
-            #datatype string
-            payload_length = len(payload) # da bei c \0 folgt
-            data += bytearray(payload,'ASCII')
+            # datatype string
+            payload_length = len(payload)  # da bei c \0 folgt
+            data += bytearray(payload, 'ASCII')
         else:
-            #datatype bytearray
+            # datatype bytearray
             payload_length = len(payload)
             data = payload
         
@@ -125,9 +122,8 @@ class ThalesRemoteConnection(object):
         packet += bytearray(struct.pack('B', message_type))
         packet += data
         self.socket_handle.sendall(packet)
-        
             
-    def waitForStringTelegram(self, timeout = None):
+    def waitForStringTelegram(self, timeout=None):
         ''' Block infinitely until the next Telegram is arriving.
         
         If some Telegram has already arrived it will just return the last one from the queue.
@@ -137,13 +133,12 @@ class ThalesRemoteConnection(object):
         \returns the last received telegram or an empty string if someting went wrong.
         '''
         while(self.telegramReceived() == False):
-            if self.telegramsAvailableMutex.acquire(timeout = timeout) == False:
+            if self.telegramsAvailableMutex.acquire(timeout=timeout) == False:
                 return ""
         
         return self.receiveStringTelegram()
     
-    
-    def waitForTelegram(self, timeout = None):
+    def waitForTelegram(self, timeout=None):
         ''' Block infinitely until the next Telegram is arriving.
         
         If some Telegram has already arrived it will just return the last one from the queue.
@@ -153,11 +148,10 @@ class ThalesRemoteConnection(object):
         \returns the last received telegram or an empty byte array if something went wrong.
         '''
         while(self.telegramReceived() == False):
-            if self.telegramsAvailableMutex.acquire(timeout = timeout) == False:
+            if self.telegramsAvailableMutex.acquire(timeout=timeout) == False:
                 return bytearray()
         
         return self.receiveTelegram()
-    
            
     def receiveStringTelegram(self):
         ''' Immediately return the last received telegram.
@@ -203,7 +197,7 @@ class ThalesRemoteConnection(object):
         
         self.receivedTelegramsGuard.acquire()
         
-        telegramsAvailable =  (len(self.receivedTelegrams) != 0)
+        telegramsAvailable = (len(self.receivedTelegrams) != 0)
         
         self.receivedTelegramsGuard.release()
         
@@ -239,8 +233,6 @@ class ThalesRemoteConnection(object):
                 self.receivedTelegrams.append(telegram)
                 self.telegramsAvailableMutex.release()
                 self.receivedTelegramsGuard.release()
-                
-                
             
     def _startTelegramListener(self):
         '''
@@ -248,9 +240,8 @@ class ThalesRemoteConnection(object):
         '''
         self._receiving_worker_is_running = True
         self.telegramsAvailableMutex.acquire()
-        self.receivingWorker = threading.Thread(target = self._telegramListenerJob)
+        self.receivingWorker = threading.Thread(target=self._telegramListenerJob)
         self.receivingWorker.start()
-        
         
     def _stopTelegramListener(self):
         '''
@@ -271,7 +262,6 @@ class ThalesRemoteConnection(object):
         except:
             incoming_packet = bytearray()
         return incoming_packet
-        
             
     def _closeSocket(self):
         '''
@@ -279,6 +269,4 @@ class ThalesRemoteConnection(object):
         '''
         self.socket_handle.close()
         self.socket_handle = None
-        
-        
         

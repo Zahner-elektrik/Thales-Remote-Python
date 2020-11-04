@@ -1,10 +1,10 @@
-"""
+'''
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2019 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2020 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -22,10 +22,10 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
+'''
  
-from ThalesRemote.ThalesRemoteScriptWrapper import PotentiostatMode,ThalesRemoteScriptWrapper
-from ThalesRemote.ThalesRemoteConnection import ThalesRemoteConnection
+from ThalesRemoteConnection import ThalesRemoteConnection
+from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 import math
 import cmath
 
@@ -48,6 +48,7 @@ def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
 def printImpedance(impedance):
     print("Impedance: " + str(abs(impedance)) + " ohm, " + str(cmath.phase(impedance)) + " rad")
 
+
 if __name__ == '__main__':
     thalesConnection = ThalesRemoteConnection()
     connectionSuccessful = thalesConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
@@ -62,7 +63,10 @@ if __name__ == '__main__':
 
     print("Potential: " + str(remoteScript.getPotential()))
     print("Current: " + str(remoteScript.getCurrent()))
-        
+    
+    '''
+    Measure current and voltage several times.
+    '''
 
     remoteScript.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     remoteScript.setPotential(0)
@@ -72,6 +76,9 @@ if __name__ == '__main__':
         print("Potential: " + str(remoteScript.getPotential()))
         print("Current: " + str(remoteScript.getCurrent()))
 
+    '''
+    Measure impedance at individual frequency points.
+    '''
     remoteScript.setFrequency(2000)
     remoteScript.setAmplitude(10e-3)
     remoteScript.setNumberOfPeriods(3)
@@ -80,7 +87,11 @@ if __name__ == '__main__':
     printImpedance(remoteScript.getImpedance(2000))
     printImpedance(remoteScript.getImpedance(2000, 10e-3, 3))
 
+    '''
+    Measurement of a spectrum with a previously defined function.
+    '''
     spectrum(remoteScript, 1000, 2e5, 10)
+    
     remoteScript.enablePotentiostat(False)
     
     thalesConnection.disconnectFromTerm()

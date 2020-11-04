@@ -1,1 +1,1 @@
-#__all__ = ['ThalesRemoteConnection', 'ThalesRemoteScriptWrapper']
+__all__ = ['ThalesRemoteConnection', 'ThalesRemoteScriptWrapper', 'ThalesRemoteError']

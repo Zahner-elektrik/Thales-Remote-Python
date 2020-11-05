@@ -31,12 +31,12 @@ import cmath
 
 TARGET_HOST = "localhost"
 
-
+'''
+Help functions
+'''
 def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
-
     log_lower_frequency = math.log(lower_frequency)
     log_upper_frequency = math.log(upper_frequency)
-
     log_interval_spacing = (log_upper_frequency - log_lower_frequency) / (number_of_points - 1)
     
     for i in range(number_of_points):
@@ -50,49 +50,52 @@ def printImpedance(impedance):
 
 
 if __name__ == '__main__':
-    thalesConnection = ThalesRemoteConnection()
-    connectionSuccessful = thalesConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
+    '''
+    The Thales software must first be started so that it can be connected.
+    '''
+    ZenniumConnection = ThalesRemoteConnection()
+    connectionSuccessful = ZenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
     if connectionSuccessful:
         print("connection successfull")
     else:
         print("connection not possible")
         
-    remoteScript = ThalesRemoteScriptWrapper(thalesConnection)
+    ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
-    remoteScript.forceThalesIntoRemoteScript()
+    ZahnerZennium.forceThalesIntoRemoteScript()
 
-    print("Potential: " + str(remoteScript.getPotential()))
-    print("Current: " + str(remoteScript.getCurrent()))
+    print("Potential: " + str(ZahnerZennium.getPotential()))
+    print("Current: " + str(ZahnerZennium.getCurrent()))
     
     '''
     Measure current and voltage several times.
     '''
 
-    remoteScript.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    remoteScript.setPotential(0)
-    remoteScript.enablePotentiostat()
+    ZahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+    ZahnerZennium.setPotential(0)
+    ZahnerZennium.enablePotentiostat()
 
     for i in range(10):
-        print("Potential: " + str(remoteScript.getPotential()))
-        print("Current: " + str(remoteScript.getCurrent()))
+        print("Potential: " + str(ZahnerZennium.getPotential()))
+        print("Current: " + str(ZahnerZennium.getCurrent()))
 
     '''
     Measure impedance at individual frequency points.
     '''
-    remoteScript.setFrequency(2000)
-    remoteScript.setAmplitude(10e-3)
-    remoteScript.setNumberOfPeriods(3)
+    ZahnerZennium.setFrequency(2000)
+    ZahnerZennium.setAmplitude(10e-3)
+    ZahnerZennium.setNumberOfPeriods(3)
 
-    printImpedance(remoteScript.getImpedance())
-    printImpedance(remoteScript.getImpedance(2000))
-    printImpedance(remoteScript.getImpedance(2000, 10e-3, 3))
+    printImpedance(ZahnerZennium.getImpedance())
+    printImpedance(ZahnerZennium.getImpedance(2000))
+    printImpedance(ZahnerZennium.getImpedance(2000, 10e-3, 3))
 
     '''
     Measurement of a spectrum with a previously defined function.
     '''
-    spectrum(remoteScript, 1000, 2e5, 10)
+    spectrum(ZahnerZennium, 1000, 2e5, 10)
     
-    remoteScript.enablePotentiostat(False)
+    ZahnerZennium.enablePotentiostat(False)
     
-    thalesConnection.disconnectFromTerm()
+    ZenniumConnection.disconnectFromTerm()
     print("finish")

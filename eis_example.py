@@ -30,41 +30,45 @@ from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrappe
 TARGET_HOST = "localhost"
 
 if __name__ == '__main__':
-    thalesConnection = ThalesRemoteConnection()
-    connectionSuccessful = thalesConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
+    '''
+    The Thales software must first be started so that it can be connected.
+    '''
+    ZenniumConnection = ThalesRemoteConnection()
+    connectionSuccessful = ZenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
     if connectionSuccessful:
         print("connection successfull")
     else:
         print("connection not possible")
         
-    remoteScript = ThalesRemoteScriptWrapper(thalesConnection)
+    ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
-    remoteScript.forceThalesIntoRemoteScript()
+    ZahnerZennium.forceThalesIntoRemoteScript()
     
     '''
     Measure EIS spectra with a sequential number in the file name that has been specified.
     Starting with number 13.
     '''
-    remoteScript.setEISNaming("counter")
-    remoteScript.setEISCounter(13)
-    remoteScript.setEISOutputPath("C:\\THALES\\temp\\test1")
-    remoteScript.setEISOutputFileName("spectra")
+    ZahnerZennium.setEISNaming("counter")
+    ZahnerZennium.setEISCounter(13)
+    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test1")
+    ZahnerZennium.setEISOutputFileName("spectra")
     
     '''
     Setting the parameters for the spectra.
+    Alternatively a rule file can be used as a template.
     '''
-    remoteScript.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    remoteScript.setAmplitude(10e-3)
-    remoteScript.setPotential(1)
-    remoteScript.setLowerFrequencyLimit(10)
-    remoteScript.setStartFrequency(1000)
-    remoteScript.setUpperFrequencyLimit(10000)
-    remoteScript.setLowerNumberOfPeriods(5)
-    remoteScript.setLowerStepsPerDecade(5)
-    remoteScript.setUpperNumberOfPeriods(20)
-    remoteScript.setUpperStepsPerDecade(10)
-    remoteScript.setScanDirection("startToMax")
-    remoteScript.setScanStrategy("single")
+    ZahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+    ZahnerZennium.setAmplitude(10e-3)
+    ZahnerZennium.setPotential(1)
+    ZahnerZennium.setLowerFrequencyLimit(10)
+    ZahnerZennium.setStartFrequency(1000)
+    ZahnerZennium.setUpperFrequencyLimit(10000)
+    ZahnerZennium.setLowerNumberOfPeriods(5)
+    ZahnerZennium.setLowerStepsPerDecade(2)
+    ZahnerZennium.setUpperNumberOfPeriods(20)
+    ZahnerZennium.setUpperStepsPerDecade(10)
+    ZahnerZennium.setScanDirection("startToMax")
+    ZahnerZennium.setScanStrategy("single")
     
     '''
     Switching on the potentiostat before the measurement,
@@ -72,26 +76,41 @@ if __name__ == '__main__':
     If the potentiostat is off before the measurement,
     the measurement is performed at the OCP.
     '''
-    remoteScript.enablePotentiostat()
+    ZahnerZennium.enablePotentiostat()
     
-    remoteScript.measureEIS()
-    remoteScript.measureEIS()
-    remoteScript.enablePotentiostat(False)
+    for i in range(3):
+        ZahnerZennium.measureEIS()
+        
+    ZahnerZennium.enablePotentiostat(False)
     
     '''
     Measure another spectrum and store it at another location.
     Measure with a different amplitude and from start to minimum frequency,
     otherwise same parameters.
     '''
-    remoteScript.setEISNaming("dateTime")
-    remoteScript.setEISOutputPath("C:\\THALES\\temp\\test2")
-    remoteScript.setEISOutputFileName("spectra")
+    ZahnerZennium.setEISNaming("dateTime")
+    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test2")
+    ZahnerZennium.setEISOutputFileName("spectra")
     
-    remoteScript.setAmplitude(50e-3)
-    remoteScript.setScanDirection("startToMin")
+    ZahnerZennium.setAmplitude(50e-3)
+    ZahnerZennium.setScanDirection("startToMin")
     
-    remoteScript.measureEIS()
-    remoteScript.measureEIS()
+    for i in range(3):
+        ZahnerZennium.measureEIS()
     
-    thalesConnection.disconnectFromTerm()
+    '''
+    Measurement with spectra of different amplitudes.
+    The amplitude is written into the file name.
+    '''
+    ZahnerZennium.setEISNaming("individual")
+    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test3")
+    
+    AmplitudesIn_mV_forMeasurement = [5, 10, 20, 50]
+    
+    for amplitude in AmplitudesIn_mV_forMeasurement:
+        ZahnerZennium.setEISOutputFileName("spectraAmplitude{}mV".format(amplitude))
+        ZahnerZennium.setAmplitude(amplitude / 1000)
+        ZahnerZennium.measureEIS()
+    
+    ZenniumConnection.disconnectFromTerm()
     print("finish")

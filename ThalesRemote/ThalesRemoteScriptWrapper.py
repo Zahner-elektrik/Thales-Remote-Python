@@ -43,7 +43,7 @@ class PotentiostatMode(Enum):
 class ThalesRemoteScriptWrapper(object):
     '''
     Wrapper that uses the ThalesRemoteConnection class.
-    The commands are explained in http://zahner.de/pdf/Remote2.pdf
+    The commands are explained in http://zahner.de/pdf/Remote2.pdf .
     
     In the document you can also find a table with error numbers which are returned.
     '''
@@ -189,6 +189,21 @@ class ThalesRemoteScriptWrapper(object):
             return
         self.executeRemoteCommand(command)
         
+    def enableRuleFileUsage(self, enable=True):
+        ''' Enable the usage of a rule file.
+        
+        If the usage of the rule file is activated all the parameters required
+        for the EIS, CV, and/or IE are taken from the rule file.
+        The exact usage can be found in the remote manual.
+        
+        \param [in] enable the state of rule file usage.
+        '''
+        if enable == True:
+            enable = 1
+        else:
+            enable = 0
+        return self.setValue("UseRuleFile", enable)
+        
     '''
     Section with settings for single impedance and EIS measurements.
     '''
@@ -332,12 +347,15 @@ class ThalesRemoteScriptWrapper(object):
         ''' Set the EIS measurement naming rule.
         
         naming = "dateTime": extend the setEISOutputFileName(name) with date and time.
-        naming = "counter": extend the setEISOutputFileName(name) with an sequential number. 
+        naming = "counter": extend the setEISOutputFileName(name) with an sequential number.
+        naming = "individual": the file is named like setEISOutputFileName(name).
         
         \param [in] naming the naming rule.
         '''
         if naming == "dateTime":
             naming = 0
+        elif naming == "individual":
+            naming = 2
         else:
             naming = 1
         return self.setValue("EIS_MOD", naming)
@@ -355,13 +373,11 @@ class ThalesRemoteScriptWrapper(object):
         ''' Set the path where the EIS measurements should be stored.
         
         The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
-        The directories are created if they do not exist.
+        The directory must exist.
         
         \param [in] path to the directory.
         '''
         path = path.lower()  # c: has to be lower case
-        if os.path.exists(path) == False:
-            os.mkdir(path)
         return self.setValue("EIS_PATH", path)
     
     def setEISOutputFileName(self, name):
@@ -369,6 +385,9 @@ class ThalesRemoteScriptWrapper(object):
         
         The basic name of the file, which is extended by a sequential number or the date and time.
         Only numbers, underscores and letters from a-Z may be used.
+        
+        If the name is set to "individual", the file with the same name must not yet exist.
+        Existing files are not overwritten.
         
         \param [in] name the basic name of the file.
         '''
@@ -415,23 +434,34 @@ class ThalesRemoteScriptWrapper(object):
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
     
-    def runSequenceFile(self, filepath):
+    def runSequenceFile(self, filepath, sequence_folder="C:/THALES/script/sequencer/sequences", sequence_number=9):
         ''' Run the sequence at filepath.
         
-        The file from the specified path is copied as sequence 9 to the correct location in the Thales directory and then selected and executed.
-        The old sequence 9 is overwritten.
+        The file from the specified path is copied as sequence sequence_number=9 to the correct location in the Thales directory and then selected and executed.
+        The default sequence number is 9 and does not need to be changed.
+        The old sequence sequence_number is overwritten.
+        
+        The variable sequence_folder is ONLY NECESSARY if python is running on ANOTHER COMPUTER like the one connected to the Zennium.
+        For this the controlling computer must have access to the hard disk of the computer with the Zennium to access the THALES folder.
+        In this case the path to the sequences folder in sequence_folder must be set to "C:/THALES/script/sequencer/sequences" on the computer with the zennium.
         
         \param [in] filepath of the sequence.
+        \param [in] sequence_folder the filepath to the THALES sequence folder. Does not normally need to be transferred and changed.
+        \param [in] sequence_number the number in the THALES sequence directory. Does not normally need to be transferred and changed.
         '''
-        sequence = "C:/THALES/script/sequencer/sequences/sequence09.seq"
+        
+        if sequence_number > 9 or sequence_number < 0:
+            raise ThalesRemoteError("Wrong sequence number.")
+        
+        sequence_folder = sequence_folder + "/sequence{:02d}.seq".format(sequence_number)
         
         if filepath.find(".seq") < 0:
             raise ThalesRemoteError("Wrong sequence file extension.")
-        if os.path.exists(sequence):
-            os.remove(sequence)
-        shutil.copy2(filepath, sequence)
+        if os.path.exists(sequence_folder):
+            os.remove(sequence_folder)
+        shutil.copy2(filepath, sequence_folder)
         
-        self.selectSequence(9)
+        self.selectSequence(sequence_number)
         return self.runSequence() 
     
     def setValue(self, name, value):

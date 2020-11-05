@@ -30,16 +30,19 @@ from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
 TARGET_HOST = "localhost"
 
 if __name__ == '__main__':
-    thalesConnection = ThalesRemoteConnection()
-    connectionSuccessful = thalesConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
+    '''
+    The Thales software must first be started so that it can be connected.
+    '''
+    ZenniumConnection = ThalesRemoteConnection()
+    connectionSuccessful = ZenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
     if connectionSuccessful:
         print("connection successfull")
     else:
         print("connection not possible")
         
-    remoteScript = ThalesRemoteScriptWrapper(thalesConnection)
+    ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
-    remoteScript.forceThalesIntoRemoteScript()
+    ZahnerZennium.forceThalesIntoRemoteScript()
     
     '''
     Select the sequence to run.
@@ -48,18 +51,18 @@ if __name__ == '__main__':
     Sequences from 0 to 9 can be created.
     These must have the names from "sequence00.seq" to "sequence09.seq".
     '''
-    remoteScript.selectSequence(0)
+    ZahnerZennium.selectSequence(0)
      
     '''
     Run the sequence.
     '''
-    remoteScript.runSequence()
+    ZahnerZennium.runSequence()
 
     '''
     By default the main potentiostat with the number 0 is selected.
     1 corresponds to the external potentiostat connected to EPC channel 1.
     '''
-    remoteScript.selectPotentiostat(1)
+    ZahnerZennium.selectPotentiostat(1)
 
     '''
     Execute a sequence that can be stored anywhere.
@@ -67,7 +70,7 @@ if __name__ == '__main__':
     This sequence file is copied by this function as sequence 9 to the Thales directory.
     Then sequence 9 is selected and executed.
     '''
-    remoteScript.runSequenceFile("C:/Users/XXX/Desktop/myZahnerSequence.seq")
+    ZahnerZennium.runSequenceFile("C:/Users/XXXX/Desktop/myZahnerSequence.seq")
     
-    thalesConnection.disconnectFromTerm()
+    ZenniumConnection.disconnectFromTerm()
     print("finish")

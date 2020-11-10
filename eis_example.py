@@ -84,6 +84,12 @@ if __name__ == '__main__':
     ZahnerZennium.enablePotentiostat(False)
     
     '''
+    By default the main potentiostat with the number 0 is selected.
+    1 corresponds to the external potentiostat connected to EPC channel 1.
+    '''
+    ZahnerZennium.selectPotentiostat(1)
+    
+    '''
     Measure another spectrum and store it at another location.
     Measure with a different amplitude and from start to minimum frequency,
     otherwise same parameters.
@@ -111,6 +117,11 @@ if __name__ == '__main__':
         ZahnerZennium.setEISOutputFileName("spectraAmplitude{}mV".format(amplitude))
         ZahnerZennium.setAmplitude(amplitude / 1000)
         ZahnerZennium.measureEIS()
+    
+    '''
+    Switch back to the main potentiostat and disconnect.
+    '''
+    ZahnerZennium.selectPotentiostat(0)
     
     ZenniumConnection.disconnectFromTerm()
     print("finish")

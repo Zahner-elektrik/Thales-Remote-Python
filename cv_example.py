@@ -1,4 +1,4 @@
-"""
+'''
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -22,10 +22,10 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
+'''
  
 from ThalesRemoteConnection import ThalesRemoteConnection
-from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
+from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 
@@ -45,50 +45,61 @@ if __name__ == '__main__':
     ZahnerZennium.forceThalesIntoRemoteScript()
     
     '''
-    Measurement of sequences and storage of sequences with date and time.
+    Measure cv with a sequential number in the file name that has been specified.
+    Starting with number 1.
     '''
-    ZahnerZennium.setSequenceNaming("dateTime")
-    ZahnerZennium.setSequenceOutputPath("C:\\THALES\\temp\\test1")
-    ZahnerZennium.setSequenceOutputFileName("batterysequence")
+    ZahnerZennium.setCVNaming("counter")
+    ZahnerZennium.setCVCounter(1)
+    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
+    ZahnerZennium.setCVOutputFileName("cv_series")
     
     '''
-    Select the sequence to run.
-     
-    The sequences must be stored under "C:\THALES\script\sequencer\sequences\".
-    Sequences from 0 to 9 can be created.
-    These must have the names from "sequence00.seq" to "sequence09.seq".
+    Setting the parameters for the cv measurment.
+    Alternatively a rule file can be used as a template.
     '''
-    ZahnerZennium.selectSequence(0)
-     
-    '''
-    Run the sequences.
-    '''
-    for i in range(3):
-        ZahnerZennium.runSequence()
-
+    ZahnerZennium.setCVStartPotential(1)
+    ZahnerZennium.setCVUpperReversingPotential(2)
+    ZahnerZennium.setCVLowerReversingPotential(0)
+    ZahnerZennium.setCVEndPotential(1)
+    
+    ZahnerZennium.setCVStartHoldTime(2)
+    ZahnerZennium.setCVEndHoldTime(2)
+    
+    ZahnerZennium.setCVCycles(1.5)
+    ZahnerZennium.setCVSamplesPerCycle(400)
+    ZahnerZennium.setCVScanRate(0.2)
+    
+    ZahnerZennium.setCVMaximumCurrent(0.003)
+    ZahnerZennium.setCVMinimumCurrent(-0.003)
+    
+    ZahnerZennium.setCVOhmicDrop(0)
+    
+    ZahnerZennium.enableCVAutoRestartAtCurrentOverflow(False)
+    ZahnerZennium.enableCVAutoRestartAtCurrentUnderflow(False)
+    ZahnerZennium.enableCVAnalogFunctionGenerator(False)
+    
+#     for i in range(3):
+#         ZahnerZennium.measureCV()
+    
     '''
     By default the main potentiostat with the number 0 is selected.
     1 corresponds to the external potentiostat connected to EPC channel 1.
     '''
     ZahnerZennium.selectPotentiostat(1)
-
-    '''
-    Measureing the next sequences with a sequential number in the file name that has been specified.
-    Starting with number 13.
-    '''
-    ZahnerZennium.setSequenceNaming("counter")
-    ZahnerZennium.setSequenceCounter(13)
-    ZahnerZennium.setSequenceOutputPath("C:\\THALES\\temp\\test1")
-    ZahnerZennium.setSequenceOutputFileName("batterysequence")
-
-    '''
-    Execute a sequence that can be stored anywhere.
     
-    This sequence file is copied by this function as sequence 9 to the Thales directory.
-    Then sequence 9 is selected and executed.
     '''
-    for i in range(3):
-        ZahnerZennium.runSequenceFile("C:/Users/maxim/Desktop/myZahnerSequence.seq")
+    Measurement with spectra of different amplitudes.
+    The amplitude is written into the file name.
+    '''
+    ZahnerZennium.setCVNaming("individual")
+    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
+    
+    ScanRatesForMeasurement = [0.1, 0.2, 0.5, 1.0]
+    
+    for scanRate in ScanRatesForMeasurement:
+        ZahnerZennium.setCVOutputFileName("cv_scanrate_{:d}mVs".format(int(scanRate * 1000)))
+        ZahnerZennium.setCVScanRate(scanRate)
+        ZahnerZennium.measureCV()
     
     '''
     Switch back to the main potentiostat and disconnect.

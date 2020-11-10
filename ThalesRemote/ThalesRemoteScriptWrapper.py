@@ -44,8 +44,10 @@ class ThalesRemoteScriptWrapper(object):
     '''
     Wrapper that uses the ThalesRemoteConnection class.
     The commands are explained in http://zahner.de/pdf/Remote2.pdf .
-    
     In the document you can also find a table with error numbers which are returned.
+    
+    The methods are documented in doxygen style.
+    After the method name comes an explanation of the function and the parameters.
     '''
     undefindedStandardErrorString = " An error has occurred."
 
@@ -264,7 +266,7 @@ class ThalesRemoteScriptWrapper(object):
         '''
         return self.setValue("dfm", steps)
     
-    def setLowerNumberOfPeriods(self, steps):
+    def setLowerStepsPerDecade(self, steps):
         ''' Set the number of steps per decade in frequency range below 66 Hz for EIS measurements.
         
         \param [in] steps the number of steps per decade.
@@ -278,7 +280,7 @@ class ThalesRemoteScriptWrapper(object):
         '''
         return self.setValue("Nwl", steps)
     
-    def setLowerStepsPerDecade(self, steps):
+    def setLowerNumberOfPeriods(self, steps):
         ''' Set the number of periods to measure  in frequency range below 66 Hz for EIS measurements.
         
         \param [in] steps the number of periods.
@@ -402,6 +404,207 @@ class ThalesRemoteScriptWrapper(object):
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
+        
+    '''
+    Section with settings for CV measurements.
+    '''
+
+    def setCVStartPotential(self, potential):
+        ''' Set the start potential of a CV measurment.
+       
+        \param [in] potential the start potential.
+        '''
+        return self.setValue("CV_Pstart", potential)
+    
+    def setCVUpperReversingPotential(self, potential):
+        ''' Set the upper reversal potential of a CV measurement.
+       
+        \param [in] potential the upper reversal potential.
+        '''
+        return self.setValue("CV_Pupper", potential)
+    
+    def setCVLowerReversingPotential(self, potential):
+        ''' Set the lower reversal potential of a CV measurement.
+       
+        \param [in] potential the lower reversal potential.
+        '''
+        return self.setValue("CV_Plower", potential)
+    
+    def setCVEndPotential(self, potential):
+        ''' Set the end potential of a CV measurment.
+       
+        \param [in] potential the end potential.
+        '''
+        return self.setValue("CV_Pend", potential)
+    
+    def setCVStartHoldTime(self, time):
+        ''' Setting the holding time at the start potential.
+        
+        The time must be given in seconds.
+       
+        \param [in] time waiting time at start potential in s.
+        '''
+        return self.setValue("CV_Tstart", time)
+    
+    def setCVEndHoldTime(self, time):
+        ''' Setting the holding time at the end potential.
+        
+        The time must be given in seconds.
+       
+        \param [in] time waiting time at end potential in s.
+        '''
+        return self.setValue("CV_Tend", time)
+    
+    def setCVScanRate(self, scanRate):
+        ''' Set the scan rate.
+        
+        The scan rate must be specified in V/s.
+        
+        \param [in] scanRate the scan rate in V/s.
+        '''
+        return self.setValue("CV_Srate", scanRate)
+    
+    def setCVCycles(self, cycles):
+        ''' Set the number of cycles.
+        
+        At least 0.5 cycles are necessary.
+        
+        \param [in] cycles the number of CV cycles, at least 0.5.
+        '''
+        return self.setValue("CV_Periods", cycles)
+    
+    def setCVSamplesPerCycle(self, samples):
+        ''' Set the number of current and voltage measurements per CV cycle.
+        
+        \param [in] samples the of measurments per cycle.
+        '''
+        return self.setValue("CV_PpPer", samples)
+    
+    def setCVMaximumCurrent(self, current):
+        ''' Set the maximum current for the CV measurement.
+        
+        The maximum positive current at which the measurement is interrupted.
+        
+        \param [in] current the maximum current for measurement in A.
+        '''
+        return self.setValue("CV_Ima", current)
+    
+    def setCVMinimumCurrent(self, current):
+        ''' Set the minimum current for the CV measurement.
+        
+        The maximum negative current at which the measurement is interrupted.
+        
+        \param [in] current the minimum current for measurement in A.
+        '''
+        return self.setValue("CV_Imi", current)
+    
+    def setCVOhmicDrop(self, ohmicdrop):
+        ''' Set the ohmic drop for CV measurement.
+        
+        \param [in] ohmicdrop the ohmic drop for measurement.
+        '''
+        return self.setValue("CV_Odrop", ohmicdrop)
+    
+    def enableCVAutoRestartAtCurrentOverflow(self, state=True):
+        ''' Automatically on restart if current is exceeded.
+        
+        A new measurement is automatically started with a different
+        reverse potential at which the current limit is not exceeded.
+        
+        \param [in] state if state = True the auto restart is enabled.
+        '''
+        if state == True:
+            state = 1
+        else:
+            state = 0
+        return self.setValue("CV_AutoReStart", state)
+    
+    def enableCVAutoRestartAtCurrentUnderflow(self, state=True):
+        ''' Automatisch bei neu starten bei Stromunterschreitung.
+        
+        A new measurement is automatically started with a smaller
+        current range than that determined by the minimum and maximum current.
+        
+        \param [in] state if state = True the auto restart is enabled.
+        '''
+        if state == True:
+            state = 1
+        else:
+            state = 0
+        return self.setValue("CV_AutoScale", state)
+    
+    def enableCVAnalogFunctionGenerator(self, state=True):
+        ''' Switch on the analog function generator (AFG).
+        
+        The analog function generator can only be used if it was purchased with the device.
+        
+        \param [in] state if state = True the AFG is used.
+        '''
+        if state == True:
+            state = 1
+        else:
+            state = 0
+        return self.setValue("CV_AFGena", state)
+    
+    def setCVNaming(self, naming):
+        ''' Set the CV measurement naming rule.
+        
+        naming = "dateTime": extend the setCVOutputFileName(name) with date and time.
+        naming = "counter": extend the setCVOutputFileName(name) with an sequential number.
+        naming = "individual": the file is named like setEISOutputFileName(name).
+        
+        \param [in] naming the naming rule.
+        '''
+        if naming == "dateTime":
+            naming = 0
+        elif naming == "individual":
+            naming = 2
+        else:
+            naming = 1
+        return self.setValue("CV_MOD", naming)
+    
+    def setCVCounter(self, number):
+        ''' Set the current number of CV measurement for filename.
+        
+        Current number for the file name for EIS measurements which is used next and then incremented.
+        
+        \param [in] number the next measurement number.
+        '''
+        return self.setValue("CV_NUM", number)
+    
+    def setCVOutputPath(self, path):
+        ''' Set the path where the CV measurements should be stored.
+        
+        The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
+        The directory must exist.
+        
+        \param [in] path to the directory.
+        '''
+        path = path.lower()  # c: has to be lower case
+        return self.setValue("CV_PATH", path)
+    
+    def setCVOutputFileName(self, name):
+        ''' Set the basic CV output filename.
+        
+        The basic name of the file, which is extended by a sequential number or the date and time.
+        Only numbers, underscores and letters from a-Z may be used.
+        
+        If the name is set to "individual", the file with the same name must not yet exist.
+        Existing files are not overwritten.
+        
+        \param [in] name the basic name of the file.
+        '''
+        return self.setValue("CV_ROOT", name)
+    
+    def measureCV(self):
+        ''' Measure CV
+        
+        For the measurement all parameters must be specified before.
+        '''
+        reply = self.executeRemoteCommand("CV")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
     
     '''
     Section of remote functions for the sequencer.
@@ -423,6 +626,56 @@ class ThalesRemoteScriptWrapper(object):
         if(reply != "SELOK\r"):
             raise ThalesRemoteError(reply.rstrip("\r") + " The selected sequence does not exist.")
         return reply
+    
+    def setSequenceNaming(self, naming):
+        ''' Set the sequence measurement naming rule.
+        
+        naming = "dateTime": extend the setSequenceOutputFileName(name) with date and time.
+        naming = "counter": extend the setSequenceOutputFileName(name) with an sequential number.
+        naming = "individual": the file is named like setEISOutputFileName(name).
+        
+        \param [in] naming the naming rule.
+        '''
+        if naming == "dateTime":
+            naming = 0
+        elif naming == "individual":
+            naming = 2
+        else:
+            naming = 1
+        return self.setValue("SEQ_MOD", naming)
+    
+    def setSequenceCounter(self, number):
+        ''' Set the current number of sequence measurement for filename.
+        
+        Current number for the file name for EIS measurements which is used next and then incremented.
+        
+        \param [in] number the next measurement number.
+        '''
+        return self.setValue("SEQ_NUM", number)
+    
+    def setSequenceOutputPath(self, path):
+        ''' Set the path where the sequence measurements should be stored.
+        
+        The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
+        The directory must exist.
+        
+        \param [in] path to the directory.
+        '''
+        path = path.lower()  # c: has to be lower case
+        return self.setValue("SEQ_PATH", path)
+    
+    def setSequenceOutputFileName(self, name):
+        ''' Set the basic sequence output filename.
+        
+        The basic name of the file, which is extended by a sequential number or the date and time.
+        Only numbers, underscores and letters from a-Z may be used.
+        
+        If the name is set to "individual", the file with the same name must not yet exist.
+        Existing files are not overwritten.
+        
+        \param [in] name the basic name of the file.
+        '''
+        return self.setValue("SEQ_ROOT", name)
     
     def runSequence(self):
         ''' Run the selected sequence.

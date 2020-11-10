@@ -2,7 +2,7 @@
 Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](http://zahner.de/pdf/Remote2.pdf) to control [Zahner Zennium Potentiostats](http://zahner.de/products/electrochemical-workstation.html).  
 It was developed to **easily integrate** Zahner Zennium Potentiostats into Python scripts for more **complex measurement** tasks and for **automation purposes**.
 
-The measurement methods EIS IE CV and DC sequences are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible.
+The measurement methods **EIS**, **IE**, **CV** and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible.
 
 The Python extension will be extended in the future with all functions of the Remote2.
 
@@ -28,7 +28,7 @@ ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 ZahnerZennium.forceThalesIntoRemoteScript()
 
 '''
-Read the currently measured voltage and current.
+Read the actual measured voltage and current.
 '''
 print("Potential: " + str(ZahnerZennium.getPotential()))
 print("Current: " + str(ZahnerZennium.getCurrent()))
@@ -48,10 +48,10 @@ ZahnerZennium.setNumberOfPeriods(3)
 
 ZahnerZennium.getImpedance()
 
-ZahnerZennium.enablePotentiostat(False)
+ZahnerZennium.disablePotentiostat()
 
 ```
-Complete detailed examples can be found in the main directory.
+Complete detailed examples for all measuring methods can be found in the main directory.
 
 # :email: Have a question?
 Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">e-mail</a> to our support team.

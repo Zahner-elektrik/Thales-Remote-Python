@@ -48,70 +48,69 @@ if __name__ == '__main__':
     Measure cv with a sequential number in the file name that has been specified.
     Starting with number 1.
     '''
-    ZahnerZennium.setCVNaming("counter")
-    ZahnerZennium.setCVCounter(1)
-    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
-    ZahnerZennium.setCVOutputFileName("cv_series")
+    ZahnerZennium.setIENaming("counter")
+    ZahnerZennium.setIECounter(1)
+    ZahnerZennium.setIEOutputPath("C:\\THALES\\temp\\ie")
+    ZahnerZennium.setIEOutputFileName("ie_steady")
     
     '''
     Setting the parameters for the cv measurment.
     Alternatively a rule file can be used as a template.
     '''
-    ZahnerZennium.setCVStartPotential(1)
-    ZahnerZennium.setCVUpperReversingPotential(2)
-    ZahnerZennium.setCVLowerReversingPotential(0)
-    ZahnerZennium.setCVEndPotential(1)
+    ZahnerZennium.setIEFirstEdgePotential(1)
+    ZahnerZennium.setIEFirstEdgePotentialRelation("absolute")
+    ZahnerZennium.setIESecondEdgePotential(1.1)
+    ZahnerZennium.setIESecondEdgePotentialRelation("absolute")
+    ZahnerZennium.setIEThirdEdgePotential(0.9)
+    ZahnerZennium.setIEThirdEdgePotentialRelation("absolute")
+    ZahnerZennium.setIEFourthEdgePotential(1)
+    ZahnerZennium.setIEFourthEdgePotentialRelation("absolute")
     
-    ZahnerZennium.setCVStartHoldTime(2)
-    ZahnerZennium.setCVEndHoldTime(2)
+    ZahnerZennium.setIEPotentialResolution(0.01)
+    ZahnerZennium.setIEMinimumWaitingTime(1)
+    ZahnerZennium.setIEMaximumWaitingTime(15)
+    ZahnerZennium.setIERelativeTolerance(0.01)  #1 %
+    ZahnerZennium.setIEAbsoluteTolerance(0.001) #1 mA
+    ZahnerZennium.setIEOhmicDrop(0)
+    ZahnerZennium.setIESweepMode("steady state")
+    ZahnerZennium.setIEScanRate(0.05)
+    ZahnerZennium.setIEMaximumCurrent(0.01)
+    ZahnerZennium.setIEMinimumCurrent(-0.01)
     
-    ZahnerZennium.setCVCycles(1.5)
-    ZahnerZennium.setCVSamplesPerCycle(400)
-    ZahnerZennium.setCVScanRate(0.2)
+    ZahnerZennium.checkIESetup()
+    ZahnerZennium.applyIESetup()
     
-    ZahnerZennium.setCVMaximumCurrent(0.003)
-    ZahnerZennium.setCVMinimumCurrent(-0.003)
-    
-    ZahnerZennium.setCVOhmicDrop(0)
-    
-    ZahnerZennium.disableCVAutoRestartAtCurrentOverflow()
-    ZahnerZennium.disableCVAutoRestartAtCurrentUnderflow()
-    ZahnerZennium.disableCVAnalogFunctionGenerator()
-    
-    ZahnerZennium.checkCVSetup()
-    ZahnerZennium.applyCVSetup()
-    
-    for i in range(3):
-        ZahnerZennium.measureCV()
-    
-    '''
-    By default the main potentiostat with the number 0 is selected.
-    1 corresponds to the external potentiostat connected to EPC channel 1.
-    '''
-    ZahnerZennium.selectPotentiostat(1)
-    
-    '''
-    Measurement with spectra of different amplitudes.
-    The amplitude is written into the file name.
-    '''
-    ZahnerZennium.setCVNaming("individual")
-    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
-    
-    ScanRatesForMeasurement = [0.1, 0.2, 0.5, 1.0]
-    
-    for scanRate in ScanRatesForMeasurement:
-        ZahnerZennium.setCVOutputFileName("cv_scanrate_{:d}mVs".format(int(scanRate * 1000)))
-        ZahnerZennium.setCVScanRate(scanRate)
-    
-        ZahnerZennium.checkCVSetup()
-        ZahnerZennium.applyCVSetup()
+    for i in range(2):
+        ZahnerZennium.measureIE()
         
-        ZahnerZennium.measureCV()
+    '''
+    Another IE with dynamic scan.
+    The names of the measurement results are extended with date and time.
+    '''
+    ZahnerZennium.setIESweepMode("dynamic scan")
+    ZahnerZennium.setIENaming("dateTime")
+    ZahnerZennium.setIEOutputFileName("ie_dynamic")
     
+    ZahnerZennium.checkIESetup()
+    ZahnerZennium.applyIESetup()
+    
+    for i in range(2):
+        ZahnerZennium.measureIE()
+        
     '''
-    Switch back to the main potentiostat and disconnect.
+    Another IE with fixed sampling.
+    The names of the measurement results are extended with date and time.
     '''
-    ZahnerZennium.selectPotentiostat(0)
+    ZahnerZennium.setIESweepMode("fixed sampling")
+    ZahnerZennium.setIEOutputFileName("ie_fixed")
+    
+    ZahnerZennium.checkIESetup()
+    ZahnerZennium.applyIESetup()
+    
+    for i in range(2):
+        ZahnerZennium.measureIE()
+    
+    
     
     ZenniumConnection.disconnectFromTerm()
     print("finish")

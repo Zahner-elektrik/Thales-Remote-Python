@@ -2,6 +2,8 @@
 Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](http://zahner.de/pdf/Remote2.pdf) to control [Zahner Zennium Potentiostats](http://zahner.de/products/electrochemical-workstation.html).  
 It was developed to **easily integrate** Zahner Zennium Potentiostats into Python scripts for more **complex measurement** tasks and for **automation purposes**.
 
+The measurement methods EIS IE CV and DC sequences are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible.
+
 The Python extension will be extended in the future with all functions of the Remote2.
 
 # :wrench: Installation

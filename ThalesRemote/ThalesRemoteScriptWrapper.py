@@ -49,7 +49,7 @@ class ThalesRemoteScriptWrapper(object):
     The methods are documented in doxygen style.
     After the method name comes an explanation of the function and the parameters.
     '''
-    undefindedStandardErrorString = " An error has occurred."
+    undefindedStandardErrorString = ""
 
     def __init__(self, remoteConnection):
         ''' Constructor
@@ -173,6 +173,14 @@ class ThalesRemoteScriptWrapper(object):
             self.executeRemoteCommand("Pot=-1")
         else:
             self.executeRemoteCommand("Pot=0")
+            
+    def disablePotentiostat(self):
+        ''' Switch the potentiostat off.
+        
+        \param [in] enabled switches the potentiostat on if true and off if false.
+        '''
+        state = False
+        return self.enablePotentiostat(state)
     
     def setPotentiostatMode(self, potentiostatMode):
         ''' Set the coupling of the potentiostat.
@@ -205,6 +213,17 @@ class ThalesRemoteScriptWrapper(object):
         else:
             enable = 0
         return self.setValue("UseRuleFile", enable)
+    
+    def disableRuleFileUsage(self):
+        ''' Disable the usage of a rule file.
+        
+        If the usage of the rule file is activated all the parameters required
+        for the EIS, CV, and/or IE are taken from the rule file.
+        The exact usage can be found in the remote manual.
+        '''
+        state = False
+        return self.enableRuleFileUsage(state)
+        
         
     '''
     Section with settings for single impedance and EIS measurements.
@@ -481,7 +500,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("CV_PpPer", samples)
     
     def setCVMaximumCurrent(self, current):
-        ''' Set the maximum current for the CV measurement.
+        ''' Set the maximum current.
         
         The maximum positive current at which the measurement is interrupted.
         
@@ -490,7 +509,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("CV_Ima", current)
     
     def setCVMinimumCurrent(self, current):
-        ''' Set the minimum current for the CV measurement.
+        ''' Set the minimum current.
         
         The maximum negative current at which the measurement is interrupted.
         
@@ -519,8 +538,19 @@ class ThalesRemoteScriptWrapper(object):
             state = 0
         return self.setValue("CV_AutoReStart", state)
     
+    def disableCVAutoRestartAtCurrentOverflow(self):
+        ''' Disable automatically restart if current is exceeded.
+        
+        A new measurement is automatically started with a different
+        reverse potential at which the current limit is not exceeded.
+        
+        \param [in] state if state = True the auto restart is enabled.
+        '''
+        state = False
+        return self.enableCVAutoRestartAtCurrentOverflow(state)
+    
     def enableCVAutoRestartAtCurrentUnderflow(self, state=True):
-        ''' Automatisch bei neu starten bei Stromunterschreitung.
+        ''' Restart automatically if the current drops below the limit.
         
         A new measurement is automatically started with a smaller
         current range than that determined by the minimum and maximum current.
@@ -532,6 +562,15 @@ class ThalesRemoteScriptWrapper(object):
         else:
             state = 0
         return self.setValue("CV_AutoScale", state)
+    
+    def disableCVAutoRestartAtCurrentUnderflow(self):
+        ''' Disable automatically restart if the current drops below the limit.
+        
+        A new measurement is automatically started with a smaller
+        current range than that determined by the minimum and maximum current.
+        '''
+        state = False
+        return self.enableCVAutoRestartAtCurrentUnderflow(state)
     
     def enableCVAnalogFunctionGenerator(self, state=True):
         ''' Switch on the analog function generator (AFG).
@@ -545,6 +584,14 @@ class ThalesRemoteScriptWrapper(object):
         else:
             state = 0
         return self.setValue("CV_AFGena", state)
+    
+    def disableCVAnalogFunctionGenerator(self):
+        ''' Disable the analog function generator (AFG).
+        
+        The analog function generator can only be used if it was purchased with the device.
+        '''
+        state = False
+        return self.enableCVAnalogFunctionGenerator(state)
     
     def setCVNaming(self, naming):
         ''' Set the CV measurement naming rule.
@@ -596,12 +643,310 @@ class ThalesRemoteScriptWrapper(object):
         '''
         return self.setValue("CV_ROOT", name)
     
+    def checkCVSetup(self):
+        ''' Check the set parameters.
+        
+        With the error number the wrong parameter can be found.
+        The error numbers are listed in the Remote2 manual.
+        '''
+        reply = self.executeRemoteCommand("CHECKCV")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
+    
+    def applyCVSetup(self):
+        ''' Take over the set parameters.
+        
+        After checking with checkCVSetup() the correct parameters for the measurement can be set.
+        '''
+        reply = self.executeRemoteCommand("SENDCVSETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
+        
+    
     def measureCV(self):
         ''' Measure CV
         
-        For the measurement all parameters must be specified before.
+        Before measurement, all parameters must be checked with checkCVSetup() and accepted with applyCVSetup().
         '''
         reply = self.executeRemoteCommand("CV")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
+        
+    '''
+    Section with settings for IE measurements.
+    Additional informations can be found in the IE manual.
+    '''
+   
+    def setIEFirstEdgePotential(self, potential):
+        ''' Set the first edge potential.
+        
+        \param [in] potential the potential of the first edge in V.
+        '''    
+        return self.setValue("IE_EckPot1", potential)
+   
+    def setIESecondEdgePotential(self, potential):
+        ''' Set the second edge potential.
+        
+        \param [in] potential the potential of the second edge in V.
+        '''    
+        return self.setValue("IE_EckPot2", potential)
+   
+    def setIEThirdEdgePotential(self, potential):
+        ''' Set the third edge potential.
+        
+        \param [in] potential the potential of the third edge in V.
+        '''    
+        return self.setValue("IE_EckPot3", potential)
+   
+    def setIEFourthEdgePotential(self, potential):
+        ''' Set the fourth edge potential.
+        
+        \param [in] potential the potential of the fourth edge in V.
+        '''    
+        return self.setValue("IE_EckPot4", potential)
+   
+    def setIEFirstEdgePotentialRelation(self, relation):
+        ''' Set the relation of the first edge potential.
+        
+        relation = "absolute": Absolute relation of the potential.
+        relation = "relative": Relative relation of the potential.
+        
+        \param [in] relation the relation of the edge potential absolute or relative.
+        '''
+        if relation == "relative":
+            relation = -1
+        else:
+            relation = 0
+        return self.setValue("IE_EckPot1rel", relation)
+   
+    def setIESecondEdgePotentialRelation(self, relation):
+        ''' Set the relation of the second edge potential.
+        
+        relation = "absolute": Absolute relation of the potential.
+        relation = "relative": Relative relation of the potential.
+        
+        \param [in] relation the relation of the edge potential absolute or relative.
+        '''
+        if relation == "relative":
+            relation = -1
+        else:
+            relation = 0
+        return self.setValue("IE_EckPot2rel", relation)
+   
+    def setIEThirdEdgePotentialRelation(self, relation):
+        ''' Set the relation of the third edge potential.
+        
+        relation = "absolute": Absolute relation of the potential.
+        relation = "relative": Relative relation of the potential.
+        
+        \param [in] relation the relation of the edge potential absolute or relative.
+        '''
+        if relation == "relative":
+            relation = -1
+        else:
+            relation = 0
+        return self.setValue("IE_EckPot3rel", relation)
+   
+    def setIEFourthEdgePotentialRelation(self, relation):
+        ''' Set the relation of the fourth edge potential.
+        
+        relation = "absolute": Absolute relation of the potential.
+        relation = "relative": Relative relation of the potential.
+        
+        \param [in] relation the relation of the edge potential absolute or relative.
+        '''
+        if relation == "relative":
+            relation = -1
+        else:
+            relation = 0
+        return self.setValue("IE_EckPot4rel", relation)
+    
+    def setIEPotentialResolution(self, resolution):
+        ''' Set the potential resolution.
+        
+        The potential step size for IE measurements.
+        
+        \param [in] resolution the resolution for the measurement.
+        '''
+        return self.setValue("IE_Resolution", resolution)
+    
+    def setIEMinimumWaitingTime(self, time):
+        ''' Set the minimum waiting time.
+        
+        The minimum waiting time on each step of the IE measurement.
+        This time is at least waited, even if the tolerance abort criteria are met.
+        
+        \param [in] time the waiting time in seconds.
+        '''
+        return self.setValue("IE_WZmin", time)
+    
+    def setIEMaximumWaitingTime(self, time):
+        ''' Set the maximum waiting time.
+        
+        The maximum waiting time on each step of the IE measurement.
+        After this time the measurement is stopped at this potential
+        and continued with the next potential even if the tolerances are not reached.
+        
+        \param [in] time the waiting time in seconds.
+        '''
+        return self.setValue("IE_WZmax", time)
+    
+    def setIERelativeTolerance(self, tolerance):
+        ''' Set the relative tolerance criteria.
+        
+        This parameter is only used in sweep mode steady state.
+        The relative tolerance to wait in percent.
+        The explanation can be found in the IE manual.
+        
+        \param [in] tolerance the tolerance to wait until break, 0.01 = 1%.
+        '''
+        return self.setValue("IE_Torel", tolerance)
+    
+    def setIEAbsoluteTolerance(self, tolerance):
+        ''' Set the absolute tolerance criteria.
+        
+        This parameter is only used in sweep mode steady state.
+        The absolute tolerance to wait in A.
+        The explanation can be found in the IE manual.
+        
+        \param [in] tolerance the tolerance to wait until break.
+        '''
+        return self.setValue("IE_Toabs", tolerance)
+    
+    def setIEOhmicDrop(self, ohmicdrop):
+        ''' Set the ohmic drop for IE measurement.
+        
+        \param [in] ohmicdrop the ohmic drop for measurement.
+        '''
+        return self.setValue("IE_Odrop", ohmicdrop)
+    
+    def setIESweepMode(self, mode):
+        ''' Set the sweep mode.
+        
+        The explanation of the modes can be found in the IE manual.
+        mode="steady state"
+        mode="fixed sampling"
+        mode="dynamic scan"
+        
+        \param [in] mode the sweep mode for measurement.
+        '''
+        if mode == "steady state":
+            mode = 0
+        elif mode == "dynamic scan":
+            mode = 2        
+        else:
+            mode = 1
+        return self.setValue("IE_SweepMode", mode)
+    
+    def setIEScanRate(self, scanRate):
+        ''' Set the scan rate.
+        
+        This parameter is only used in sweep mode dynamic scan.
+        The scan rate must be specified in V/s.
+        
+        \param [in] scanRate the scan rate in V/s.
+        '''
+        return self.setValue("IE_Srate", scanRate)
+    
+    def setIEMaximumCurrent(self, current):
+        ''' Set the maximum current.
+        
+        The maximum positive current at which the measurement is interrupted.
+        
+        \param [in] current the maximum current for measurement in A.
+        '''
+        return self.setValue("IE_Ima", current)
+    
+    def setIEMinimumCurrent(self, current):
+        ''' Set the minimum current.
+        
+        The maximum negative current at which the measurement is interrupted.
+        
+        \param [in] current the minimum current for measurement in A.
+        '''
+        return self.setValue("IE_Imi", current)
+    
+    def setIENaming(self, naming):
+        ''' Set the IE measurement naming rule.
+        
+        naming = "dateTime": extend the setIEOutputFileName(name) with date and time.
+        naming = "counter": extend the setIEOutputFileName(name) with an sequential number.
+        naming = "individual": the file is named like setEISOutputFileName(name).
+        
+        \param [in] naming the naming rule.
+        '''
+        if naming == "dateTime":
+            naming = 0
+        elif naming == "individual":
+            naming = 2
+        else:
+            naming = 1
+        return self.setValue("IE_MOD", naming)
+    
+    def setIECounter(self, number):
+        ''' Set the current number of IE measurement for filename.
+        
+        Current number for the file name for EIS measurements which is used next and then incremented.
+        
+        \param [in] number the next measurement number.
+        '''
+        return self.setValue("IE_NUM", number)
+    
+    def setIEOutputPath(self, path):
+        ''' Set the path where the IE measurements should be stored.
+        
+        The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
+        The directory must exist.
+        
+        \param [in] path to the directory.
+        '''
+        path = path.lower()  # c: has to be lower case
+        return self.setValue("IE_PATH", path)
+    
+    def setIEOutputFileName(self, name):
+        ''' Set the basic IE output filename.
+        
+        The basic name of the file, which is extended by a sequential number or the date and time.
+        Only numbers, underscores and letters from a-Z may be used.
+        
+        If the name is set to "individual", the file with the same name must not yet exist.
+        Existing files are not overwritten.
+        
+        \param [in] name the basic name of the file.
+        '''
+        return self.setValue("IE_ROOT", name)
+    
+    def checkIESetup(self):
+        ''' Check the set parameters.
+        
+        With the error number the wrong parameter can be found.
+        The error numbers are listed in the Remote2 manual.
+        '''
+        reply = self.executeRemoteCommand("CHECKIE")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
+    
+    def applyIESetup(self):
+        ''' Take over the set parameters.
+        
+        After checking with checkIESetup() the correct parameters for the measurement can be set.
+        '''
+        reply = self.executeRemoteCommand("SENDIESETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
+        
+    
+    def measureIE(self):
+        ''' Measure IE
+        
+        Before measurement, all parameters must be checked with checkIESetup() and accepted with applyIESetup().
+        '''
+        reply = self.executeRemoteCommand("IE")
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply

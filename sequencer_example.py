@@ -88,7 +88,7 @@ if __name__ == '__main__':
     Then sequence 9 is selected and executed.
     '''
     for i in range(3):
-        ZahnerZennium.runSequenceFile("C:/Users/maxim/Desktop/myZahnerSequence.seq")
+        ZahnerZennium.runSequenceFile("C:/Users/XXX/Desktop/myZahnerSequence.seq")
     
     '''
     Switch back to the main potentiostat and disconnect.

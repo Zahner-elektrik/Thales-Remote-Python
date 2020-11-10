@@ -81,7 +81,7 @@ if __name__ == '__main__':
     for i in range(3):
         ZahnerZennium.measureEIS()
         
-    ZahnerZennium.enablePotentiostat(False)
+    ZahnerZennium.disablePotentiostat()
     
     '''
     By default the main potentiostat with the number 0 is selected.

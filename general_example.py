@@ -95,7 +95,7 @@ if __name__ == '__main__':
     '''
     spectrum(ZahnerZennium, 1000, 2e5, 10)
     
-    ZahnerZennium.enablePotentiostat(False)
+    ZahnerZennium.disablePotentiostat()
     
     ZenniumConnection.disconnectFromTerm()
     print("finish")

@@ -23,9 +23,17 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTIO
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
- 
+
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+
+'''
+Import the ISM import package and the matplotlib plotting library.
+'''
+from IsmImport import IsmImport
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.ticker import EngFormatter
 
 TARGET_HOST = "localhost"
 
@@ -39,37 +47,37 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
-        
+          
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
-
+  
     ZahnerZennium.forceThalesIntoRemoteScript()
-    
+      
     '''
     Measure EIS spectra with a sequential number in the file name that has been specified.
-    Starting with number 13.
+    Starting with number 1.
     '''
     ZahnerZennium.setEISNaming("counter")
-    ZahnerZennium.setEISCounter(13)
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test1")
+    ZahnerZennium.setEISCounter(1)
+    ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
     ZahnerZennium.setEISOutputFileName("spectra")
-    
+      
     '''
     Setting the parameters for the spectra.
     Alternatively a rule file can be used as a template.
     '''
     ZahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     ZahnerZennium.setAmplitude(10e-3)
-    ZahnerZennium.setPotential(1)
-    ZahnerZennium.setLowerFrequencyLimit(10)
+    ZahnerZennium.setPotential(0)
+    ZahnerZennium.setLowerFrequencyLimit(0.1)
     ZahnerZennium.setStartFrequency(1000)
-    ZahnerZennium.setUpperFrequencyLimit(10000)
-    ZahnerZennium.setLowerNumberOfPeriods(5)
-    ZahnerZennium.setLowerStepsPerDecade(2)
+    ZahnerZennium.setUpperFrequencyLimit(1000000)
+    ZahnerZennium.setLowerNumberOfPeriods(3)
+    ZahnerZennium.setLowerStepsPerDecade(3)
     ZahnerZennium.setUpperNumberOfPeriods(20)
     ZahnerZennium.setUpperStepsPerDecade(10)
     ZahnerZennium.setScanDirection("startToMax")
     ZahnerZennium.setScanStrategy("single")
-    
+      
     '''
     Switching on the potentiostat before the measurement,
     so that EIS is measured at the set DC potential.
@@ -77,51 +85,74 @@ if __name__ == '__main__':
     the measurement is performed at the OCP.
     '''
     ZahnerZennium.enablePotentiostat()
-    
-    for i in range(3):
-        ZahnerZennium.measureEIS()
-        
+      
+    ZahnerZennium.measureEIS()
+          
     ZahnerZennium.disablePotentiostat()
-    
-    '''
-    By default the main potentiostat with the number 0 is selected.
-    1 corresponds to the external potentiostat connected to EPC channel 1.
-    '''
-    ZahnerZennium.selectPotentiostat(1)
-    
-    '''
-    Measure another spectrum and store it at another location.
-    Measure with a different amplitude and from start to minimum frequency,
-    otherwise same parameters.
-    '''
-    ZahnerZennium.setEISNaming("dateTime")
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test2")
-    ZahnerZennium.setEISOutputFileName("spectra")
-    
-    ZahnerZennium.setAmplitude(50e-3)
-    ZahnerZennium.setScanDirection("startToMin")
-    
-    for i in range(3):
-        ZahnerZennium.measureEIS()
-    
-    '''
-    Measurement with spectra of different amplitudes.
-    The amplitude is written into the file name.
-    '''
-    ZahnerZennium.setEISNaming("individual")
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test3")
-    
-    AmplitudesIn_mV_forMeasurement = [5, 10, 20, 50]
-    
-    for amplitude in AmplitudesIn_mV_forMeasurement:
-        ZahnerZennium.setEISOutputFileName("spectraAmplitude{}mV".format(amplitude))
-        ZahnerZennium.setAmplitude(amplitude / 1000)
-        ZahnerZennium.measureEIS()
-    
-    '''
-    Switch back to the main potentiostat and disconnect.
-    '''
-    ZahnerZennium.selectPotentiostat(0)
-    
+      
     ZenniumConnection.disconnectFromTerm()
+    
+    '''
+    Import the first spectrum from the previous measurement series.
+    This was saved under the set path and name with the number expanded.
+    The measurement starts at 1 therefore the following path results:
+    "C:\THALES\temp\test1\spectra_0001.ism".
+    '''
+    
+    ismFile = IsmImport(r"C:\THALES\temp\test1\spectra_0001.ism")
+    
+    impedanceFrequencies = ismFile.getFrequencyArray()
+    
+    impedanceAbsolute = ismFile.getImpedanceArray()
+    impedancePhase = ismFile.getPhaseArray()
+    
+    impedanceComplex = ismFile.getComplexImpedanceArray()
+    
+    '''
+    Display the ism file in Nyquist and Bode representation.
+    '''
+    plt.ion()
+    
+    '''
+    Nyquist representation.
+    
+    Display the data in the chart and then format the axes.
+    '''
+    figNyquist, (nyquistAxis) = plt.subplots(1, 1)
+    figNyquist.suptitle("Nyquist")
+    
+    nyquistAxis.plot(np.real(impedanceComplex), -np.imag(impedanceComplex), marker="x", markersize=5)
+    nyquistAxis.grid(which="both")
+    nyquistAxis.set_aspect('equal')
+    nyquistAxis.xaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
+    nyquistAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
+    nyquistAxis.set_xlabel(r'$Z_{\rm re}$')
+    nyquistAxis.set_ylabel(r'$-Z_{\rm im}$')
+    
+    '''
+    Bode representation.
+    
+    Display the data in the chart and then format the axes.
+    '''
+    figBode, (impedanceAxis, phaseAxis) = plt.subplots(2, 1, sharex=True)
+    figBode.suptitle("Bode")
+    
+    impedanceAxis.loglog(impedanceFrequencies, impedanceAbsolute, marker="+", markersize=5)
+    impedanceAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
+    impedanceAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
+    impedanceAxis.set_xlabel(r'$f$')
+    impedanceAxis.set_ylabel(r'$|Z|$')
+    impedanceAxis.grid(which="both")
+    
+    phaseAxis.semilogx(impedanceFrequencies, np.abs(impedancePhase * (360 / (2 * np.pi))), marker="+", markersize=5)
+    phaseAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
+    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$°$", sep=""))
+    phaseAxis.set_xlabel(r'$f$')
+    phaseAxis.set_ylabel(r'$|Phase|$')
+    phaseAxis.grid(which="both")
+    phaseAxis.set_ylim([0, 90])
+        
+    plt.show()
+    
     print("finish")
+    

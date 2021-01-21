@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2020 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -67,10 +67,10 @@ if __name__ == '__main__':
     
     ZahnerZennium.setCVCycles(1.5)
     ZahnerZennium.setCVSamplesPerCycle(400)
-    ZahnerZennium.setCVScanRate(0.2)
+    ZahnerZennium.setCVScanRate(0.5)
     
-    ZahnerZennium.setCVMaximumCurrent(0.003)
-    ZahnerZennium.setCVMinimumCurrent(-0.003)
+    ZahnerZennium.setCVMaximumCurrent(0.03)
+    ZahnerZennium.setCVMinimumCurrent(-0.03)
     
     ZahnerZennium.setCVOhmicDrop(0)
     
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     ZahnerZennium.checkCVSetup()
     ZahnerZennium.applyCVSetup()
     
-    for i in range(3):
+    for i in range(2):
         ZahnerZennium.measureCV()
     
     '''

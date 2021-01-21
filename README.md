@@ -28,7 +28,7 @@ ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 ZahnerZennium.forceThalesIntoRemoteScript()
 
 '''
-Read the actual measured voltage and current.
+Read the measured voltage and current.
 '''
 print("Potential: " + str(ZahnerZennium.getPotential()))
 print("Current: " + str(ZahnerZennium.getCurrent()))
@@ -51,9 +51,51 @@ ZahnerZennium.getImpedance()
 ZahnerZennium.disablePotentiostat()
 
 ```
-Complete detailed examples for all measuring methods can be found in the main directory.
 
-# :email: Have a question?
+# :book: Examples
+There are several examples available on different topics.
+
+### [general_example.py](general_example.py)
+
+* Switch potentiostat on or off
+* Setting potentiostat potentiostatic or galvanostatic
+* Setting output potential or current
+* Read potential and current
+* Measure impedance
+
+### [eis_import_plot_example.ipynb](eis_import_plot_example.ipynb)
+This example also requires numpy, matplotlib and the package ThalesFileImport from the repository. For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
+
+It is an example of the following possibilities:
+* Measure an impedance spectra
+* **Importing the measurement results from the ism file into python**
+* Plotting the spectrum in bode and nyquist representation with the matplotlib library
+
+### [eis_example.py](eis_example.py)
+
+* Setting output file naming for impedance spectras
+* Parametrizing an impedance spectrum
+* Measurement with an external potentiostat (EPC-Device)
+
+### [cv_example.py](cv_example.py)
+
+* Setting output file naming for CV measurements
+* Parametrizing an CV measurement
+* Measurement with an external potentiostat (EPC-Device)
+
+### [ie_example.py](ie_example.py)
+
+* Setting output file naming for IE measurements
+* Parametrizing an IE measurement
+
+### [sequencer_example.py](sequencer_example.py)
+With the [Zahner sequencer](http://zahner.de/files/sequencer-an-introduction.pdf), DC voltage and current curves defined in a text file can be output to the potentiostat.
+
+* Setting output file naming for sequence measurements
+* Parametrizing an sequence measurement
+* Measurement with an external potentiostat (EPC-Device)
+
+# :email: Haveing a question?
 Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">e-mail</a> to our support team.
 
 # :interrobang: Found a bug or missing a specific feature?
@@ -64,7 +106,7 @@ The library was developed with python 3.9 using only standard libraries.
 It was tested with Python 3.9 and 3.8.5.
 
 # :closed_book: License
-Copyright 2020 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

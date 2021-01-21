@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2020 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -177,7 +177,6 @@ class ThalesRemoteScriptWrapper(object):
     def disablePotentiostat(self):
         ''' Switch the potentiostat off.
         
-        \param [in] enabled switches the potentiostat on if true and off if false.
         '''
         state = False
         return self.enablePotentiostat(state)

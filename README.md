@@ -64,7 +64,9 @@ There are several examples available on different topics.
 * Measure impedance
 
 ### [eis_import_plot_example.ipynb](eis_import_plot_example.ipynb)
-This example also requires numpy, matplotlib and the package ThalesFileImport from the repository. For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
+This example also requires numpy, matplotlib and the package ThalesFileImport from the repository.  
+This file also exists only as python without the Jupyter documentation.  
+For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
 
 It is an example of the following possibilities:
 * Measure an impedance spectra
@@ -94,6 +96,16 @@ With the [Zahner sequencer](http://zahner.de/files/sequencer-an-introduction.pdf
 * Setting output file naming for sequence measurements
 * Parametrizing an sequence measurement
 * Measurement with an external potentiostat (EPC-Device)
+
+### [eis_pad4_example.ipynb](eis_pad4_example.ipynb)
+This example also requires numpy, matplotlib and the package ThalesFileImport from the repository.  
+This file also exists only as python without the Jupyter documentation.  
+For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
+
+It is an example of the following possibilities:
+* Measurement of an impedance spectrum on a stack with single cells connected to the PAD4 card.
+* **Importing the measurement results from the ism file into python**
+* Plotting the spectrum in bode and nyquist representation with the matplotlib library
 
 # :email: Haveing a question?
 Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">e-mail</a> to our support team.

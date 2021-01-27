@@ -24,12 +24,13 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
  
+import sys
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     '''
     The Thales software must first be started so that it can be connected.
     '''
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
+        sys.exit()
         
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
@@ -50,7 +52,7 @@ if __name__ == '__main__':
     '''
     ZahnerZennium.setCVNaming("counter")
     ZahnerZennium.setCVCounter(1)
-    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
+    ZahnerZennium.setCVOutputPath(r"C:\THALES\temp\cv")
     ZahnerZennium.setCVOutputFileName("cv_series")
     
     '''
@@ -79,9 +81,9 @@ if __name__ == '__main__':
     ZahnerZennium.disableCVAnalogFunctionGenerator()
     
     ZahnerZennium.checkCVSetup()
-    ZahnerZennium.applyCVSetup()
+    print(ZahnerZennium.readCVSetup())
     
-    for i in range(2):
+    for i in range(3):
         ZahnerZennium.measureCV()
     
     '''
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     The amplitude is written into the file name.
     '''
     ZahnerZennium.setCVNaming("individual")
-    ZahnerZennium.setCVOutputPath("C:\\THALES\\temp\\cv")
+    ZahnerZennium.setCVOutputPath(r"C:\THALES\temp\cv")
     
     ScanRatesForMeasurement = [0.1, 0.2, 0.5, 1.0]
     
@@ -104,7 +106,7 @@ if __name__ == '__main__':
         ZahnerZennium.setCVScanRate(scanRate)
     
         ZahnerZennium.checkCVSetup()
-        ZahnerZennium.applyCVSetup()
+        print(ZahnerZennium.readCVSetup())
         
         ZahnerZennium.measureCV()
     

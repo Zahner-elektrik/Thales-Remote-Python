@@ -24,12 +24,13 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
  
+import sys
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     '''
     The Thales software must first be started so that it can be connected.
     '''
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
+        sys.exit()
         
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
@@ -50,7 +52,7 @@ if __name__ == '__main__':
     '''
     ZahnerZennium.setEISNaming("counter")
     ZahnerZennium.setEISCounter(13)
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test1")
+    ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
     ZahnerZennium.setEISOutputFileName("spectra")
     
     '''
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     ZahnerZennium.setLowerNumberOfPeriods(5)
     ZahnerZennium.setLowerStepsPerDecade(2)
     ZahnerZennium.setUpperNumberOfPeriods(20)
-    ZahnerZennium.setUpperStepsPerDecade(10)
+    ZahnerZennium.setUpperStepsPerDecade(5)
     ZahnerZennium.setScanDirection("startToMax")
     ZahnerZennium.setScanStrategy("single")
     
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     otherwise same parameters.
     '''
     ZahnerZennium.setEISNaming("dateTime")
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test2")
+    ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test2")
     ZahnerZennium.setEISOutputFileName("spectra")
     
     ZahnerZennium.setAmplitude(50e-3)
@@ -109,7 +111,7 @@ if __name__ == '__main__':
     The amplitude is written into the file name.
     '''
     ZahnerZennium.setEISNaming("individual")
-    ZahnerZennium.setEISOutputPath("C:\\THALES\\temp\\test3")
+    ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test3")
     
     AmplitudesIn_mV_forMeasurement = [5, 10, 20, 50]
     

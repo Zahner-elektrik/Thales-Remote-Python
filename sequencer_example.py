@@ -24,12 +24,13 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
  
+import sys
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     '''
     The Thales software must first be started so that it can be connected.
     '''
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
+        sys.exit()
         
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
@@ -48,7 +50,7 @@ if __name__ == '__main__':
     Measurement of sequences and storage of sequences with date and time.
     '''
     ZahnerZennium.setSequenceNaming("dateTime")
-    ZahnerZennium.setSequenceOutputPath("C:\\THALES\\temp\\test1")
+    ZahnerZennium.setSequenceOutputPath(r"C:\THALES\temp\test1")
     ZahnerZennium.setSequenceOutputFileName("batterysequence")
     
     '''
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     '''
     ZahnerZennium.setSequenceNaming("counter")
     ZahnerZennium.setSequenceCounter(13)
-    ZahnerZennium.setSequenceOutputPath("C:\\THALES\\temp\\test1")
+    ZahnerZennium.setSequenceOutputPath(r"C:\THALES\temp\test1")
     ZahnerZennium.setSequenceOutputFileName("batterysequence")
 
     '''
@@ -88,7 +90,7 @@ if __name__ == '__main__':
     Then sequence 9 is selected and executed.
     '''
     for i in range(3):
-        ZahnerZennium.runSequenceFile("C:/Users/XXX/Desktop/myZahnerSequence.seq")
+        ZahnerZennium.runSequenceFile(r"C:\Users\XXX\Desktop\myZahnerSequence.seq")
     
     '''
     Switch back to the main potentiostat and disconnect.

@@ -53,6 +53,7 @@ if __name__ == "__main__":
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
   
     ZahnerZennium.forceThalesIntoRemoteScript()
+    
       
     '''
     Measure EIS spectra with a sequential number in the file name that has been specified.
@@ -61,8 +62,8 @@ if __name__ == "__main__":
     ZahnerZennium.setEISNaming("counter")
     ZahnerZennium.setEISCounter(1)
     ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
-    ZahnerZennium.setEISOutputFileName("spectra")
-      
+    ZahnerZennium.setEISOutputFileName("spectra_cells")
+        
     '''
     Setting the parameters for the spectra.
     Alternatively a rule file can be used as a template.
@@ -70,16 +71,23 @@ if __name__ == "__main__":
     ZahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     ZahnerZennium.setAmplitude(10e-3)
     ZahnerZennium.setPotential(0)
-    ZahnerZennium.setLowerFrequencyLimit(0.1)
+    ZahnerZennium.setLowerFrequencyLimit(0.05)
     ZahnerZennium.setStartFrequency(1000)
-    ZahnerZennium.setUpperFrequencyLimit(1000000)
-    ZahnerZennium.setLowerNumberOfPeriods(3)
-    ZahnerZennium.setLowerStepsPerDecade(3)
+    ZahnerZennium.setUpperFrequencyLimit(100000)
+    ZahnerZennium.setLowerNumberOfPeriods(2)
+    ZahnerZennium.setLowerStepsPerDecade(5)
     ZahnerZennium.setUpperNumberOfPeriods(20)
     ZahnerZennium.setUpperStepsPerDecade(10)
     ZahnerZennium.setScanDirection("startToMax")
     ZahnerZennium.setScanStrategy("single")
-      
+    
+    '''
+    Setup PAD4 Channels
+    '''
+    ZahnerZennium.setupPAD4(1,1,1)
+    ZahnerZennium.setupPAD4(1,2,1)
+    ZahnerZennium.enablePAD4()
+    
     '''
     Switching on the potentiostat before the measurement,
     so that EIS is measured at the set DC potential.
@@ -87,28 +95,31 @@ if __name__ == "__main__":
     the measurement is performed at the OCP.
     '''
     ZahnerZennium.enablePotentiostat()
-      
     ZahnerZennium.measureEIS()
-          
     ZahnerZennium.disablePotentiostat()
-      
     ZenniumConnection.disconnectFromTerm()
     
+    
     '''
-    Import the first spectrum from the previous measurement series.
-    This was saved under the set path and name with the number expanded.
-    The measurement starts at 1 therefore the following path results:
-    "C:\THALES\temp\test1\spectra_0001.ism".
+    Import the spectra
     '''
+    ismFileStack = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser00.ism")
+    impedanceFrequenciesStack = ismFileStack.getFrequencyArray()
+    impedanceAbsoluteStack = ismFileStack.getImpedanceArray()
+    impedancePhaseStack = ismFileStack.getPhaseArray()
+    impedanceComplexStack = ismFileStack.getComplexImpedanceArray()
     
-    ismFile = IsmImport(r"C:\THALES\temp\test1\spectra_0001.ism")
+    ismFileCell1 = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser01.ism")
+    impedanceFrequenciesCell1 = ismFileCell1.getFrequencyArray()
+    impedanceAbsoluteCell1 = ismFileCell1.getImpedanceArray()
+    impedancePhaseCell1 = ismFileCell1.getPhaseArray()
+    impedanceComplexCell1 = ismFileCell1.getComplexImpedanceArray()
     
-    impedanceFrequencies = ismFile.getFrequencyArray()
-    
-    impedanceAbsolute = ismFile.getImpedanceArray()
-    impedancePhase = ismFile.getPhaseArray()
-    
-    impedanceComplex = ismFile.getComplexImpedanceArray()
+    ismFileCell2 = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser02.ism")
+    impedanceFrequenciesCell2 = ismFileCell2.getFrequencyArray()
+    impedanceAbsoluteCell2 = ismFileCell2.getImpedanceArray()
+    impedancePhaseCell2 = ismFileCell2.getPhaseArray()
+    impedanceComplexCell2 = ismFileCell2.getComplexImpedanceArray()
     
     '''
     Display the ism file in Nyquist and Bode representation.
@@ -123,38 +134,17 @@ if __name__ == "__main__":
     figNyquist, (nyquistAxis) = plt.subplots(1, 1)
     figNyquist.suptitle("Nyquist")
     
-    nyquistAxis.plot(np.real(impedanceComplex), -np.imag(impedanceComplex), marker="x", markersize=5)
+    nyquistAxis.plot(np.real(impedanceComplexStack), -np.imag(impedanceComplexStack), marker="x", markersize=5, label="Stack")
+    nyquistAxis.plot(np.real(impedanceComplexCell1), -np.imag(impedanceComplexCell1), marker="x", markersize=5, label="Cell 1")
+    nyquistAxis.plot(np.real(impedanceComplexCell2), -np.imag(impedanceComplexCell2), marker="x", markersize=5, label="Cell 2")
+    
     nyquistAxis.grid(which="both")
     nyquistAxis.set_aspect("equal")
     nyquistAxis.xaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
     nyquistAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
     nyquistAxis.set_xlabel(r"$Z_{\rm re}$")
     nyquistAxis.set_ylabel(r"$-Z_{\rm im}$")
-    
-    '''
-    Bode representation.
-    
-    Display the data in the chart and then format the axes.
-    '''
-    figBode, (impedanceAxis, phaseAxis) = plt.subplots(2, 1, sharex=True)
-    figBode.suptitle("Bode")
-    
-    impedanceAxis.loglog(impedanceFrequencies, impedanceAbsolute, marker="+", markersize=5)
-    impedanceAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
-    impedanceAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
-    impedanceAxis.set_xlabel(r"$f$")
-    impedanceAxis.set_ylabel(r"$|Z|$")
-    impedanceAxis.grid(which="both")
-    
-    phaseAxis.semilogx(impedanceFrequencies, np.abs(impedancePhase * (360 / (2 * np.pi))), marker="+", markersize=5)
-    phaseAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
-    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$°$", sep=""))
-    phaseAxis.set_xlabel(r"$f$")
-    phaseAxis.set_ylabel(r"$|Phase|$")
-    phaseAxis.grid(which="both")
-    phaseAxis.set_ylim([0, 90])
-        
+    nyquistAxis.legend(fontsize = "large")
+    figNyquist.set_size_inches(30, 6)
     plt.show()
-    
-    print("finish")
     

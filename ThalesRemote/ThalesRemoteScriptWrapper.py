@@ -216,13 +216,56 @@ class ThalesRemoteScriptWrapper(object):
     def disableRuleFileUsage(self):
         ''' Disable the usage of a rule file.
         
-        If the usage of the rule file is activated all the parameters required
-        for the EIS, CV, and/or IE are taken from the rule file.
-        The exact usage can be found in the remote manual.
         '''
         state = False
         return self.enableRuleFileUsage(state)
+    
+    def setupPAD4(self, card, channel, state):
+        ''' Setting a channel of a PAD4 card for an EIS measurement.
         
+        \param [in] card the number of the card starting at 1 and up to 4.
+        \param [in] channel the channel of the card starting at 1 and up to 4.
+        \param [in] state if state = 1 the channel is switched on else switched off.
+        '''
+        command = "PAD4=" + str(card) + ";"
+        command = command + str(channel) + ";"
+        if state == 1:
+            command = command + "1"
+        else:
+            command = command + "0"
+        self.executeRemoteCommand(command)
+        
+    
+    def enablePAD4(self, state=True):
+        ''' Switching on the set PAD4 channels.
+        
+        The files of the measurement results with PAD4 are numbered consecutively.
+        The lowest number is the main channel of the potentiostat.
+        
+        \param [in] state if state = True PAD4 channels are enabled.
+        '''
+        if state == True:
+            state = 1
+        else:
+            state = 0
+        return self.setValue("PAD4ENA", state)
+    
+    def disablePAD4(self):
+        ''' Switching off the set PAD4 channels.
+        
+        '''
+        state = False
+        return self.enablePAD4(state)
+    
+    def readPAD4Setup(self):
+        ''' Read the set parameters.
+        
+        Reading the set PAD4 configuration.
+        '''
+        reply = self.executeRemoteCommand("SENDPAD4SETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
         
     '''
     Section with settings for single impedance and EIS measurements.
@@ -540,10 +583,6 @@ class ThalesRemoteScriptWrapper(object):
     def disableCVAutoRestartAtCurrentOverflow(self):
         ''' Disable automatically restart if current is exceeded.
         
-        A new measurement is automatically started with a different
-        reverse potential at which the current limit is not exceeded.
-        
-        \param [in] state if state = True the auto restart is enabled.
         '''
         state = False
         return self.enableCVAutoRestartAtCurrentOverflow(state)
@@ -565,8 +604,6 @@ class ThalesRemoteScriptWrapper(object):
     def disableCVAutoRestartAtCurrentUnderflow(self):
         ''' Disable automatically restart if the current drops below the limit.
         
-        A new measurement is automatically started with a smaller
-        current range than that determined by the minimum and maximum current.
         '''
         state = False
         return self.enableCVAutoRestartAtCurrentUnderflow(state)
@@ -587,7 +624,6 @@ class ThalesRemoteScriptWrapper(object):
     def disableCVAnalogFunctionGenerator(self):
         ''' Disable the analog function generator (AFG).
         
-        The analog function generator can only be used if it was purchased with the device.
         '''
         state = False
         return self.enableCVAnalogFunctionGenerator(state)
@@ -653,10 +689,10 @@ class ThalesRemoteScriptWrapper(object):
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
     
-    def applyCVSetup(self):
-        ''' Take over the set parameters.
+    def readCVSetup(self):
+        ''' Read the set parameters.
         
-        After checking with checkCVSetup() the correct parameters for the measurement can be set.
+        After checking with checkCVSetup() the parameters can be read back from the workstation.
         '''
         reply = self.executeRemoteCommand("SENDCVSETUP")
         if reply.find("ERROR") >= 0:
@@ -667,7 +703,7 @@ class ThalesRemoteScriptWrapper(object):
     def measureCV(self):
         ''' Measure CV
         
-        Before measurement, all parameters must be checked with checkCVSetup() and accepted with applyCVSetup().
+        Before measurement, all parameters must be checked with checkCVSetup().
         '''
         reply = self.executeRemoteCommand("CV")
         if reply.find("ERROR") >= 0:
@@ -929,10 +965,10 @@ class ThalesRemoteScriptWrapper(object):
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
     
-    def applyIESetup(self):
-        ''' Take over the set parameters.
+    def readIESetup(self):
+        ''' Read the set parameters.
         
-        After checking with checkIESetup() the correct parameters for the measurement can be set.
+        After checking with checkIESetup() the parameters can be read back from the workstation.
         '''
         reply = self.executeRemoteCommand("SENDIESETUP")
         if reply.find("ERROR") >= 0:
@@ -943,7 +979,7 @@ class ThalesRemoteScriptWrapper(object):
     def measureIE(self):
         ''' Measure IE
         
-        Before measurement, all parameters must be checked with checkIESetup() and accepted with applyIESetup().
+        Before measurement, all parameters must be checked with checkIESetup().
         '''
         reply = self.executeRemoteCommand("IE")
         if reply.find("ERROR") >= 0:
@@ -1071,6 +1107,7 @@ class ThalesRemoteScriptWrapper(object):
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
+    
     
     '''
     The following methods should not be called by the user.

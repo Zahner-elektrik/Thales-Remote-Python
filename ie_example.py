@@ -23,13 +23,14 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTIO
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
- 
+
+import sys
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     '''
     The Thales software must first be started so that it can be connected.
     '''
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
+        sys.exit()
         
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
@@ -50,7 +52,7 @@ if __name__ == '__main__':
     '''
     ZahnerZennium.setIENaming("counter")
     ZahnerZennium.setIECounter(1)
-    ZahnerZennium.setIEOutputPath("C:\\THALES\\temp\\ie")
+    ZahnerZennium.setIEOutputPath(r"C:\THALES\temp\ie")
     ZahnerZennium.setIEOutputFileName("ie_steady")
     
     '''
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     ZahnerZennium.setIEFourthEdgePotential(1)
     ZahnerZennium.setIEFourthEdgePotentialRelation("absolute")
     
-    ZahnerZennium.setIEPotentialResolution(0.01)
+    ZahnerZennium.setIEPotentialResolution(0.02)
     ZahnerZennium.setIEMinimumWaitingTime(1)
     ZahnerZennium.setIEMaximumWaitingTime(15)
     ZahnerZennium.setIERelativeTolerance(0.01)  #1 %
@@ -78,9 +80,9 @@ if __name__ == '__main__':
     ZahnerZennium.setIEMinimumCurrent(-0.01)
     
     ZahnerZennium.checkIESetup()
-    ZahnerZennium.applyIESetup()
+    print(ZahnerZennium.readIESetup())
     
-    for i in range(2):
+    for i in range(3):
         ZahnerZennium.measureIE()
         
     '''
@@ -92,9 +94,9 @@ if __name__ == '__main__':
     ZahnerZennium.setIEOutputFileName("ie_dynamic")
     
     ZahnerZennium.checkIESetup()
-    ZahnerZennium.applyIESetup()
+    print(ZahnerZennium.readIESetup())
     
-    for i in range(2):
+    for i in range(3):
         ZahnerZennium.measureIE()
         
     '''
@@ -105,9 +107,9 @@ if __name__ == '__main__':
     ZahnerZennium.setIEOutputFileName("ie_fixed")
     
     ZahnerZennium.checkIESetup()
-    ZahnerZennium.applyIESetup()
+    print(ZahnerZennium.readIESetup())
     
-    for i in range(2):
+    for i in range(3):
         ZahnerZennium.measureIE()
     
     

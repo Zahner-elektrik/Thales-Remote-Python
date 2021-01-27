@@ -24,6 +24,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
  
+import sys
 from ThalesRemoteConnection import ThalesRemoteConnection
 from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 import math
@@ -49,7 +50,7 @@ def printImpedance(impedance):
     print("Impedance: " + str(abs(impedance)) + " ohm, " + str(cmath.phase(impedance)) + " rad")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     '''
     The Thales software must first be started so that it can be connected.
     '''
@@ -59,13 +60,11 @@ if __name__ == '__main__':
         print("connection successfull")
     else:
         print("connection not possible")
+        sys.exit()
         
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
 
     ZahnerZennium.forceThalesIntoRemoteScript()
-
-    print("Potential: " + str(ZahnerZennium.getPotential()))
-    print("Current: " + str(ZahnerZennium.getCurrent()))
     
     '''
     Measure current and voltage several times.

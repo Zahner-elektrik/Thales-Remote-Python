@@ -1105,15 +1105,20 @@ class ThalesRemoteScriptWrapper(object):
         '''
         return self.remoteConnection.sendStringAndWaitForReplyString("2,ScriptRemote", 128)
      
-    def getWorkstationHeartBeat(self):
+    def getWorkstationHeartBeat(self, timeout=None):
         ''' Query the heartbeat time from the Term software for the Workstation.
          
         The complete documentation can be found at the following link.
         http://zahner.de/pdf/DevCli.pdf Page 8
+        
+        The timeout is not set by default and the command blocks indefinitely.
+        However, a time in seconds can optionally be specified for the timeout.
+        When the timeout expires, an exception is thrown by the socket.
          
+        \param [in] timeout time in seconds in which the term must provide the answer.
         \return the HeartBeat time in milli seconds.
         '''
-        retval = self.remoteConnection.sendStringAndWaitForReplyString("1,ScriptRemote", 128)
+        retval = self.remoteConnection.sendStringAndWaitForReplyString("1,ScriptRemote", 128, timeout)
         return retval.split(",")[2]
          
     def getTermIsActive(self, timeout=2):
@@ -1127,7 +1132,7 @@ class ThalesRemoteScriptWrapper(object):
         connectToTerm and forceThalesIntoRemoteScript.
         The workstation must also be reset. To re-establish a controlled state.
          
-        \param [in] timeout time in which the term must provide the answer.
+        \param [in] timeout time in seconds in which the term must provide the answer.
         \return True or False if the Term is Active.
         '''
         active = True

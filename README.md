@@ -9,7 +9,7 @@ The Python extension will be extended in the future with all functions of the Re
 # :wrench: Installation
 ### With integrated development environment
 With an integrated development environment, for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
-ThalesRemote can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
+ThalesRemote can either be simply downloaded or best cloned with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
 If you are using Eclipse you can use the extension [EGit](https://www.eclipse.org/egit/) for this.
 
 ### Only Package download
@@ -114,5 +114,5 @@ Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&
 Feel free to **create a new issue** with a respective title and description on the the [Thales-Remote-Python](https://github.com/Zahner-elektrik/Thales-Remote-Python/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**!
 
 # :white_check_mark: Requirements
-The library was developed with python 3.9 using only standard libraries.  
-It was tested with Python 3.9 and 3.8.5.
+The library was developed and tested with Python 3.9.2.\
+Only standard python libraries were used.

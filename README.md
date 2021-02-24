@@ -9,7 +9,7 @@ The Python extension will be extended in the future with all functions of the Re
 # :wrench: Installation
 ### With integrated development environment
 With an integrated development environment, for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
-ThalesRemote can either be simply downloaded or best cloned with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
+ThalesRemote can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
 If you are using Eclipse you can use the extension [EGit](https://www.eclipse.org/egit/) for this.
 
 ### Only Package download

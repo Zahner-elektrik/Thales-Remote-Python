@@ -25,8 +25,8 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
  
 import sys
-from ThalesRemoteConnection import ThalesRemoteConnection
-from ThalesRemoteScriptWrapper import ThalesRemoteScriptWrapper
+from thales_remote.connection import ThalesRemoteConnection
+from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 
 TARGET_HOST = "localhost"
 

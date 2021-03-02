@@ -25,13 +25,13 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
 import sys
-from ThalesRemoteConnection import ThalesRemoteConnection
-from ThalesRemoteScriptWrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+from thales_remote.connection import ThalesRemoteConnection
+from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 
 '''
 Import the ISM import package and the matplotlib plotting library.
 '''
-from IsmImport import IsmImport
+from thales_file_import.ism_import import IsmImport
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter

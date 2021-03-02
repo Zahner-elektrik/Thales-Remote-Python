@@ -30,7 +30,6 @@ import struct
 import threading
 import queue
 from _socket import SHUT_RD
-from ThalesRemoteError import ThalesRemoteError
 
 
 class ThalesRemoteConnection(object):

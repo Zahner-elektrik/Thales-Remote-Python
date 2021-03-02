@@ -25,7 +25,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
  
 from enum import Enum
-from ThalesRemoteError import ThalesRemoteError
+from thales_remote.error import ThalesRemoteError
 import re
 import shutil
 import os
@@ -1106,7 +1106,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.remoteConnection.sendStringAndWaitForReplyString("2,ScriptRemote", 128)
      
     def getWorkstationHeartBeat(self, timeout=None):
-        ''' Query the heartbeat time from the Term software for the Workstation.
+        ''' Query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
          
         The complete documentation can be found at the following link.
         http://zahner.de/pdf/DevCli.pdf Page 8
@@ -1126,13 +1126,15 @@ class ThalesRemoteScriptWrapper(object):
          
         Whether the term is still active is checked by sending a heartbeat command.
         If the term does not respond after the timeout, an exception is thrown and this is caught with the except block.
+        The time returned by getWorkstationHeartBeat is not relevant,
+        it is only important that a response was returned within the time.
      
         Afterwards False is returned if the exception was resolved.
         Once False is returned, the connection to the term MUST be completely re-established with
         connectToTerm and forceThalesIntoRemoteScript.
         The workstation must also be reset. To re-establish a controlled state.
          
-        \param [in] timeout time in seconds in which the term must provide the answer.
+        \param [in] timeout time in seconds in which the term must provide the answer, default 2 seconds.
         \return True or False if the Term is Active.
         '''
         active = True

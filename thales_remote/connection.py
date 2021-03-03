@@ -102,6 +102,9 @@ class ThalesRemoteConnection(object):
         self._stopTelegramListener()
         time.sleep(0.2)
         self._closeSocket()
+        self.queuesForChannels[2].put(None)
+        self.queuesForChannels[128].put(None)
+        return
         
     def isConnectedToTerm(self):
         '''Check if the connection to Term is open.
@@ -140,6 +143,22 @@ class ThalesRemoteConnection(object):
             self.socket_handle.settimeout(None)
             self.socketMutex.release()
             
+    
+    
+    def waitForBinaryTelegram(self, message_type=2, timeout=None):
+        ''' Block infinitely until the next Telegram is arriving.
+        
+        If some Telegram has already arrived it will just return the last one from the queue.
+        
+        \param [in] timout if used the timeout to receive data in seconds. In case of a timeout, an Empty exception is thrown.
+        \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.        
+        \returns the last received telegram or an empty bytearray if someting went wrong.
+        '''
+        retval = self.queuesForChannels[message_type].get(True, timeout=timeout)
+        if retval == None:
+            retval = bytearray()
+        return retval
+            
     def waitForStringTelegram(self, message_type=2, timeout=None):
         ''' Block infinitely until the next Telegram is arriving.
         
@@ -149,7 +168,11 @@ class ThalesRemoteConnection(object):
         \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.        
         \returns the last received telegram or an empty string if someting went wrong.
         '''
-        retval = self.queuesForChannels[message_type].get(True, timeout=timeout).decode("ASCII")
+        retval = self.waitForBinaryTelegram(message_type,timeout)
+        if len(retval) > 0:
+            retval = retval.decode("ASCII")
+        else:
+            retval = ""
         return retval
         
     def sendStringAndWaitForReplyString(self, payload, message_type, timeout=None):

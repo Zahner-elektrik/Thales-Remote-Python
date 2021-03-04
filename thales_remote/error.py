@@ -64,9 +64,28 @@ The first two lines of the traceback show the file and line number and the conte
 
 class ThalesRemoteError(Exception):
     '''
-    Thales Exception Class
+    Thales Remote Exception Class
     '''
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+        
+        
+class TermConnectionError(Exception):
+    '''
+    Term Connection Exception Class
+    
+    This exception is thrown when an error occurs with the term communication,
+    which has not yet been thrown by a socket exception.
+    
+    After this error the connection must be completely rebuilt
+    with new constructor calls of ThalesRemoteConnection and ThalesRemoteScriptWrapper.
+    '''
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+        
+        
+        

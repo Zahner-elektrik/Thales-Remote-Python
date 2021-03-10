@@ -110,6 +110,9 @@ class ThalesRemoteScriptWrapper(object):
          
     def setVoltageRangeIndex(self, vrange):
         ''' Set the voltage range for measurement.
+        
+        If a Zennium, Zennium E, Zennium E4 or a device from the IM6 series is used, the set index must match the U-buffer. If the U-buffer does not match the set value, the measurement is wrong.
+        The Zennium pro, Zennium X and Zennium XC series automatically change the range.
          
         \param [in] vrange the number of the voltage range.
         '''
@@ -312,17 +315,19 @@ class ThalesRemoteScriptWrapper(object):
      
     def setUpperNumberOfPeriods(self, steps):
         ''' Set the number of periods to measure in frequency range above 66 Hz for EIS measurements.
-         
-        \param [in] steps the number of periods.
-        '''
-        return self.setValue("Nwl", steps)
-     
-    def setLowerNumberOfPeriods(self, steps):
-        ''' Set the number of periods to measure  in frequency range below 66 Hz for EIS measurements.
+        Must be greater than setLowerNumberOfPeriods().
          
         \param [in] steps the number of periods.
         '''
         return self.setValue("Nws", steps)
+     
+    def setLowerNumberOfPeriods(self, steps):
+        ''' Set the number of periods to measure  in frequency range below 66 Hz for EIS measurements.
+        Must be smaller than setUpperNumberOfPeriods().
+        
+        \param [in] steps the number of periods.
+        '''
+        return self.setValue("Nwl", steps)
      
     def setScanStrategy(self, strategy):
         ''' Set the scan strategy for EIS measurements.

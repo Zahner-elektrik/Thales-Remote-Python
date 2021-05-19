@@ -125,6 +125,18 @@ class ThalesRemoteScriptWrapper(object):
         '''
         reply = self.setValue("DEV%", device)
         return reply
+    
+    def switchToSCPIControl(self):
+        ''' Change away from operation as EPC device to SCPI operation.
+        
+        This command works only with external potentiostats of the latest generation PP212, PP222, PP242 and XPOT2.
+        After this command they are no longer accessible with the EPC interface.
+        Then you can connect to the potentiostat with USB via the Comports.
+        The change back to EPC operation is also done explicitly from the USB side.
+        
+        \returns reply string.
+        '''
+        return self.executeRemoteCommand("SETUSB")
      
     def getSerialNumber(self):
         ''' Get the serialnumber of the active device.
@@ -134,6 +146,15 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand("ALLNUM")
         match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
         return match.group(2)
+     
+    def getDeviceInformation(self):
+        ''' Get the name and serialnumber of the active device.
+         
+        \returns Returns a tuple with the information about the selected potentiostat. (Name, Serialnumber).
+        '''
+        reply = self.executeRemoteCommand("DEVINF")
+        match = re.search("(.*);(.*);(.*);([0-9]*)", reply)
+        return match.group(3),match.group(4)
      
     def getDeviceName(self):
         ''' Get the name of the active device.

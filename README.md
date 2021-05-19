@@ -107,6 +107,12 @@ It is an example of the following possibilities:
 * **Importing the measurement results from the ism file into python**
 * Plotting the spectrum in bode and nyquist representation with the matplotlib library
 
+### [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
+
+* Multichannel operation with several external potentiostats, of the latest generation, type **PP212, PP222, PP242 or XPOT2**.
+* Control of standalone operation of external potentiostats with the [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat) library.
+* Shared [Zennium series](http://zahner.de/products/electrochemical-workstation.html) device for impedance measurements.
+
 # :email: Haveing a question?
 Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">e-mail</a> to our support team.
 
@@ -114,5 +120,5 @@ Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&
 Feel free to **create a new issue** with a respective title and description on the the [Thales-Remote-Python](https://github.com/Zahner-elektrik/Thales-Remote-Python/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**!
 
 # :white_check_mark: Requirements
-The library was developed and tested with Python 3.9.2.\
+The library was developed and tested with Python 3.9.4.\
 Only standard python libraries were used.

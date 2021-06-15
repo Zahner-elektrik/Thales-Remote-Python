@@ -70,7 +70,7 @@ if __name__ == "__main__":
     ZahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     ZahnerZennium.setAmplitude(10e-3)
     ZahnerZennium.setPotential(0)
-    ZahnerZennium.setLowerFrequencyLimit(0.1)
+    ZahnerZennium.setLowerFrequencyLimit(0.05)
     ZahnerZennium.setStartFrequency(1000)
     ZahnerZennium.setUpperFrequencyLimit(1000000)
     ZahnerZennium.setLowerNumberOfPeriods(3)

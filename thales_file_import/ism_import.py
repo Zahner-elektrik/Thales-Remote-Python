@@ -25,6 +25,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
 import numpy as np
+import datetime
 
 
 class IsmImport(object):
@@ -47,6 +48,26 @@ class IsmImport(object):
         tmpPhase = np.ndarray(shape=(numberOfElements,), dtype='>f8', buffer=ismFile.read(8 * numberOfElements))
         tmpTime = np.ndarray(shape=(numberOfElements,), dtype='>f8', buffer=ismFile.read(8 * numberOfElements))
         tmpSignificance = np.ndarray(shape=(numberOfElements,), dtype='>i2', buffer=ismFile.read(2 * numberOfElements))
+        
+        dateStringLength = int.from_bytes(ismFile.read(2), "big", signed=True)
+        dateString = ismFile.read(dateStringLength)
+        date = dateString[0:6].decode("ASCII")
+        
+        day = int(date[0:2])
+        month = int(date[2:4])
+        year = int(date[4:6])
+        
+        """
+        Only the last two digits of the date are saved.
+        It is assumed that the measurement was carried out between 1970 and 2070.
+        A software update is necessary in the year 2070 at the latest.
+        """
+        if year < 70:
+            year += 2000
+        else:
+            year += 1900
+            
+        self.measurementDate = datetime.datetime(year,month,day)
         
         self.frequency = np.zeros(len(tmpFrequency))
         for i in range(len(tmpFrequency)):
@@ -142,4 +163,14 @@ class IsmImport(object):
         \returns an numpy array with the significance points.
         '''
         return np.flip(self.significance[self.reverseIndex:])
+    
+    def getMeasurementDate(self):
+        '''Get the measurement date.
+        
+        Only the date of the measurement is saved. The measurement time is not saved in the ISM file.
+        The time is initialized by Python with 00:00:00.
+        
+        \returns a python datetime object.
+        '''
+        return self.measurementDate
     

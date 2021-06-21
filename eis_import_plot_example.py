@@ -49,11 +49,11 @@ if __name__ == "__main__":
     else:
         print("connection not possible")
         sys.exit()
-          
+    
     ZahnerZennium = ThalesRemoteScriptWrapper(ZenniumConnection)
-  
+    
     ZahnerZennium.forceThalesIntoRemoteScript()
-      
+    
     '''
     Measure EIS spectra with a sequential number in the file name that has been specified.
     Starting with number 1.
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     ZahnerZennium.setEISCounter(1)
     ZahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
     ZahnerZennium.setEISOutputFileName("spectra")
-      
+    
     '''
     Setting the parameters for the spectra.
     Alternatively a rule file can be used as a template.
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     ZahnerZennium.setUpperStepsPerDecade(10)
     ZahnerZennium.setScanDirection("startToMax")
     ZahnerZennium.setScanStrategy("single")
-      
+    
     '''
     Switching on the potentiostat before the measurement,
     so that EIS is measured at the set DC potential.
@@ -87,11 +87,11 @@ if __name__ == "__main__":
     the measurement is performed at the OCP.
     '''
     ZahnerZennium.enablePotentiostat()
-      
+    
     ZahnerZennium.measureEIS()
-          
+    
     ZahnerZennium.disablePotentiostat()
-      
+    
     ZenniumConnection.disconnectFromTerm()
     
     '''
@@ -109,6 +109,8 @@ if __name__ == "__main__":
     impedancePhase = ismFile.getPhaseArray()
     
     impedanceComplex = ismFile.getComplexImpedanceArray()
+    
+    print("Measurement time: " + str(ismFile.getMeasurementDate()))
     
     '''
     Display the ism file in Nyquist and Bode representation.

@@ -110,7 +110,7 @@ if __name__ == "__main__":
     
     impedanceComplex = ismFile.getComplexImpedanceArray()
     
-    print("Measurement time: " + str(ismFile.getMeasurementDate()))
+    print("Measurement end time: " + str(ismFile.getMeasurementEndDateTime()))
     
     '''
     Display the ism file in Nyquist and Bode representation.

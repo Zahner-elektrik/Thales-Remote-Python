@@ -80,7 +80,11 @@ class IsmImport(object):
         self.phase = np.zeros(len(tmpPhase))
         for i in range(len(tmpPhase)):
             self.phase[i] = tmpPhase[i]
-        
+            
+        self.measurementTimeStamp = []
+        for i in range(len(tmpTime)):
+            self.measurementTimeStamp.append(self._ismTimeStampToDateTime(tmpTime[i]))
+            
         self.significance = np.zeros(len(tmpSignificance))
         for i in range(len(tmpSignificance)):
             self.significance[i] = tmpSignificance[i]
@@ -164,13 +168,37 @@ class IsmImport(object):
         '''
         return np.flip(self.significance[self.reverseIndex:])
     
-    def getMeasurementDate(self):
-        '''Get the measurement date.
+    def getMeasurementDateTimeArray(self):
+        '''Get the timestamps from the measurement.
         
-        Only the date of the measurement is saved. The measurement time is not saved in the ISM file.
-        The time is initialized by Python with 00:00:00.
+        The timestamps between the reversal frequency and the final frequency are returned.
+        The smallest time is the reversal point. The start time is not included in this array because
+        the overlapping points are not returned.
+        
+        \returns an numpy array with the datetime objects.
+        '''
+        return np.flip(self.measurementTimeStamp[self.reverseIndex:])
+    
+    def getMeasurementEndDateTime(self):
+        '''Get the end date time of the measurement.
+        
+        Returns the end datetime of the measurement.
         
         \returns a python datetime object.
         '''
-        return self.measurementDate
+        return max(self.measurementTimeStamp)
+        
+        
+    def _ismTimeStampToDateTime(self,timestamp):
+        '''Calculation of the time stamp.
+        
+        The time is in seconds related to 01.01.1980.
+        
+        \returns a python datetime object.
+        '''
+        timeZero = datetime.datetime(1980,1,1)
+        timeDifference = datetime.timedelta(seconds = abs(timestamp))
+        
+        timestamp = timeZero+timeDifference
+        return timestamp
     

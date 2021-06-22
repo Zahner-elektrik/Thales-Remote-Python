@@ -13,6 +13,7 @@ ThalesRemote can either be simply downloaded or best pulled with Git from the Gi
 If you are using Eclipse you can use the extension [EGit](https://www.eclipse.org/egit/) for this.
 
 ### Only Package download
+
 Download the folder ThalesRemote and add it to the PYTHONPATH to access the library from Python.
 
 # :hammer: Basic Usage
@@ -100,7 +101,7 @@ With the [Zahner sequencer](http://zahner.de/files/sequencer-an-introduction.pdf
 ### [eis_pad4_example.ipynb](eis_pad4_example.ipynb)
 This example also requires numpy, matplotlib and the package ThalesFileImport from the repository.  
 This file also exists only as python without the Jupyter documentation.  
-For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
+For the development numpy version 1.20.3 and matplotlib version 3.4.2 were used.
 
 It is an example of the following possibilities:
 * Measurement of an impedance spectrum on a stack with single cells connected to the PAD4 card.
@@ -120,5 +121,5 @@ Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&
 Feel free to **create a new issue** with a respective title and description on the the [Thales-Remote-Python](https://github.com/Zahner-elektrik/Thales-Remote-Python/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**!
 
 # :white_check_mark: Requirements
-The library was developed and tested with Python 3.9.4.\
+The library was developed and tested with Python 3.9.5.\
 Only standard python libraries were used.

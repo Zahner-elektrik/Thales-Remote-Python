@@ -92,27 +92,23 @@ class IsmImport(object):
         ismFile.close()
         
         '''
-        Determination of the upper or lower reversing frequency in order to be
-        able to output the range between the reversing frequency and the final frequency.
+        The frequency range at the beginning, which is measured overlapping, is not returned,
+        therefore now the array indices are determined in which range the data are, which are
+        returned by the getters.
         '''
-        self.firstUp = False
-        if self.frequency[0] < self.frequency[1]:
-            self.firstUp = True
+        self.minFrequencyIndex = np.argmin(self.frequency)
+        self.maxFrequencyIndex = np.argmax(self.frequency)
         
-        self.reverseIndex = 0
-        oldFrequency = self.frequency[0]            
-        for i in range(len(self.frequency)):
-            if self.firstUp:
-                if oldFrequency > self.frequency[i]:
-                    self.reverseIndex = i
-                    break
-            else:
-                if oldFrequency < self.frequency[i]:
-                    self.reverseIndex = i
-                    break
-            oldFrequency = self.frequency[i]
+        self.swapNecessary = False
+        self.fromIndex = self.minFrequencyIndex
+        self.toIndex = self.maxFrequencyIndex
         
-        self.reverseIndex = self.reverseIndex - 1
+        if self.minFrequencyIndex > self.maxFrequencyIndex:
+            self.swapNecessary = True
+            self.fromIndex = self.maxFrequencyIndex
+            self.toIndex = self.minFrequencyIndex
+            
+        self.toIndex += 1
         return
     
     def getFrequencyArray(self):
@@ -122,7 +118,10 @@ class IsmImport(object):
         
         \returns an numpy array with the frequency points.
         '''
-        return np.flip(self.frequency[self.reverseIndex:])
+        if self.swapNecessary:
+            return np.flip(self.frequency[self.fromIndex:self.toIndex])
+        else:
+            return self.frequency[self.fromIndex:self.toIndex]
     
     def getImpedanceArray(self):
         '''Get the impedance points from the measurement.
@@ -131,7 +130,10 @@ class IsmImport(object):
         
         \returns an numpy array with the impedance points.
         '''
-        return np.flip(self.impedance[self.reverseIndex:])
+        if self.swapNecessary:
+            return np.flip(self.impedance[self.fromIndex:self.toIndex])
+        else:
+            return self.impedance[self.fromIndex:self.toIndex]
         
     def getPhaseArray(self):
         '''Get the phase points from the measurement.
@@ -140,7 +142,10 @@ class IsmImport(object):
         
         \returns an numpy array with the phase points.
         '''
-        return np.flip(self.phase[self.reverseIndex:])
+        if self.swapNecessary:
+            return np.flip(self.phase[self.fromIndex:self.toIndex])
+        else:
+            return self.phase[self.fromIndex:self.toIndex]
     
     def getComplexImpedanceArray(self):
         '''Get the complex impedance points from the measurement.
@@ -166,7 +171,10 @@ class IsmImport(object):
         
         \returns an numpy array with the significance points.
         '''
-        return np.flip(self.significance[self.reverseIndex:])
+        if self.swapNecessary:
+            return np.flip(self.significance[self.fromIndex:self.toIndex])
+        else:
+            return self.significance[self.fromIndex:self.toIndex]
     
     def getMeasurementDateTimeArray(self):
         '''Get the timestamps from the measurement.
@@ -177,7 +185,10 @@ class IsmImport(object):
         
         \returns an numpy array with the datetime objects.
         '''
-        return np.flip(self.measurementTimeStamp[self.reverseIndex:])
+        if self.swapNecessary:
+            return np.flip(self.measurementTimeStamp[self.fromIndex:self.toIndex])
+        else:
+            return self.measurementTimeStamp[self.fromIndex:self.toIndex]
     
     def getMeasurementEndDateTime(self):
         '''Get the end date time of the measurement.

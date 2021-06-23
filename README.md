@@ -6,7 +6,7 @@ The measurement methods **EIS**, **IE**, **CV** and **DC sequences** are support
 
 The Python extension will be extended in the future with all functions of the Remote2.
 
-# :wrench: Installation
+# 🔧 Installation
 ### With integrated development environment
 With an integrated development environment, for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
 ThalesRemote can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
@@ -14,9 +14,9 @@ If you are using Eclipse you can use the extension [EGit](https://www.eclipse.or
 
 ### Only Package download
 
-Download the folder ThalesRemote and add it to the PYTHONPATH to access the library from Python.
+Download the ThalesRemote folder and place it in the project directory or add it to the PYTHONPATH to access the library from Python.
 
-# :hammer: Basic Usage
+# 🔨 Basic Usage
 
 ```python
 
@@ -53,7 +53,7 @@ ZahnerZennium.disablePotentiostat()
 
 ```
 
-# :book: Examples
+# 📖 Examples
 There are several examples available on different topics.
 
 ### [general_example.py](general_example.py)
@@ -65,11 +65,7 @@ There are several examples available on different topics.
 * Measure impedance
 
 ### [eis_import_plot_example.ipynb](eis_import_plot_example.ipynb)
-This example also requires numpy, matplotlib and the package ThalesFileImport from the repository.  
-This file also exists only as python without the Jupyter documentation.  
-For the development numpy version 1.19.3 and matplotlib version 3.3.3 were used.
 
-It is an example of the following possibilities:
 * Measure an impedance spectra
 * **Importing the measurement results from the ism file into python**
 * Plotting the spectrum in bode and nyquist representation with the matplotlib library
@@ -99,14 +95,17 @@ With the [Zahner sequencer](http://zahner.de/files/sequencer-an-introduction.pdf
 * Measurement with an external potentiostat (EPC-Device)
 
 ### [eis_pad4_example.ipynb](eis_pad4_example.ipynb)
-This example also requires numpy, matplotlib and the package ThalesFileImport from the repository.  
-This file also exists only as python without the Jupyter documentation.  
-For the development numpy version 1.20.3 and matplotlib version 3.4.2 were used.
 
-It is an example of the following possibilities:
 * Measurement of an impedance spectrum on a stack with single cells connected to the PAD4 card.
 * **Importing the measurement results from the ism file into python**
 * Plotting the spectrum in bode and nyquist representation with the matplotlib library
+
+### [impedance_vs_parameter_example.ipynb](impedance_vs_parameter_example.ipynb)
+
+* Setting output file naming for impedance spectras
+* Measure impedance spectra with different DC parameters
+* Importing the measurement results from the ism file into python
+* Display impedance and phase in contourplots with the matplotlib library
 
 ### [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
 
@@ -114,12 +113,14 @@ It is an example of the following possibilities:
 * Control of standalone operation of external potentiostats with the [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat) library.
 * Shared [Zennium series](http://zahner.de/products/electrochemical-workstation.html) device for impedance measurements.
 
-# :email: Haveing a question?
+# 📧 Haveing a question?
 Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">e-mail</a> to our support team.
 
-# :interrobang: Found a bug or missing a specific feature?
+# ⁉️ Found a bug or missing a specific feature?
 Feel free to **create a new issue** with a respective title and description on the the [Thales-Remote-Python](https://github.com/Zahner-elektrik/Thales-Remote-Python/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**!
 
-# :white_check_mark: Requirements
+# ✅ Requirements
 The library was developed and tested with Python 3.9.5.\
 Only standard python libraries were used.
+
+When data is plotted in examples, numpy version 1.20.3 and matplotlib version 3.4.2 were used.

@@ -4,7 +4,8 @@ It was developed to **easily integrate** Zahner Zennium Potentiostats into Pytho
 
 The measurement methods **EIS**, **IE**, **CV** and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible.
 
-The Python extension will be extended in the future with all functions of the Remote2.
+Additional detailed documentation of the individual commands can be found in the python modules.  
+The complete documentation of the individual functions can be found on the [API documentation website](http://zahner.de/documentation/thales_remote/index.html).  
 
 # 🔧 Installation
 ### With integrated development environment

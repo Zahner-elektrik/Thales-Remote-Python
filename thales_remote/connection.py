@@ -1,4 +1,4 @@
-'''
+"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -22,7 +22,7 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-'''
+"""
 
 import socket
 import time
@@ -34,14 +34,11 @@ from thales_remote.error import TermConnectionError
 
 
 class ThalesRemoteConnection(object):
-    '''
+    """
     Class to handle the Thales remote connection.
-    '''
+    """
     
     def __init__(self):
-        '''
-        Constructor
-        '''
         self.term_port = 260  # The port used by Thales
         self.socket_handle = None
         
@@ -57,12 +54,14 @@ class ThalesRemoteConnection(object):
         return
         
     def connectToTerm(self, address, connectionName):
-        ''' Connect to Term (The Thales Terminal)
+        """ Connect to Term Software.
         
-        \param [in] address the hostname or ip-address of the host running Term
-        \param [in] connectionName name of the connection ScriptRemote for Remote and Logging as Online Display
-        \returns true on success, false if failed
-        '''
+        
+        :param address: The hostname or ip-address of the host running Term.
+        :param connectionName: The name of the connection ScriptRemote for Remote and Logging as Online Display.
+        :returns: True on success, False if failed.
+        :rtype: bool
+        """
         self.socket_handle = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.socket_handle.connect((address, self.term_port))
@@ -90,12 +89,12 @@ class ThalesRemoteConnection(object):
         return True
             
     def disconnectFromTerm(self):
-        ''' Close the connection to Term and cleanup.
+        """ Close the connection to Term and cleanup.
         
         Stops the thread used for receiving telegrams assynchronously and shuts down
         the network connection. Put None into the Queues to free the waiting threads.
         They wait in waitForBinaryTelegram and if they receive None from the Queue, the will throw an exception.
-        '''
+        """
         self.sendTelegram("\0xFF\0xFF", 4)
         time.sleep(0.2)
         self._stopTelegramListener()
@@ -106,24 +105,25 @@ class ThalesRemoteConnection(object):
         return
         
     def isConnectedToTerm(self):
-        '''Check if the connection to Term is open.
+        """Check if the connection to Term is open.
         
-        \returns true if connected, false if not.
-        '''
+        :returns: True if connected, False if not.
+        :rtype: bool
+        """
         return self.socket_handle != None
             
     def sendTelegram(self, payload, message_type, timeout=None):
-        '''Send a telegram (data) to Term.
+        """Send a telegram (data) to Term.
         
         Sending a telegram to the term.
         If the other thread hangs while sending and the semaphore cannot be aquired within the timout,
         then a TermConnectionError is thrown. If a timeout occurs in the socket,
         then an exception is thrown by the socket.
         
-        \param [in] payload the actual data which is being sent to Term. This can be a string or an bytearray.
-        \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.
-        \param [in] timeout timeout for sending data in seconds, blocking at None.
-        '''
+        :param payload: The actual data which is being sent to Term. This can be a string or an bytearray.
+        :param message_type: Used internally by the DevCli dll. Depends on context. Most of the time 2.
+        :param timeout: The timeout for sending data in seconds, blocking at None.
+        """
         packet = bytearray()
         data = bytearray()
         
@@ -148,102 +148,105 @@ class ThalesRemoteConnection(object):
                 self.socket_handle.settimeout(None)
                 self.sendMutex.release()
         else:
-            '''
+            """
             The semaphore to send could not be aquired within the timeout.
             There must be an error in the connection to the term.
-            '''
+            """
             raise TermConnectionError("Timeout aquiring send semaphore.")
+        return
     
     
     def waitForBinaryTelegram(self, message_type=2, timeout=None):
-        ''' Block infinitely until the next Telegram is arriving.
+        """ Block infinitely until the next Telegram is arriving.
         
         If some Telegram has already arrived it will just return the last one from the queue.
         
-        \param [in] timout if used the timeout to receive data in seconds. In case of a timeout, an Empty exception is thrown.
-        \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.
-        \param [in] timeout timeout for sending data in seconds, blocking at None.
-        \returns the last received telegram or an empty bytearray if someting went wrong.
-        '''
+        :param message_type: Used internally by the DevCli dll. Depends on context. Most of the time 2.
+        :param timeout: The timeout for sending data in seconds, blocking at None
+        :returns: The response from the device or an empty bytearray if someting went wrong.
+        :rtype: bytearray
+        """
         retval = self.queuesForChannels[message_type].get(True, timeout=timeout)
         if retval == None:
             raise TermConnectionError("Error during data reception.")
         return retval
             
     def waitForStringTelegram(self, message_type=2, timeout=None):
-        ''' Block infinitely until the next Telegram is arriving.
+        """ Block infinitely until the next Telegram is arriving.
         
         If some Telegram has already arrived it will just return the last one from the queue.
         
-        \param [in] timout if used the timeout to receive data in seconds. In case of a timeout, an Empty exception is thrown.
-        \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.
-        \param [in] timeout timeout for sending data in seconds, blocking at None.     
-        \returns the last received telegram or an empty string if someting went wrong.
-        '''
+        :param message_type: Used internally by the DevCli dll. Depends on context. Most of the time 2.
+        :param timeout: The timeout for sending data in seconds, blocking at None
+        :returns: The last received telegram or an empty string if someting went wrong.
+        :rtype: string
+        """
         retval = self.waitForBinaryTelegram(message_type,timeout).decode("ASCII")
         return retval
         
     def sendStringAndWaitForReplyString(self, payload, message_type, timeout=None):
-        ''' Convenience function: Send a telegram and wait for it's reply.
+        """ Convenience function: Send a telegram and wait for it's reply.
         
         If a timeout or a socket error occurs an exception is thrown.
         
-        \param [in] payload the actual data which is being sent to Term.
-        \param [in] message_type used internally by the DevCli dll. Depends on context. Most of the time 2.
-        \param [in] timeout timeout for sending data in seconds, blocking at None.   
-        \returns the last received telegram.
-        '''
+        
+        :param payload: The actual data which is being sent to Term. This can be a string or an bytearray.
+        :param message_type: Used internally by the DevCli dll. Depends on context. Most of the time 2.
+        :param timeout: The timeout for sending data in seconds, blocking at None.
+        :returns: The last received telegram or an empty string if someting went wrong.
+        :rtype: string
+        """
         self.sendTelegram(payload, message_type, timeout)
         return self.waitForStringTelegram(message_type, timeout)
         
-    '''
+    """
     The following methods should not be called by the user.
     They are marked with the prefix '_' after the Python convention for proteced.
-    '''
+    """
         
     def _telegramListenerJob(self):
-        '''
+        """
         The method running in a separate thread, pushing the incomming packets into the queues.
-        '''
+        """
         while self._receiving_worker_is_running:
             message_type, telegram = self._readTelegramFromSocket()
             if len(telegram) > 0 and (message_type == 2 or message_type == 128):
                 self.queuesForChannels[message_type].put(telegram)
             elif message_type == None:
-                '''
+                """
                 An error has occurred in the connection. None is passed into all queues to free
                 the waiting threads from the queue. If they have received None, they throw an exception.
                 The thread is then exited.
-                '''
+                """
                 for key in self.queuesForChannels.keys():
                     self.queuesForChannels[key].put(None)
                 self._receiving_worker_is_running = False
         return
             
     def _startTelegramListener(self):
-        '''
+        """
         Starts the thread handling the asyncronously incoming data.
-        '''
+        """
         self._receiving_worker_is_running = True
         self.receivingWorker = threading.Thread(target=self._telegramListenerJob)
         self.receivingWorker.start()
         
     def _stopTelegramListener(self):
-        '''
+        """
         Stops the thread handling the incoming data gracefully.
-        '''
+        """
         self.socket_handle.shutdown(SHUT_RD)
         self._receiving_worker_is_running = False
         self.receivingWorker.join()
             
     def _readTelegramFromSocket(self):
-        '''
+        """
         Reads the raw telegram structure from the socket stream.
         
         When a socket exception occurs, None and an empty byte array are returned.
         The caller of the function then passes the None to the queue to raise an
         exception in the threads waiting at the queue.
-        '''
+        """
         try:
             header_len = self.socket_handle.recv(2)
             header_type = self.socket_handle.recv(1)
@@ -255,9 +258,9 @@ class ThalesRemoteConnection(object):
         return header_type, incoming_packet
             
     def _closeSocket(self):
-        '''
+        """
         Close the socket.
-        '''
+        """
         self.socket_handle.close()
         self.socket_handle = None
         

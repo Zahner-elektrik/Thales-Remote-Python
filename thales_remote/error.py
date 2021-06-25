@@ -1,4 +1,4 @@
-'''
+"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -22,11 +22,11 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-'''
+"""
 
 
 
-'''
+"""
 The following is an example for troubleshooting when an exception is thrown.
 
 ----Example exception----
@@ -59,13 +59,15 @@ The first two lines of the traceback show the file and line number and the conte
     
             The error occurred in line 62 of the file ie_example.py with the statement ZahnerZennium.setIESecondEdgePotential(10000).
             This means that the value 10000, which should be set, is out of the allowed range.
-'''
+"""
 
 
 class ThalesRemoteError(Exception):
-    '''
-    Thales Remote Exception Class
-    '''
+    """ Thales Remote Exception Class
+    
+    In the following document the errors are explained.
+    http://zahner.de/pdf/Remote2.pdf
+    """
 
     def __init__(self, message):
         self.message = message
@@ -73,15 +75,13 @@ class ThalesRemoteError(Exception):
         
         
 class TermConnectionError(Exception):
-    '''
-    Term Connection Exception Class
+    """ Term Connection Exception Class
     
     This exception is thrown when an error occurs with the term communication,
     which has not yet been thrown by a socket exception.
     
-    After this error the connection must be completely rebuilt
-    with new constructor calls of ThalesRemoteConnection and ThalesRemoteScriptWrapper.
-    '''
+    After this error the connection must be completely rebuilt.
+    """
 
     def __init__(self, message):
         self.message = message

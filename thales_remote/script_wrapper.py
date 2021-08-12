@@ -280,7 +280,7 @@ class ThalesRemoteScriptWrapper(object):
             command = command + "1"
         else:
             command = command + "0"
-        self.executeRemoteCommand(command)
+        return self.executeRemoteCommand(command)
      
     def enablePAD4(self, state=True):
         """ Switching on the set PAD4 channels.
@@ -1359,6 +1359,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: The response string from the device.
         :rtype: string
         """
+        self.remoteConnection.sendStringAndWaitForReplyString("3,ScriptRemote,0,OFF", 128)
         return self.remoteConnection.sendStringAndWaitForReplyString("2,ScriptRemote", 128)
      
     def getWorkstationHeartBeat(self, timeout=None):

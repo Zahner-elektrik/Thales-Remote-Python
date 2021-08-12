@@ -95,6 +95,7 @@ class ThalesRemoteConnection(object):
         the network connection. Put None into the Queues to free the waiting threads.
         They wait in waitForBinaryTelegram and if they receive None from the Queue, the will throw an exception.
         """
+        self.sendStringAndWaitForReplyString("3,ScriptRemote,0,RS", 128)
         self.sendTelegram("\0xFF\0xFF", 4)
         time.sleep(0.2)
         self._stopTelegramListener()

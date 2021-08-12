@@ -1,4 +1,4 @@
-'''
+"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -22,24 +22,22 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-'''
+"""
 
 import numpy as np
 import datetime
 
 
-class IsmImport(object):
-    '''
-    Class to be able to read out ism files.
-    '''
+class IsmImport():
+    """ Class to be able to read out ism files.
+    
+    This class extracts the data from the ISM files.
+    It returns the frequency range between the reversal frequency and the end frequency.
+    
+    :param filePath: The path to the ism files.
+    """
 
     def __init__(self, filePath):
-        '''Constructor
-        
-        This object contains the values from the ism file after intitialization.
-        
-        \param [in] filePath the path to the ism files.
-        '''
         ismFile = open(filePath, 'rb')
         ismFile.read(6)
         numberOfElements = int.from_bytes(ismFile.read(6), "big", signed=True) + 1             
@@ -91,11 +89,11 @@ class IsmImport(object):
         
         ismFile.close()
         
-        '''
+        """
         The frequency range at the beginning, which is measured overlapping, is not returned,
         therefore now the array indices are determined in which range the data are, which are
         returned by the getters.
-        '''
+        """
         self.minFrequencyIndex = np.argmin(self.frequency)
         self.maxFrequencyIndex = np.argmax(self.frequency)
         
@@ -112,48 +110,48 @@ class IsmImport(object):
         return
     
     def getFrequencyArray(self):
-        '''Get the frequency points from the measurement.
+        """Get the frequency points from the measurement.
         
         The frequency points between the reversal frequency and the final frequency are returned.
         
-        \returns an numpy array with the frequency points.
-        '''
+        :returns: Numpy array with the frequency points.
+        """
         if self.swapNecessary:
             return np.flip(self.frequency[self.fromIndex:self.toIndex])
         else:
             return self.frequency[self.fromIndex:self.toIndex]
     
     def getImpedanceArray(self):
-        '''Get the impedance points from the measurement.
+        """Get the impedance points from the measurement.
         
         The impedance points between the reversal frequency and the final frequency are returned.
         
-        \returns an numpy array with the impedance points.
-        '''
+        :returns: Numpy array with the impedance points.
+        """
         if self.swapNecessary:
             return np.flip(self.impedance[self.fromIndex:self.toIndex])
         else:
             return self.impedance[self.fromIndex:self.toIndex]
         
     def getPhaseArray(self):
-        '''Get the phase points from the measurement.
+        """Get the phase points from the measurement.
         
         The phase points between the reversal frequency and the final frequency are returned.
         
-        \returns an numpy array with the phase points.
-        '''
+        :returns: Numpy array with the phase points.
+        """
         if self.swapNecessary:
             return np.flip(self.phase[self.fromIndex:self.toIndex])
         else:
             return self.phase[self.fromIndex:self.toIndex]
     
     def getComplexImpedanceArray(self):
-        '''Get the complex impedance points from the measurement.
+        """Get the complex impedance points from the measurement.
         
         The complex impedance points between the reversal frequency and the final frequency are returned.
         
-        \returns an numpy array with the complex impedance points.
-        '''
+        :returns: Numpy array with the complex impedance points.
+        """
         freq = self.getFrequencyArray()
         imp = self.getImpedanceArray()
         phase = self.getPhaseArray()
@@ -165,48 +163,49 @@ class IsmImport(object):
         return np.array(cplx)
     
     def getSignificanceArray(self):
-        '''Get the significance points from the measurement.
+        """Get the significance points from the measurement.
         
         The significance points between the reversal frequency and the final frequency are returned.
         
-        \returns an numpy array with the significance points.
-        '''
+        :returns: Numpy array with the significance points.
+        """
         if self.swapNecessary:
             return np.flip(self.significance[self.fromIndex:self.toIndex])
         else:
             return self.significance[self.fromIndex:self.toIndex]
     
     def getMeasurementDateTimeArray(self):
-        '''Get the timestamps from the measurement.
+        """Get the timestamps from the measurement.
         
         The timestamps between the reversal frequency and the final frequency are returned.
         The smallest time is the reversal point. The start time is not included in this array because
         the overlapping points are not returned.
         
-        \returns an numpy array with the datetime objects.
-        '''
+        :returns: Numpy array with the datetime objects.
+        """
         if self.swapNecessary:
             return np.flip(self.measurementTimeStamp[self.fromIndex:self.toIndex])
         else:
             return self.measurementTimeStamp[self.fromIndex:self.toIndex]
     
     def getMeasurementEndDateTime(self):
-        '''Get the end date time of the measurement.
+        """Get the end date time of the measurement.
         
         Returns the end datetime of the measurement.
         
-        \returns a python datetime object.
-        '''
+        :returns: Python datetime object with the end time of the measurement.
+        """
         return max(self.measurementTimeStamp)
         
         
     def _ismTimeStampToDateTime(self,timestamp):
-        '''Calculation of the time stamp.
+        """ Calculation of the time stamp.
         
         The time is in seconds related to 01.01.1980.
         
-        \returns a python datetime object.
-        '''
+        :param timestamp: Seconds since 01.01.1980.
+        :returns: Python datetime object.
+        """
         timeZero = datetime.datetime(1980,1,1)
         timeDifference = datetime.timedelta(seconds = abs(timestamp))
         

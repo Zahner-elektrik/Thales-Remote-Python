@@ -32,6 +32,8 @@ import queue
 from _socket import SHUT_RD
 from thales_remote.error import TermConnectionError
 
+from datetime import datetime
+
 
 class ThalesRemoteConnection(object):
     """
@@ -51,6 +53,8 @@ class ThalesRemoteConnection(object):
         self.queuesForChannels = dict()
         self.queuesForChannels[2] = queue.Queue()
         self.queuesForChannels[128] = queue.Queue()
+        
+        self.connectionName = ""
         return
         
     def connectToTerm(self, address, connectionName):
@@ -73,6 +77,7 @@ class ThalesRemoteConnection(object):
         
         time.sleep(0.4)
         
+        self.connectionName = connectionName
         payload_length = len(connectionName)
         
         registration_packet = bytearray()
@@ -95,8 +100,9 @@ class ThalesRemoteConnection(object):
         the network connection. Put None into the Queues to free the waiting threads.
         They wait in waitForBinaryTelegram and if they receive None from the Queue, the will throw an exception.
         """
-        self.sendStringAndWaitForReplyString("3,ScriptRemote,0,RS", 128)
-        self.sendTelegram("\0xFF\0xFF", 4)
+        self.sendStringAndWaitForReplyString("3," + str(self.connectionName) + ",0,RS", 128)
+        time.sleep(0.2)
+        self.sendTelegram(bytearray([255,255]), 4)
         time.sleep(0.2)
         self._stopTelegramListener()
         time.sleep(0.2)
@@ -144,6 +150,11 @@ class ThalesRemoteConnection(object):
         if self.sendMutex.acquire(True,timeout=timeout):
             self.socket_handle.settimeout(timeout)
             try:
+                # print("\n" + str(datetime.now().time()) + " send:")
+                # print(f"payload_length: {payload_length} message_type: {message_type}")
+                # print(f"payload: {data}")
+                # print("complete packet:" + str(packet))
+                
                 self.socket_handle.sendall(packet)
             finally:
                 self.socket_handle.settimeout(None)
@@ -153,7 +164,7 @@ class ThalesRemoteConnection(object):
             The semaphore to send could not be aquired within the timeout.
             There must be an error in the connection to the term.
             """
-            raise TermConnectionError("Timeout aquiring send semaphore.")
+            raise TermConnectionError("Socket error during data transmission.")
         return
     
     
@@ -169,7 +180,7 @@ class ThalesRemoteConnection(object):
         """
         retval = self.queuesForChannels[message_type].get(True, timeout=timeout)
         if retval == None:
-            raise TermConnectionError("Error during data reception.")
+            raise TermConnectionError("Socket error during data reception.")
         return retval
             
     def waitForStringTelegram(self, message_type=2, timeout=None):
@@ -250,9 +261,15 @@ class ThalesRemoteConnection(object):
         """
         try:
             header_len = self.socket_handle.recv(2)
-            header_type = self.socket_handle.recv(1)
-            header_type = struct.unpack('B', header_type)[0]
+            header_type_bytes = self.socket_handle.recv(1)
+            header_type = struct.unpack('B', header_type_bytes)[0]
             incoming_packet = self.socket_handle.recv(struct.unpack('H', header_len)[0])
+            
+            # print("\n" + str(datetime.now().time()) + " read:")
+            # print(f"payload_length: {struct.unpack('H', header_len)[0]} message_type: {header_type}")
+            # print(f"payload: {incoming_packet}")
+            # print("complete packet:" + str(header_len + header_type_bytes + incoming_packet))
+            
         except:
             header_type = None
             incoming_packet = bytearray()

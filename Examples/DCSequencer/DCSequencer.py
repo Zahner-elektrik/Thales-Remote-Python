@@ -1,0 +1,43 @@
+import sys
+from thales_remote.connection import ThalesRemoteConnection
+from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
+
+from jupyter_utils import executionInNotebook, notebookCodeToPython
+
+if __name__ == "__main__":
+    zenniumConnection = ThalesRemoteConnection()
+    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+    if connectionSuccessful:
+        print("connection successfull")
+    else:
+        print("connection not possible")
+        sys.exit()
+        
+    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
+    zahnerZennium.forceThalesIntoRemoteScript()
+
+    zahnerZennium.setSequenceNaming("dateTime")
+    zahnerZennium.setSequenceOutputPath(r"C:\THALES\temp\test1")
+    zahnerZennium.setSequenceOutputFileName("batterysequence")
+
+    zahnerZennium.selectSequence(0)
+
+    zahnerZennium.runSequence()
+
+    zahnerZennium.selectPotentiostat(1)
+
+    zahnerZennium.setSequenceNaming("counter")
+    zahnerZennium.setSequenceCounter(13)
+    zahnerZennium.setSequenceOutputPath(r"C:\THALES\temp\test1")
+    zahnerZennium.setSequenceOutputFileName("batterysequence")
+
+    zahnerZennium.runSequenceFile(r"C:\Users\XXX\Desktop\myZahnerSequence.seq")
+
+    zahnerZennium.selectPotentiostat(0)
+    
+    zenniumConnection.disconnectFromTerm()
+    print("finish")
+
+    if executionInNotebook() == True:
+        notebookCodeToPython("DCSequencer.ipynb")
+

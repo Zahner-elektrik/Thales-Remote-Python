@@ -45,9 +45,6 @@ class ThalesRemoteScriptWrapper(object):
     Wrapper that uses the ThalesRemoteConnection class.
     The commands are explained in http://zahner.de/pdf/Remote2.pdf .
     In the document you can also find a table with error numbers which are returned.
-     
-    The methods are documented in doxygen style.
-    After the method name comes an explanation of the function and the parameters.
     
     :param remoteConnection: The connection object to the Thales software.
     :type remoteConnection: :class:`~thales_remote.connection.ThalesRemoteConnection`
@@ -184,6 +181,9 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand("DEVINF")
         match = re.search("(.*);(.*);(.*);([0-9]*)", reply)
         return match.group(3), match.group(4)
+    
+    def getSetup(self):
+        return self.executeRemoteCommand("SENDSETUP")
      
     def getDeviceName(self):
         """ Get the name of the active device.
@@ -280,7 +280,11 @@ class ThalesRemoteScriptWrapper(object):
             command = command + "1"
         else:
             command = command + "0"
-        return self.executeRemoteCommand(command)
+        reply = self.executeRemoteCommand(command)
+        
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
+        return reply
      
     def enablePAD4(self, state=True):
         """ Switching on the set PAD4 channels.
@@ -581,7 +585,7 @@ class ThalesRemoteScriptWrapper(object):
     def setCVUpperReversingPotential(self, potential):
         """ Set the upper reversal potential of a CV measurement.
         
-        :param potential: The upper reversal potentia
+        :param potential: The upper reversal potential.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -610,7 +614,7 @@ class ThalesRemoteScriptWrapper(object):
          
         The time must be given in seconds.
         
-        :param time: The waiting time at start potential in s
+        :param time: The waiting time at start potential in s.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -621,7 +625,7 @@ class ThalesRemoteScriptWrapper(object):
          
         The time must be given in seconds.
         
-        :param time: The waiting time at end potential in s
+        :param time: The waiting time at end potential in s.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -632,7 +636,7 @@ class ThalesRemoteScriptWrapper(object):
          
         The scan rate must be specified in V/s.
         
-        :param scanRate: The scanRate the scan rate in V/s.
+        :param scanRate: The scan rate in V/s.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -651,9 +655,9 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("CV_Periods", cycles)
      
     def setCVSamplesPerCycle(self, samples):
-        """ Set the number of current and voltage measurements per CV cycle.
+        """ Set the number of measurements per CV cycle.
         
-        :param samples: The of measurments per cycle.
+        :param samples: The number of measurments per cycle.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -691,7 +695,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("CV_Odrop", ohmicdrop)
      
     def enableCVAutoRestartAtCurrentOverflow(self, state=True):
-        """ Automatically on restart if current is exceeded.
+        """ Automatically restart if current is exceeded.
         
         A new measurement is automatically started with a different
         reverse potential at which the current limit is not exceeded.
@@ -742,6 +746,7 @@ class ThalesRemoteScriptWrapper(object):
         """ Switch on the analog function generator (AFG).
         
         The analog function generator can only be used if it was purchased with the device.
+        If the device has the AFG function, you will see a button in the CV software to activate this function.
         
         :param state: If state = True the AFG is used.
         :returns: The response string from the device.
@@ -756,6 +761,8 @@ class ThalesRemoteScriptWrapper(object):
     def disableCVAnalogFunctionGenerator(self):
         """ Disable the analog function generator (AFG).
          
+        :returns: The response string from the device.
+        :rtype: string
         """
         return self.enableCVAnalogFunctionGenerator(False)
      
@@ -1274,6 +1281,9 @@ class ThalesRemoteScriptWrapper(object):
         """ Run the selected sequence.
          
         This command executes the selected sequence between 0 and 9.
+        
+        :returns: The response string from the device.
+        :rtype: string
         """
         reply = self.executeRemoteCommand("DOSEQ")
         if(reply != "SEQ DONE\r"):

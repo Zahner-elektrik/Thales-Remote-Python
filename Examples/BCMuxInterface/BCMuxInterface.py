@@ -1,30 +1,5 @@
-'''
-  ____       __                        __    __   __      _ __
- /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
-  / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
- /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
-
-Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
-THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-'''
-
 import socket
+from jupyter_utils import executionInNotebook, notebookCodeToPython
 
 class BCMuxInterface():
     """ BC-Mux control class.
@@ -120,13 +95,9 @@ class BCMuxInterface():
         self.socket.send(command.encode("utf-8"))
         data = self.socket.recv(BCMuxInterface.BUFFER_SIZE)
         return data.decode("utf-8")
-        
 
 if __name__ == '__main__':
-    """
-    This is a short example to switch each of the 16 channels to the Zennium.
-    """
-    TCP_IP = "192.192.192.192" #IP of the BC-MUX
+    TCP_IP = "169.169.169.169"
     TCP_PORT = 4223
     
     bcMux = BCMuxInterface(TCP_IP, TCP_PORT)
@@ -136,10 +107,13 @@ if __name__ == '__main__':
     
     for i in range(16):
         print(f"Channel: {i+1}")
-        bcMux.connectChannel(i)
+        bcMux.connectChannel(i+1)
         bcMux.disconnectChannel()
     
-    
     bcMux.close()
-        
-    
+
+    print("finish")
+
+    if executionInNotebook() == True:
+        notebookCodeToPython("BCMuxInterface.ipynb")
+

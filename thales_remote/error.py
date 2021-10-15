@@ -32,7 +32,7 @@ The following is an example for troubleshooting when an exception is thrown.
 ----Example exception----
 Traceback (most recent call last):
   File "C:\XXX\Thales-Remote-Python\ie_example.py", line 62, in <module>
-    ZahnerZennium.setIESecondEdgePotential(10000)
+    zahnerZennium.setIESecondEdgePotential(10000)
   File "C:\XXX\Thales-Remote-Python\ThalesRemote\ThalesRemoteScriptWrapper.py", line 648, in setIESecondEdgePotential
     return self.setValue("IE_EckPot2", potential)
   File "C:\XXX\Thales-Remote-Python\ThalesRemote\ThalesRemoteScriptWrapper.py", line 1026, in setValue
@@ -55,9 +55,9 @@ ThalesRemoteError.ThalesRemoteError: ERROR;100;1
 The first two lines of the traceback show the file and line number and the content of the line where the error occurred.  
                           
   File "C:\XXX\Thales-Remote-Python\ie_example.py", line 62, in <module>
-    ZahnerZennium.setIESecondEdgePotential(10000)
+    zahnerZennium.setIESecondEdgePotential(10000)
     
-            The error occurred in line 62 of the file ie_example.py with the statement ZahnerZennium.setIESecondEdgePotential(10000).
+            The error occurred in line 62 of the file ie_example.py with the statement zahnerZennium.setIESecondEdgePotential(10000).
             This means that the value 10000, which should be set, is out of the allowed range.
 """
 
@@ -65,6 +65,8 @@ The first two lines of the traceback show the file and line number and the conte
 class ThalesRemoteError(Exception):
     """ Thales Remote Exception Class
     
+    This exception is thrown when an error is reported in the remote protocol, for example,
+    when a parameter is out of range.
     In the following document the errors are explained.
     http://zahner.de/pdf/Remote2.pdf
     """

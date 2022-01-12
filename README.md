@@ -1,26 +1,25 @@
 ![Thales-Remote-Python](https://doc.zahner.de/github_resources/Thales-Remote-Python.png)
 
-Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](http://zahner.de/pdf/Remote2.pdf) to control [Zahner Zennium Potentiostats](http://zahner.de/products/electrochemical-workstation.html).  
-It was developed to **easily integrate** [Zahner Zennium Potentiostats](http://zahner.de/products/electrochemical-workstation.html) into Python scripts for more **complex measurement** tasks and for **automation purposes**.
+Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](http://zahner.de/pdf/Remote2.pdf) to control [Zahner ZENNIUM Potentiostats](http://zahner.de/products/electrochemical-workstation.html).  
+It was developed to **easily integrate** [Zahner ZENNIUM Potentiostats](http://zahner.de/products/electrochemical-workstation.html) into Python scripts for more **complex measurement** tasks and for **automation purposes**.
 
-The measurement methods **EIS**, **IE**, **CV** and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible. Other supported functions are the remote control of the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) and the import of ism files in Python.  
+The measurement methods **Impedance Spectroscopy (EIS)**, **Cyclic Voltammetry (CV)**, **IE**,and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible. Other supported functions are the remote control of the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) and the import of ism files in Python.  
 
 # 📚 Documentation
 
 The complete documentation of the individual functions can be found on the [API documentation website](https://doc.zahner.de/thales_remote/).  
 
-
 # 🔧 Installation
 
-The library to control the potentiostats is located in the subfolder [thales_remote](thales_remote). The [thales_file_import](thales_file_import) subfolder contains the library for importing Thales file formats. The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
+The library to control the potentiostats is the subfolder [thales_remote](thales_remote). The [thales_file_import](thales_file_import) subfolder contains the library for importing Thales file formats. The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
 
-### With integrated development environment
-With an integrated development environment, for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
-ThalesRemote can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
+### Integrated development environment
+With an integrated development environment (IDE), for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
+[thales_remote](thales_remote) can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
 If you are using Eclipse you can use the extension [EGit](https://www.eclipse.org/egit/) for this.
 
-### Only Package download
-Download the folder and place it in the project directory or add it to the PYTHONPATH to access the library from Python.
+### Package download
+Download the subdirectory [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) and put these two directories into your source directory where your Python script is located. Or add the path of the two directories [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) on your computer to the PYTHONPATH.
 
 # 🔨 Basic Usage
 
@@ -59,8 +58,11 @@ zahnerZennium.disablePotentiostat()
 ```
 
 # 📖 Examples
-There are several examples which are structured according to electrochemical methods. [BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb) is the most basic introduction, which describes the connection setup in detail.  
-Unlike the examples, the methods can be flexibly combined in a Python script, for example a CV measurement followed by an EIS measurement.
+There is at least one example for each possible electrochemical method that can be controlled remotely.
+
+[BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb) is the most basic introduction, which describes the connection setup in detail. For each example there is a Jupyter notebook which explains the example code in detail. For the user there is a Python script for each example which contains the pure Python code so that Jupyter does not need to be installed.
+
+In the examples only one method is explained and parameterized at a time for better comprehension. But the methods can also be combined flexibly in a Python script, for example a CV measurement followed by an EIS measurement.
 
 ### [BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb)
 
@@ -73,9 +75,15 @@ Unlike the examples, the methods can be flexibly combined in a Python script, fo
 
 ### [EISImportPlot.ipynb](Examples/EISImportPlot/EISImportPlot.ipynb)
 
-* Measure an impedance spectra
+* Measurement of an impedance spectrum
 * **Importing the measurement results from the ism file into python**
 * **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
+
+### [FileExchangeEIS.ipynb](Examples/FileExchangeEIS/FileExchangeEIS.ipynb)
+
+* Measurement of an impedance spectrum
+* Importing the measurement results from the ism file into python
+* **Acquiring the measurement files with Python via network**
 
 ### [EIS.ipynb](Examples/EIS/EIS.ipynb)
 
@@ -85,6 +93,7 @@ Unlike the examples, the methods can be flexibly combined in a Python script, fo
 
 ### [CyclicVoltammetry.ipynb](Examples/CyclicVoltammetry/CyclicVoltammetry.ipynb)
 
+* Measure cylic voltammetry measurement
 * Setting output file naming for CV measurements
 * Parametrizing an CV measurement
 * Measurement with an external potentiostat (EPC-Device)

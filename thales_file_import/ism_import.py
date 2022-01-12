@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2022 Zahner-Elektrik GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -26,19 +26,25 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import numpy as np
 import datetime
+import io
 
 
 class IsmImport():
     """ Class to be able to read out ism files.
     
     This class extracts the data from the ISM files.
-    It returns the frequency range between the reversal frequency and the end frequency.
+    It returns the data for the frequency range between the reversal frequency and the end frequency.
     
-    :param filePath: The path to the ism files.
+    :param file: The path to the ism file, or the ism file as bytes or bytearray.
+    :type file: str, bytes, bytearray
     """
 
-    def __init__(self, filePath):
-        ismFile = open(filePath, 'rb')
+    def __init__(self, file):
+        if isinstance(file, bytes) or isinstance(file, bytearray):
+            ismFile = io.BytesIO(file)
+        else:
+            ismFile = open(file, 'rb')
+        
         ismFile.read(6)
         numberOfElements = int.from_bytes(ismFile.read(6), "big", signed=True) + 1             
         tmpFrequency = np.ndarray(shape=(numberOfElements,), dtype='>f8', buffer=ismFile.read(8 * numberOfElements))
@@ -110,7 +116,7 @@ class IsmImport():
         return
     
     def getFrequencyArray(self):
-        """Get the frequency points from the measurement.
+        """ Get the frequency points from the measurement.
         
         The frequency points between the reversal frequency and the final frequency are returned.
         
@@ -122,7 +128,7 @@ class IsmImport():
             return self.frequency[self.fromIndex:self.toIndex]
     
     def getImpedanceArray(self):
-        """Get the impedance points from the measurement.
+        """ Get the impedance points from the measurement.
         
         The impedance points between the reversal frequency and the final frequency are returned.
         
@@ -134,7 +140,7 @@ class IsmImport():
             return self.impedance[self.fromIndex:self.toIndex]
         
     def getPhaseArray(self):
-        """Get the phase points from the measurement.
+        """ Get the phase points from the measurement.
         
         The phase points between the reversal frequency and the final frequency are returned.
         
@@ -146,7 +152,7 @@ class IsmImport():
             return self.phase[self.fromIndex:self.toIndex]
     
     def getComplexImpedanceArray(self):
-        """Get the complex impedance points from the measurement.
+        """ Get the complex impedance points from the measurement.
         
         The complex impedance points between the reversal frequency and the final frequency are returned.
         
@@ -163,7 +169,7 @@ class IsmImport():
         return np.array(cplx)
     
     def getSignificanceArray(self):
-        """Get the significance points from the measurement.
+        """ Get the significance points from the measurement.
         
         The significance points between the reversal frequency and the final frequency are returned.
         
@@ -175,7 +181,7 @@ class IsmImport():
             return self.significance[self.fromIndex:self.toIndex]
     
     def getMeasurementDateTimeArray(self):
-        """Get the timestamps from the measurement.
+        """ Get the timestamps from the measurement.
         
         The timestamps between the reversal frequency and the final frequency are returned.
         The smallest time is the reversal point. The start time is not included in this array because
@@ -189,7 +195,7 @@ class IsmImport():
             return self.measurementTimeStamp[self.fromIndex:self.toIndex]
     
     def getMeasurementEndDateTime(self):
-        """Get the end date time of the measurement.
+        """ Get the end date time of the measurement.
         
         Returns the end datetime of the measurement.
         

@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
  
-Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2022 Zahner-Elektrik GmbH & Co. KG
  
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -43,7 +43,7 @@ class PotentiostatMode(Enum):
 class ThalesRemoteScriptWrapper(object):
     """
     Wrapper that uses the ThalesRemoteConnection class.
-    The commands are explained in http://zahner.de/pdf/Remote2.pdf .
+    The commands are explained in the `Remote2-Manual <http://zahner.de/pdf/Remote2.pdf>`_.
     In the document you can also find a table with error numbers which are returned.
     
     :param remoteConnection: The connection object to the Thales software.
@@ -194,6 +194,17 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand("ALLNUM")
         match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
         return match.group(3)
+    
+    def calibrateOffsets(self):
+        """ Perform offset calibration on the device.
+        
+        When the instrument has warmed up for about 30 minutes,
+        this command can be used to perform the offset calibration again.
+        
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.executeRemoteCommand("CALOFFSETS")
      
     def enablePotentiostat(self, enabled=True):
         """ Switch the potentiostat on or off.
@@ -1301,10 +1312,6 @@ class ThalesRemoteScriptWrapper(object):
         For this the controlling computer must have access to the hard disk of the computer with the Zennium to access the THALES folder.
         In this case the path to the sequences folder in sequence_folder must be set to "C:/THALES/script/sequencer/sequences" on the computer with the zennium.
         
-        \param [in] filepath of the sequence.
-        \param [in] sequence_folder the filepath to the THALES sequence folder. Does not normally need to be transferred and changed.
-        \param [in] sequence_number the number in the THALES sequence directory. Does not normally need to be transferred and changed.
-        
         :param filepath: Filepath of the sequence.
         :type filepath: string
         :param sequence_folder: The filepath to the THALES sequence folder.
@@ -1375,8 +1382,8 @@ class ThalesRemoteScriptWrapper(object):
     def getWorkstationHeartBeat(self, timeout=None):
         """ Query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
         
-        The complete documentation can be found at the following link.
-        http://zahner.de/pdf/DevCli.pdf Page 8
+        The complete documentation can be found in the `DevCli-Manual <http://zahner.de/pdf/DevCli.pdf>`_ Page 8.
+         
         
         The timeout is not set by default and the command blocks indefinitely.
         However, a time in seconds can optionally be specified for the timeout.
@@ -1422,4 +1429,7 @@ class ThalesRemoteScriptWrapper(object):
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         match = re.search(pattern, reply)
         return float(match.group(1))
-     
+
+
+
+

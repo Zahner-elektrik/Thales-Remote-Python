@@ -44,6 +44,19 @@ if __name__ == "__main__":
         print("Potential: " + str(zahnerZennium.getPotential()))
         print("Current: " + str(zahnerZennium.getCurrent()))
 
+    zahnerZennium.disablePotentiostat()
+    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_GALVANOSTATIC)
+    zahnerZennium.setCurrent(20e-9)
+    zahnerZennium.enablePotentiostat()
+
+    for i in range(5):
+        print("Potential: " + str(zahnerZennium.getPotential()))
+        print("Current: " + str(zahnerZennium.getCurrent()))
+
+    zahnerZennium.disablePotentiostat()
+    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+    zahnerZennium.setPotential(1.0)
+    zahnerZennium.enablePotentiostat()
     zahnerZennium.setFrequency(2000)
     zahnerZennium.setAmplitude(10e-3)
     zahnerZennium.setNumberOfPeriods(3)
@@ -53,8 +66,9 @@ if __name__ == "__main__":
     printImpedance(zahnerZennium.getImpedance(2000, 10e-3, 3))
 
     spectrum(zahnerZennium, 1000, 2e5, 10)
-    
+
     zahnerZennium.disablePotentiostat()
+    zahnerZennium.setAmplitude(0)
 
     zenniumConnection.disconnectFromTerm()
     print("finish")

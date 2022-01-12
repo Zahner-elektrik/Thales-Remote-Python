@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2021 ZAHNER-elektrik I. Zahner-Schiller GmbH & Co. KG
+Copyright 2022 Zahner-Elektrik GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -50,9 +50,12 @@ class ThalesRemoteConnection(object):
         
         self._receiving_worker_is_running = False
         
+        self.availibleChannels = [2,128,129,130,131,132]
+        
         self.queuesForChannels = dict()
-        self.queuesForChannels[2] = queue.Queue()
-        self.queuesForChannels[128] = queue.Queue()
+        
+        for channel in self.availibleChannels:
+            self.queuesForChannels[channel] = queue.Queue()
         
         self.connectionName = ""
         return
@@ -81,7 +84,7 @@ class ThalesRemoteConnection(object):
         payload_length = len(connectionName)
         
         registration_packet = bytearray()
-        registration_packet += bytearray(struct.pack('H', payload_length))
+        registration_packet += bytearray(struct.pack('<H', payload_length))
         registration_packet += bytearray([0x02, 0xd0, 0xff, 0xff, 0xff, 0xff])
         registration_packet += bytearray(connectionName, 'ASCII')
         
@@ -143,18 +146,13 @@ class ThalesRemoteConnection(object):
             payload_length = len(payload)
             data = payload
         
-        packet += bytearray(struct.pack('H', payload_length))
-        packet += bytearray(struct.pack('B', message_type))
+        packet += bytearray(struct.pack('<H', payload_length))
+        packet += bytearray(struct.pack('<B', message_type))
         packet += data
         
         if self.sendMutex.acquire(True,timeout=timeout):
             self.socket_handle.settimeout(timeout)
-            try:
-                # print("\n" + str(datetime.now().time()) + " send:")
-                # print(f"payload_length: {payload_length} message_type: {message_type}")
-                # print(f"payload: {data}")
-                # print("complete packet:" + str(packet))
-                
+            try:                
                 self.socket_handle.sendall(packet)
             finally:
                 self.socket_handle.settimeout(None)
@@ -196,7 +194,7 @@ class ThalesRemoteConnection(object):
         retval = self.waitForBinaryTelegram(message_type,timeout).decode("ASCII")
         return retval
         
-    def sendStringAndWaitForReplyString(self, payload, message_type, timeout=None):
+    def sendStringAndWaitForReplyString(self, payload, message_type, timeout=None, answer_message_type = None):
         """ Convenience function: Send a telegram and wait for it's reply.
         
         If a timeout or a socket error occurs an exception is thrown.
@@ -208,8 +206,10 @@ class ThalesRemoteConnection(object):
         :returns: The last received telegram or an empty string if someting went wrong.
         :rtype: string
         """
+        if answer_message_type == None:
+            answer_message_type = message_type
         self.sendTelegram(payload, message_type, timeout)
-        return self.waitForStringTelegram(message_type, timeout)
+        return self.waitForStringTelegram(answer_message_type, timeout)
         
     """
     The following methods should not be called by the user.
@@ -217,12 +217,11 @@ class ThalesRemoteConnection(object):
     """
         
     def _telegramListenerJob(self):
-        """
-        The method running in a separate thread, pushing the incomming packets into the queues.
+        """ The method running in a separate thread, pushing the incomming packets into the queues.
         """
         while self._receiving_worker_is_running:
             message_type, telegram = self._readTelegramFromSocket()
-            if len(telegram) > 0 and (message_type == 2 or message_type == 128):
+            if len(telegram) > 0 and message_type in self.availibleChannels:
                 self.queuesForChannels[message_type].put(telegram)
             elif message_type == None:
                 """
@@ -236,24 +235,23 @@ class ThalesRemoteConnection(object):
         return
             
     def _startTelegramListener(self):
-        """
-        Starts the thread handling the asyncronously incoming data.
+        """ Starts the thread handling the asyncronously incoming data.
         """
         self._receiving_worker_is_running = True
         self.receivingWorker = threading.Thread(target=self._telegramListenerJob)
         self.receivingWorker.start()
+        return
         
     def _stopTelegramListener(self):
-        """
-        Stops the thread handling the incoming data gracefully.
+        """ Stops the thread handling the incoming data gracefully.
         """
         self.socket_handle.shutdown(SHUT_RD)
         self._receiving_worker_is_running = False
         self.receivingWorker.join()
+        return
             
     def _readTelegramFromSocket(self):
-        """
-        Reads the raw telegram structure from the socket stream.
+        """ Reads the raw telegram structure from the socket stream.
         
         When a socket exception occurs, None and an empty byte array are returned.
         The caller of the function then passes the None to the queue to raise an
@@ -262,13 +260,8 @@ class ThalesRemoteConnection(object):
         try:
             header_len = self.socket_handle.recv(2)
             header_type_bytes = self.socket_handle.recv(1)
-            header_type = struct.unpack('B', header_type_bytes)[0]
-            incoming_packet = self.socket_handle.recv(struct.unpack('H', header_len)[0])
-            
-            # print("\n" + str(datetime.now().time()) + " read:")
-            # print(f"payload_length: {struct.unpack('H', header_len)[0]} message_type: {header_type}")
-            # print(f"payload: {incoming_packet}")
-            # print("complete packet:" + str(header_len + header_type_bytes + incoming_packet))
+            header_type = struct.unpack('<B', header_type_bytes)[0]
+            incoming_packet = self.socket_handle.recv(struct.unpack('<H', header_len)[0])
             
         except:
             header_type = None
@@ -276,9 +269,9 @@ class ThalesRemoteConnection(object):
         return header_type, incoming_packet
             
     def _closeSocket(self):
-        """
-        Close the socket.
+        """ Close the socket.
         """
         self.socket_handle.close()
         self.socket_handle = None
+        return
         

@@ -88,6 +88,11 @@ class ThalesRemoteConnection(object):
         registration_packet += bytearray([0x02, 0xd0, 0xff, 0xff, 0xff, 0xff])
         registration_packet += bytearray(connectionName, 'ASCII')
         
+        # print("\n" + str(datetime.now().time()) + " send:")
+        # print(f"payload_length: {payload_length}")
+        # print(f"registration_packet: {registration_packet}")
+        # print("complete packet:" + str(registration_packet))
+        
         self.sendMutex.acquire()
         self.socket_handle.sendall(registration_packet)
         self.sendMutex.release()
@@ -95,6 +100,14 @@ class ThalesRemoteConnection(object):
         time.sleep(0.8)
         
         return True
+    
+    def getConnectionName(self):
+        """ Get the connection name
+        
+        :returns: The name of the connection.
+        :rtype: str
+        """
+        return self.connectionName
             
     def disconnectFromTerm(self):
         """ Close the connection to Term and cleanup.
@@ -152,7 +165,12 @@ class ThalesRemoteConnection(object):
         
         if self.sendMutex.acquire(True,timeout=timeout):
             self.socket_handle.settimeout(timeout)
-            try:                
+            try:
+                # print("\n" + str(datetime.now().time()) + " send:")
+                # print(f"payload_length: {payload_length} message_type: {message_type}")
+                # print(f"payload: {data}")
+                # print("complete packet:" + str(packet))
+                
                 self.socket_handle.sendall(packet)
             finally:
                 self.socket_handle.settimeout(None)
@@ -262,6 +280,11 @@ class ThalesRemoteConnection(object):
             header_type_bytes = self.socket_handle.recv(1)
             header_type = struct.unpack('<B', header_type_bytes)[0]
             incoming_packet = self.socket_handle.recv(struct.unpack('<H', header_len)[0])
+            
+            # print("\n" + str(datetime.now().time()) + " read:")
+            # print(f"payload_length: {struct.unpack('<H', header_len)[0]} message_type: {header_type}")
+            # print(f"payload: {incoming_packet}")
+            # print("complete packet:" + str(header_len + header_type_bytes + incoming_packet))
             
         except:
             header_type = None

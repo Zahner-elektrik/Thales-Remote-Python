@@ -2,8 +2,6 @@ import sys
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -21,6 +19,8 @@ if __name__ == "__main__":
     zahnerZennium.setIENaming("counter")
     zahnerZennium.setIECounter(1)
 
+    zahnerZennium.calibrateOffsets()
+    
     zahnerZennium.setIEFirstEdgePotential(1)
     zahnerZennium.setIEFirstEdgePotentialRelation("absolute")
     zahnerZennium.setIESecondEdgePotential(1.1)
@@ -68,7 +68,4 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     print("finish")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("CurrentVoltageCurve.ipynb")
 

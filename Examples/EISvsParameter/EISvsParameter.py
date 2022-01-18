@@ -8,8 +8,6 @@ import numpy as np
 from matplotlib.ticker import EngFormatter, StrMethodFormatter
 from matplotlib import ticker,colors,cm
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -20,8 +18,9 @@ if __name__ == "__main__":
         sys.exit()
     
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
-    
     zahnerZennium.forceThalesIntoRemoteScript()
+    
+    zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISNaming("individual")
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp")
@@ -51,6 +50,7 @@ if __name__ == "__main__":
         zahnerZennium.measureEIS()
         zahnerZennium.disablePotentiostat()
     
+    zahnerZennium.setAmplitude(0)
     zenniumConnection.disconnectFromTerm()
 
     absoluteImpedances = []
@@ -110,7 +110,4 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
     phaseFigure.savefig("phase_contour.svg")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("EISvsParameter.ipynb")
 

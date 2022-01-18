@@ -1,5 +1,4 @@
 import socket
-from jupyter_utils import executionInNotebook, notebookCodeToPython
 
 class BCMuxInterface():
     """ BC-Mux control class.
@@ -113,7 +112,4 @@ if __name__ == '__main__':
     bcMux.close()
 
     print("finish")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("BCMuxInterface.ipynb")
 

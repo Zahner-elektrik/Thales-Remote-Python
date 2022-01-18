@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -20,6 +18,8 @@ if __name__ == "__main__":
     
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
+    
+    zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISNaming("counter")
     zahnerZennium.setEISCounter(1)
@@ -46,6 +46,7 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
     zahnerZennium.measureEIS()
     zahnerZennium.disablePotentiostat()
+    zahnerZennium.setAmplitude(0)
     zenniumConnection.disconnectFromTerm()
 
     ismFileStack = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser00.ism")
@@ -83,7 +84,4 @@ if __name__ == "__main__":
     figNyquist.set_size_inches(20, 8)
     plt.show()
     figNyquist.savefig("nyquist.svg")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("EISPad4.ipynb")
 

@@ -4,8 +4,6 @@ from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrap
 import math
 import cmath
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 def printImpedance(impedance):
     print("Impedance: " + str(abs(impedance)) + " ohm, " + str(cmath.phase(impedance)) + " rad")
     return
@@ -36,13 +34,15 @@ if __name__ == "__main__":
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
 
+    zahnerZennium.calibrateOffsets()
+
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     zahnerZennium.setPotential(1.0)
     zahnerZennium.enablePotentiostat()
 
     for i in range(5):
-        print("Potential: " + str(zahnerZennium.getPotential()))
-        print("Current: " + str(zahnerZennium.getCurrent()))
+        print(f"Potential:\t{zahnerZennium.getPotential()}\tV")
+        print(f"Current:\t{zahnerZennium.getCurrent()}\tA")
 
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_GALVANOSTATIC)
@@ -50,8 +50,8 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
 
     for i in range(5):
-        print("Potential: " + str(zahnerZennium.getPotential()))
-        print("Current: " + str(zahnerZennium.getCurrent()))
+        print(f"Potential:\t{zahnerZennium.getPotential()}\tV")
+        print(f"Current:\t{zahnerZennium.getCurrent()}\tA")
 
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
@@ -72,7 +72,4 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     print("finish")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("BasicIntroduction.ipynb")
 

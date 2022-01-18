@@ -2,8 +2,6 @@ import sys
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -15,6 +13,8 @@ if __name__ == "__main__":
         
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
+
+    zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
     zahnerZennium.setEISNaming("counter")
@@ -61,11 +61,10 @@ if __name__ == "__main__":
         zahnerZennium.setAmplitude(amplitude / 1000)
         zahnerZennium.measureEIS()
 
+    zahnerZennium.setAmplitude(0)
+
     zahnerZennium.selectPotentiostat(0)
     
     zenniumConnection.disconnectFromTerm()
     print("finish")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("EIS.ipynb")
 

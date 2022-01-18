@@ -43,7 +43,7 @@ class PotentiostatMode(Enum):
 class ThalesRemoteScriptWrapper(object):
     """
     Wrapper that uses the ThalesRemoteConnection class.
-    The commands are explained in the `Remote2-Manual <http://zahner.de/pdf/Remote2.pdf>`_.
+    The commands are explained in the `Remote2-Manual <https://doc.zahner.de/Remote.pdf>`_.
     In the document you can also find a table with error numbers which are returned.
     
     :param remoteConnection: The connection object to the Thales software.
@@ -162,7 +162,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.executeRemoteCommand("SETUSB")
      
     def getSerialNumber(self):
-        """ Get the serialnumber of the active device.
+        """ Get the serial number of the active device.
         
         Active device ist the device selected with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.selectPotentiostat`.
         
@@ -174,7 +174,7 @@ class ThalesRemoteScriptWrapper(object):
         return match.group(2)
      
     def getDeviceInformation(self):
-        """ Get the name and serialnumber of the active device.
+        """ Get the name and serial number of the active device.
          
         :returns: Returns a tuple with the information about the selected potentiostat. (Name, Serialnumber).
         """
@@ -1346,6 +1346,9 @@ class ThalesRemoteScriptWrapper(object):
         :returns: The response string from the device.
         :rtype: string
         """
+        if isinstance(value, float):
+            value = "{:.16e}".format(value)        
+        
         reply = self.executeRemoteCommand(name + "=" + str(value))
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
@@ -1376,13 +1379,13 @@ class ThalesRemoteScriptWrapper(object):
         :returns: The response string from the device.
         :rtype: string
         """
-        self.remoteConnection.sendStringAndWaitForReplyString("3,ScriptRemote,0,OFF", 128)
-        return self.remoteConnection.sendStringAndWaitForReplyString("2,ScriptRemote", 128)
+        self.remoteConnection.sendStringAndWaitForReplyString(f"3,{self.remoteConnection.getConnectionName()},0,OFF", 128)
+        return self.remoteConnection.sendStringAndWaitForReplyString(f"2,{self.remoteConnection.getConnectionName()}", 128)
      
     def getWorkstationHeartBeat(self, timeout=None):
         """ Query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
         
-        The complete documentation can be found in the `DevCli-Manual <http://zahner.de/pdf/DevCli.pdf>`_ Page 8.
+        The complete documentation can be found in the `DevCli-Manual <https://doc.zahner.de/DevCli.pdf>`_ Page 8.
          
         
         The timeout is not set by default and the command blocks indefinitely.
@@ -1392,8 +1395,21 @@ class ThalesRemoteScriptWrapper(object):
         :param timeout: The time in seconds in which the term must provide the answer.
         :returns: The HeartBeat time in milli seconds.
         """
-        retval = self.remoteConnection.sendStringAndWaitForReplyString("1,ScriptRemote", 128, timeout)
+        retval = self.remoteConnection.sendStringAndWaitForReplyString(f"1,{self.remoteConnection.getConnectionName()}", 128, timeout)
         return retval.split(",")[2]
+    
+    def getSerialNumberFromTerm(self):
+        """ Get the serial number of the workstation via the Term software.
+        
+        The serial number of the active potentiostat with EPC devices can be read with the
+        :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.getSerialNumber` function.
+        This function returns only the serial number of the workstation, which is determined by the Term software.
+        
+        :returns: The workstation serial number.
+        :rtype: string
+        """
+        retval = self.remoteConnection.sendStringAndWaitForReplyString(f"3,{self.remoteConnection.getConnectionName()},6", 128)
+        return retval.split(",")[2]       
     
     def getTermIsActive(self, timeout=2):
         """ Check if the Term still responds to requests.
@@ -1414,7 +1430,7 @@ class ThalesRemoteScriptWrapper(object):
         """
         active = True
         try:
-            self.remoteConnection.sendStringAndWaitForReplyString("1,ScriptRemote", 128, timeout)
+            self.remoteConnection.sendStringAndWaitForReplyString(f"1,{self.remoteConnection.getConnectionName()}", 128, timeout)
         except:
             active = False
         return active

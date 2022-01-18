@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -19,8 +17,9 @@ if __name__ == "__main__":
         sys.exit()
           
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
-  
     zahnerZennium.forceThalesIntoRemoteScript()
+    
+    zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISNaming("counter")
     zahnerZennium.setEISCounter(1)
@@ -43,6 +42,9 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
     zahnerZennium.measureEIS()
     zahnerZennium.disablePotentiostat()
+    
+    zahnerZennium.setAmplitude(0)
+    
     zenniumConnection.disconnectFromTerm()
 
     ismFile = IsmImport(r"C:\THALES\temp\test1\spectra_0001.ism")
@@ -90,7 +92,4 @@ if __name__ == "__main__":
     figBode.set_size_inches(18, 12)
     plt.show()
     figBode.savefig("bode.svg")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("EISImportPlot.ipynb")
 

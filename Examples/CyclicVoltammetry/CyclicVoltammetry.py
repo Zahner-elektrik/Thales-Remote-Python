@@ -2,8 +2,6 @@ import sys
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -15,6 +13,7 @@ if __name__ == "__main__":
         
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
+    zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setCVOutputPath(r"C:\THALES\temp\cv")
 
@@ -68,7 +67,4 @@ if __name__ == "__main__":
     
     zenniumConnection.disconnectFromTerm()
     print("finish")
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("CyclicVoltammetry.ipynb")
 

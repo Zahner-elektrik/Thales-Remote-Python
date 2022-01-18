@@ -4,8 +4,6 @@ from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrap
 from thales_remote.file_interface import ThalesFileInterface
 from thales_file_import.ism_import import IsmImport
 
-from jupyter_utils import executionInNotebook, notebookCodeToPython
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter
@@ -25,6 +23,8 @@ if __name__ == "__main__":
     
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
+
+    zahnerZennium.calibrateOffsets()
 
     fileInterface = ThalesFileInterface(remoteIP)
 
@@ -50,6 +50,8 @@ if __name__ == "__main__":
     zahnerZennium.measureEIS()
     
     zahnerZennium.disablePotentiostat()
+    zahnerZennium.setAmplitude(0)
+    
 
     file = fileInterface.aquireFile(r"C:\THALES\temp\myeis.ism")
 
@@ -76,7 +78,7 @@ if __name__ == "__main__":
     
     phaseAxis.semilogx(impedanceFrequencies, np.abs(impedancePhase * (360 / (2 * np.pi))), marker="+", markersize=5)
     phaseAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
-    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$°$", sep=""))
+    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$Â°$", sep=""))
     phaseAxis.set_xlabel(r"$f$")
     phaseAxis.set_ylabel(r"$|Phase|$")
     phaseAxis.grid(which="both")
@@ -116,6 +118,7 @@ if __name__ == "__main__":
     
     fileInterface.enableAutomaticFileExchange()
     zahnerZennium.measureEIS()
+    zahnerZennium.setAmplitude(0)
 
     for file in fileInterface.getReceivedFiles():
         ismFile = IsmImport(file["binary_data"])
@@ -126,7 +129,4 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     fileInterface.close()
-
-    if executionInNotebook() == True:
-        notebookCodeToPython("FileExchangeEIS.ipynb")
 

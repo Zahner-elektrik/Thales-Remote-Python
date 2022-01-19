@@ -30,9 +30,9 @@ import io
 
 
 class IsmImport():
-    """ Class to be able to read out ism files.
+    """ Class to be able to read out ism files (EIS).
     
-    This class extracts the data from the ISM files.
+    This class extracts the data from the ism files.
     It returns the data for the frequency range between the reversal frequency and the end frequency.
     
     :param file: The path to the ism file, or the ism file as bytes or bytearray.
@@ -45,7 +45,7 @@ class IsmImport():
         else:
             ismFile = open(file, 'rb')
         
-        ismFile.read(6)
+        version = ismFile.read(6)
         numberOfElements = int.from_bytes(ismFile.read(6), "big", signed=True) + 1             
         tmpFrequency = np.ndarray(shape=(numberOfElements,), dtype='>f8', buffer=ismFile.read(8 * numberOfElements))
         tmpImpedance = np.ndarray(shape=(numberOfElements,), dtype='>f8', buffer=ismFile.read(8 * numberOfElements))
@@ -199,7 +199,7 @@ class IsmImport():
         
         Returns the end datetime of the measurement.
         
-        :returns: Python datetime object with the end time of the measurement.
+        :returns: datetime object with the end time of the measurement.
         """
         return max(self.measurementTimeStamp)
         

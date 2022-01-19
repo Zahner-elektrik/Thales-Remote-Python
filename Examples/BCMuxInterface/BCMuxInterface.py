@@ -3,7 +3,7 @@ import socket
 class BCMuxInterface():
     """ BC-Mux control class.
     
-    With this class the `BC-MUX Multiplexer <http://zahner.de/products/multiplexer/bc-mux.html>`_ can
+    With this class the `BC-MUX Multiplexer <https://zahner.de/products-details/multiplexer/bc-mux>`_ can
     be controlled remotely without the BC-Mux Controller software.
     
     The USB interface of the BC Mux is not supported by Python. Also the network settings must be

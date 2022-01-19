@@ -1,9 +1,9 @@
 ![Thales-Remote-Python](https://doc.zahner.de/github_resources/Thales-Remote-Python.png)
 
-Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](http://zahner.de/pdf/Remote2.pdf) to control [Zahner ZENNIUM Potentiostats](http://zahner.de/products/electrochemical-workstation.html).  
-It was developed to **easily integrate** [Zahner ZENNIUM Potentiostats](http://zahner.de/products/electrochemical-workstation.html) into Python scripts for more **complex measurement** tasks and for **automation purposes**.
+Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](https://doc.zahner.de/Remote.pdf) to control [Zahner ZENNIUM Potentiostats](https://zahner.de/products#potentiostats).  
+It was developed to **easily integrate** [Zahner ZENNIUM Potentiostats](https://zahner.de/products#potentiostats) into Python scripts for more **complex measurement** tasks and for **automation purposes**.
 
-The measurement methods **Impedance Spectroscopy (EIS)**, **Cyclic Voltammetry (CV)**, **IE**,and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible. Other supported functions are the remote control of the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) and the import of ism files in Python.  
+The measurement methods **Impedance Spectroscopy (EIS)**, **Cyclic Voltammetry (CV)**, **Current–Voltage characteristic (IE)**,and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible. Other supported functions are the remote control of the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) and the import of ism files in Python.  
 
 # 📚 Documentation
 
@@ -11,7 +11,7 @@ The complete documentation of the individual functions can be found on the [API 
 
 # 🔧 Installation
 
-The library to control the potentiostats is the subfolder [thales_remote](thales_remote). The [thales_file_import](thales_file_import) subfolder contains the library for importing Thales file formats. The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](http://zahner.de/products/multiplexer/bc-mux.html) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
+The library to control the potentiostats is the subfolder [thales_remote](thales_remote). The [thales_file_import](thales_file_import) subfolder contains the library for importing Thales file formats. The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
 
 ### Integrated development environment
 With an integrated development environment (IDE), for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
@@ -76,13 +76,13 @@ In the examples only one method is explained and parameterized at a time for bet
 ### [EISImportPlot.ipynb](Examples/EISImportPlot/EISImportPlot.ipynb)
 
 * Measurement of an impedance spectrum
-* **Importing the measurement results from the ism file into python**
+* **Importing the measurement results from the ism file into Python**
 * **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
 
 ### [FileExchangeEIS.ipynb](Examples/FileExchangeEIS/FileExchangeEIS.ipynb)
 
 * Measurement of an impedance spectrum
-* Importing the measurement results from the ism file into python
+* Importing the measurement results from the ism file into Python
 * **Acquiring the measurement files with Python via network**
 
 ### [EIS.ipynb](Examples/EIS/EIS.ipynb)
@@ -98,6 +98,14 @@ In the examples only one method is explained and parameterized at a time for bet
 * Parametrizing an CV measurement
 * Measurement with an external potentiostat (EPC-Device)
 
+### [CVImportPlot.ipynb](Examples/CVImportPlot/CVImportPlot.ipynb)
+
+* Measure cylic voltammetry measurement
+* Setting output file naming for CV measurements
+* Parametrizing an CV measurement
+* Importing the measurement results from the isc file into Python
+* **Acquiring the measurement files with Python via network**
+
 ### [CurrentVoltageCurve.ipynb](Examples/CurrentVoltageCurve/CurrentVoltageCurve.ipynb)
 
 * Setting output file naming for IE measurements
@@ -105,29 +113,29 @@ In the examples only one method is explained and parameterized at a time for bet
 
 ### [DCSequencer.ipynb](Examples/DCSequencer/DCSequencer.ipynb)
 
-* The [Zahner sequencer](http://zahner.de/files/sequencer-an-introduction.pdf) outputs current and voltage curves defined in a text file.
+* The [Zahner sequencer](https://zahner.de/media-files/support_downloads/files/sequencer_1.pdf) outputs current and voltage curves defined in a text file.
 * Setting output file naming for sequence measurements
 * Parametrizing an sequence measurement
 * Measurement with an external potentiostat (EPC-Device)
 
 ### [EISPad4.ipynb](Examples/EISPad4/EISPad4.ipynb)
 
-* Measurement of an impedance spectrum on a stack with single cells connected to the [PAD4](http://zahner.de/products/addon-cards/pad4.html) card.
-* **Importing the measurement results from the ism file into python**
+* Measurement of an impedance spectrum on a stack with single cells connected to the [PAD4](https://zahner.de/products-details/addon-cards/pad4) card.
+* **Importing the measurement results from the ism file into Python**
 * **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
 
 ### [EISvsParameter.ipynb](Examples/EISvsParameter/EISvsParameter.ipynb)
 
 * Setting output file naming for impedance spectras
 * Measure impedance spectra with different DC parameters
-* Importing the measurement results from the ism file into python
+* Importing the measurement results from the ism file into Python
 * Display impedance and phase in contourplots with the matplotlib library
 
 ### [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
 
 * Multichannel operation with several external potentiostats, of the latest generation, type **PP212, PP222, PP242 or XPOT2**.
 * Control of standalone operation of external potentiostats with the [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat) library.
-* Shared [Zennium series](http://zahner.de/products/electrochemical-workstation.html) device for impedance measurements.
+* Shared [Zennium series](https://zahner.de/products#potentiostats) device for impedance measurements.
 
 ### [BCMuxInterface.ipynb](Examples/BCMuxInterface/BCMuxInterface.ipynb)
 

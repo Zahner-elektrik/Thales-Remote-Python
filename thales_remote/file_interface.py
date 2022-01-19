@@ -178,7 +178,7 @@ class ThalesFileInterface(object):
     def disableSaveReceivedFilesToDisk(self):
         """ Disable the automatic saving of files to the hard disk.
         """
-        return self.enableAutomaticFileExchange(False)
+        return self.enableSaveReceivedFilesToDisk(False)
     
     def enableKeepReceivedFilesInObject(self,enable = True):
         """ Enable that the files remain in the Python object.
@@ -203,11 +203,18 @@ class ThalesFileInterface(object):
         This function returns an array. Each element in the array is a dictionary as described in
         function :func:`~thales_remote.file_interface.ThalesFileInterface.aquireFile`.
         
-        
         :returns: Array with the files from the Python object.
         :rtype: array 
         """
         return self.receivedFiles
+    
+    def getLatestReceivedFile(self):
+        """ Read the latest files from the Python object.    
+        
+        :returns: The latest file from the Python object.
+        :rtype: array 
+        """
+        return  self.receivedFiles[-1]
     
     def deleteReceivedFiles(self):
         """ Delete all files from the Python object.

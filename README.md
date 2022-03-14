@@ -118,6 +118,12 @@ In the examples only one method is explained and parameterized at a time for bet
 * Parametrizing an sequence measurement
 * Measurement with an external potentiostat (EPC-Device)
 
+### [EISCVLaTeX.ipynb](Examples/EISCVLaTeX/EISCVLaTeX.ipynb)
+
+* Measure impedance specta and cyclic voltammetry
+* Plotting the measurement data.
+* Create a PDF with the measurement data using LaTeX.
+
 ### [EISPad4.ipynb](Examples/EISPad4/EISPad4.ipynb)
 
 * Measurement of an impedance spectrum on a stack with single cells connected to the [PAD4](https://zahner.de/products-details/addon-cards/pad4) card.
@@ -126,7 +132,7 @@ In the examples only one method is explained and parameterized at a time for bet
 
 ### [EISvsParameter.ipynb](Examples/EISvsParameter/EISvsParameter.ipynb)
 
-* Setting output file naming for impedance spectras
+* Setting output file naming for impedance spectra
 * Measure impedance spectra with different DC parameters
 * Importing the measurement results from the ism file into Python
 * Display impedance and phase in contourplots with the matplotlib library

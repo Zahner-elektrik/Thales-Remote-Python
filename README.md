@@ -137,6 +137,11 @@ In the examples only one method is explained and parameterized at a time for bet
 * Importing the measurement results from the ism file into Python
 * Display impedance and phase in contourplots with the matplotlib library
 
+### [ExternalDeviceFRA.ipynb](Examples/ExternalDeviceFRA/ExternalDeviceFRA.ipynb)
+
+* Configure FRA Probe measurement
+* Measure EIS with FRA Probe
+
 ### [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
 
 * Multichannel operation with several external potentiostats, of the latest generation, type **PP212, PP222, PP242 or XPOT2**.

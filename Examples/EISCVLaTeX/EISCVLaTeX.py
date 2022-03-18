@@ -154,7 +154,7 @@ if __name__ == "__main__":
     
     with open("EIS.csv","wb") as file:
         file.write(bytearray("Frequency;Impedance;Phase" + os.linesep, "utf-8"))
-    
+        
         for freq, imp, phase in zip(impedanceFrequencies, impedanceAbsolute, impedancePhase):
             file.write(bytearray(f"{prefixFormatter.format_data(freq)};{prefixFormatter.format_data(imp)};{prefixFormatter.format_data(phase * (360 / (2 * np.pi)))}" + os.linesep, "utf-8"))
     

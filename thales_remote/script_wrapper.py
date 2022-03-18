@@ -227,7 +227,7 @@ class ThalesRemoteScriptWrapper(object):
         """
         return self.enablePotentiostat(False)
      
-    def setPotentiostatMode(self, potentiostatMode):
+    def setPotentiostatMode(self, potentiostatMode: PotentiostatMode):
         """ Set the coupling of the potentiostat.
          
         This can be PotentiostatMode.POTMODE_POTENTIOSTATIC or PotentiostatMode.POTMODE_GALVANOSTATIC or
@@ -1300,6 +1300,135 @@ class ThalesRemoteScriptWrapper(object):
         if(reply != "SEQ DONE\r"):
             raise ThalesRemoteError(reply.rstrip("\r") + ThalesRemoteScriptWrapper.undefindedStandardErrorString)
         return reply
+    
+    def enableFraMode(self, state=True):
+        """ Enables the use of the FRA probe.
+        
+        With the FRA Probe, external power potentiostats, signal generators, sources, sinks can be
+        controlled analog for impedance measurements.
+        
+        `FRA Product Page <https://www.zahner.de/products-details/probes/fra-probe>`_  
+        `FRA Manual <https://www.zahner.de/media-files/downloads_pdf/files/m_fra.pdf>`_  
+        
+        Before this function is called, the analog interface to the external interface must be initialized
+        with the correct factors. It may be necessary to use + or - as sign, this must be tested to ensure
+        that potentiostatic and galvanostatic function correctly.
+        
+        For example, if the device has 100 A output current and the analog signal input range of the
+        device is 5 V, then the current gain is 100/5.
+        
+        :param state: If state = True FRA mode is enabled.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        if state == True:
+            state = 1
+        else:
+            state = 0
+        return self.setValue("FRA", state)
+    
+    def disableFraMode(self):
+        return self.enableFraMode(False)
+    
+    def setFraVoltageInputGain(self, value):
+        """ Sets the input voltage gain.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_POT_IN", value)
+    
+    def setFraVoltageOutputGain(self, value):
+        """ Sets the output voltage gain.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_POT_OUT", value)
+    
+    def setFraVoltageMinimum(self, value):
+        """ Sets the minimum voltage.
+        
+        Sets the minimum voltage of the FRA device.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_POT_MIN", value)
+    
+    def setFraVoltageMaximum(self, value):
+        """ Sets the maximum voltage.
+        
+        Sets the maximum voltage of the FRA device.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_POT_MAX", value)
+    
+    def setFraCurrentInputGain(self, value):
+        """ Sets the input current gain.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_CUR_IN", value)
+    
+    def setFraCurrentOutputGain(self, value):
+        """ Sets the output current gain.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_CUR_OUT", value)
+    
+    def setFraCurrentMinimum(self, value):
+        """ Sets the minimum current.
+        
+        Sets the minimum current of the FRA device.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_CUR_MIN", value)
+    
+    def setFraCurrentMaximum(self, value):
+        """ Sets the maximum current.
+        
+        Sets the maximum current of the FRA device.
+        
+        :param value: The value to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setValue("FRA_CUR_MAX", value)
+     
+    def setFraPotentiostatMode(self, potentiostatMode: PotentiostatMode):
+        """ Set the coupling of the FRA mode.
+         
+        This can be PotentiostatMode.POTMODE_POTENTIOSTATIC or PotentiostatMode.POTMODE_GALVANOSTATIC or
+        PotentiostatMode.POTMODE_PSEUDOGALVANOSTATIC.
+        
+        :param potentiostatMode: The coupling of the FRA mode
+        :type potentiostatMode: :class:`~thales_remote.script_wrapper.PotentiostatMode`
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        if potentiostatMode == PotentiostatMode.POTMODE_POTENTIOSTATIC:
+            command = "FRAGAL=0"
+        elif potentiostatMode == PotentiostatMode.POTMODE_GALVANOSTATIC:
+            command = "FRAGAL=1"
+        else:
+            return ""
+        return self.executeRemoteCommand(command)
+        
      
     def runSequenceFile(self, filepath, sequence_folder="C:/THALES/script/sequencer/sequences", sequence_number=9):
         """ Run the sequence at filepath.
@@ -1347,7 +1476,7 @@ class ThalesRemoteScriptWrapper(object):
         :rtype: string
         """
         if isinstance(value, float):
-            value = "{:.16e}".format(value)        
+            value = "{:.14e}".format(value)        
         
         reply = self.executeRemoteCommand(name + "=" + str(value))
         if reply.find("ERROR") >= 0:

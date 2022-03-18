@@ -103,7 +103,7 @@ if __name__ == "__main__":
     phasePlot.set_ylabel(r"DC Voltage")
     phasePlot.yaxis.set_major_formatter(EngFormatter(unit="V"))
 
-    phaseBar = phaseFigure.colorbar(phaseContour, format=StrMethodFormatter("{x:.0f}$Â°$"))
+    phaseBar = phaseFigure.colorbar(phaseContour, format=StrMethodFormatter("{x:.0f}$°$"))
     phaseBar.set_label("| Phase |")
 
     phaseFigure.set_size_inches(14, 12)

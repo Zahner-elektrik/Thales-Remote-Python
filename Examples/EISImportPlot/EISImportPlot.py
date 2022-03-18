@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     phaseAxis.semilogx(impedanceFrequencies, np.abs(impedancePhase * (360 / (2 * np.pi))), marker="+", markersize=5)
     phaseAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
-    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$Â°$", sep=""))
+    phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$°$", sep=""))
     phaseAxis.set_xlabel(r"$f$")
     phaseAxis.set_ylabel(r"$|Phase|$")
     phaseAxis.grid(which="both")

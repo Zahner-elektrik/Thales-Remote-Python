@@ -1,11 +1,11 @@
 import sys
-from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 import math
 import cmath
+from thales_remote.connection import ThalesRemoteConnection
+from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 
 def printImpedance(impedance):
-    print("Impedance: " + str(abs(impedance)) + " ohm, " + str(cmath.phase(impedance)) + " rad")
+    print(f"Impedance: {abs(impedance):>10.3e} ohm {cmath.phase(impedance)/cmath.pi*180.0:>10.2f} degree")
     return
 
 def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
@@ -15,7 +15,7 @@ def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
     
     for i in range(number_of_points):
         current_frequency = math.exp(log_lower_frequency + log_interval_spacing * i)
-        print("Frequency: " + str(current_frequency))
+        print(f"Frequency: {current_frequency:e} Hz")
         printImpedance(scriptHandle.getImpedance(current_frequency))
         
     return
@@ -41,8 +41,8 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
 
     for i in range(5):
-        print(f"Potential:\t{zahnerZennium.getPotential()}\tV")
-        print(f"Current:\t{zahnerZennium.getCurrent()}\tA")
+        print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
+        print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
 
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_GALVANOSTATIC)
@@ -50,16 +50,20 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
 
     for i in range(5):
-        print(f"Potential:\t{zahnerZennium.getPotential()}\tV")
-        print(f"Current:\t{zahnerZennium.getCurrent()}\tA")
+        print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
+        print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
 
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     zahnerZennium.setPotential(1.0)
     zahnerZennium.enablePotentiostat()
     zahnerZennium.setFrequency(2000)
-    zahnerZennium.setAmplitude(10e-3)
     zahnerZennium.setNumberOfPeriods(3)
+    
+    zahnerZennium.enablePotentiostat()
+    zahnerZennium.getCurrent()
+
+    zahnerZennium.setAmplitude(10e-3)
 
     printImpedance(zahnerZennium.getImpedance())
     printImpedance(zahnerZennium.getImpedance(2000))

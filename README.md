@@ -13,15 +13,16 @@ The complete documentation of the individual functions can be found on the [API 
 
 The library to control the potentiostats is the subfolder [thales_remote](thales_remote). The [thales_file_import](thales_file_import) subfolder contains the library for importing Thales file formats. The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
 
-### Integrated development environment
-With an integrated development environment (IDE), for example [Eclipse](https://www.eclipse.org/) with [PyDev](https://www.pydev.org/) extension, the package must be added to the project.
-[thales_remote](thales_remote) can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the project, updates can be easily done.
-If you are using Eclipse you can use the extension [EGit](https://www.eclipse.org/egit/) for this.
+### Integrated development environment - IDE
+[thales_remote](thales_remote) can either be simply downloaded or best pulled with Git from the GitHub repository. With GitHub integration into the IDE, updates can be easily done.
 
 ### Package download
-Download the subdirectory [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) and put these two directories into your source directory where your Python script is located. Or add the path of the two directories [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) on your computer to the PYTHONPATH.
+Download the subdirectory [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) and put these two directories into your source directory where your Python script is located.  
+Or add the path of the two directories [thales_remote](thales_remote) and if needed [thales_file_import](thales_file_import) on your computer to the [PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
 # 🔨 Basic Usage
+
+The [Jupyter](https://jupyter.org/) notebook [BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb) explains the fundamentals of using the library.
 
 ```python
 """
@@ -55,12 +56,13 @@ zahnerZennium.setNumberOfPeriods(3)
 zahnerZennium.getImpedance()
 
 zahnerZennium.disablePotentiostat()
+zenniumConnection.disconnectFromTerm()
 ```
 
 # 📖 Examples
 There is at least one example for each possible electrochemical method that can be controlled remotely.
 
-[BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb) is the most basic introduction, which describes the connection setup in detail. For each example there is a Jupyter notebook which explains the example code in detail. For the user there is a Python script for each example which contains the pure Python code so that Jupyter does not need to be installed.
+[BasicIntroduction.ipynb](Examples/BasicIntroduction/BasicIntroduction.ipynb) is the most basic introduction, which describes the connection setup in detail. For each example there is a [Jupyter](https://jupyter.org/) notebook which explains the example code in detail. For the user there is a Python script for each example which contains the pure Python code so that Jupyter does not need to be installed.
 
 In the examples only one method is explained and parameterized at a time for better comprehension. But the methods can also be combined flexibly in a Python script, for example a CV measurement followed by an EIS measurement.
 
@@ -71,7 +73,7 @@ In the examples only one method is explained and parameterized at a time for bet
 * Setting potentiostat potentiostatic or galvanostatic
 * Setting output potential or current
 * Read potential and current
-* Measure impedance
+* Single frequency impedance measurement
 
 ### [EISImportPlot.ipynb](Examples/EISImportPlot/EISImportPlot.ipynb)
 
@@ -158,9 +160,13 @@ Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&
 
 # ⁉️ Found a bug or missing a specific feature?
 Feel free to **create a new issue** with an appropriate title and description in the [Thales-Remote-Python repository issue tracker](https://github.com/Zahner-elektrik/Thales-Remote-Python/issues). Or send a <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">mail</a> to our support team.  
-If you have already found a solution to your issue, **we would be happy to review your pull request**!
+If you have already found a solution to your issue or feature, **we would be happy to review your pull request**!
 
 # ✅ Requirements
 Programming is done with the latest Python version at the time of commit.
 
-The packages matplotlib, scipy and numpy are used to display the measurement results. Jupyter is not necessary, since each example is also available as a Python file.
+For the [thales_remote](thales_remote) package only the standard library was used.  
+For the [thales_file_import](thales_file_import) package [NumPy](https://numpy.org/) is needed.
+
+The packages [matplotlib](https://matplotlib.org/), [SciPy](https://scipy.org/) and [NumPy](https://numpy.org/) are used in some examples to display the measurement data graphically.
+Jupyter is not necessary, since each example is also available as a Python file.

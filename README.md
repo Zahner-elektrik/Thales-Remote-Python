@@ -144,6 +144,13 @@ In the examples only one method is explained and parameterized at a time for bet
 * Configure FRA Probe measurement
 * Measure EIS with FRA Probe
 
+### [LoadWithExternalSource.ipynb](Examples/LoadWithExternalSource/LoadWithExternalSource.ipynb)
+
+* Measure EIS at OCP with the [electronic load EL1002](https://zahner.de/products-details/electronic-loads/el1002) and the [Delta Elektronika SM3300 SM 18-220](https://www.delta-elektronika.nl/en/products/dc-power-supplies-3300w-sm3300-series.html)
+* Remote control [Delta Elektronika SM3300 SM 18-220](https://www.delta-elektronika.nl/en/products/dc-power-supplies-3300w-sm3300-series.html)
+* **Acquiring the measurement files with Python via network**
+* **Plotting the spectrum in bode representation with the matplotlib library**
+
 ### [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
 
 * Multichannel operation with several external potentiostats, of the latest generation, type **PP212, PP222, PP242 or XPOT2**.

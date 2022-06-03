@@ -2,7 +2,7 @@ import sys
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 
-from thales_file_import.ism_import import IsmImport
+from zahner_analysis.file_import.ism_import import IsmImport
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter, StrMethodFormatter

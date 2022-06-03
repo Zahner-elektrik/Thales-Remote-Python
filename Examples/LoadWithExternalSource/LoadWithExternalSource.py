@@ -7,7 +7,7 @@ from delta_remote.script_wrapper import DeltaSCPIWrapper,DeltaSources
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
 from thales_remote.file_interface import ThalesFileInterface
-from thales_file_import.ism_import import IsmImport
+from zahner_analysis.file_import.ism_import import IsmImport
 
 import matplotlib.pyplot as plt
 import numpy as np

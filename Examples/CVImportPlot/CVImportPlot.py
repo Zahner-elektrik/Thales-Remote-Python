@@ -3,7 +3,7 @@ from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 from thales_remote.file_interface import ThalesFileInterface
 
-from thales_file_import.isc_import import IscImport
+from zahner_analysis.file_import.isc_import import IscImport
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,10 +30,10 @@ if __name__ == "__main__":
     fileInterface.enableKeepReceivedFilesInObject()
     fileInterface.enableAutomaticFileExchange(fileExtensions="*.isc")
 
-    zahnerZennium.setCVStartPotential(3)
-    zahnerZennium.setCVUpperReversingPotential(3.2)
-    zahnerZennium.setCVLowerReversingPotential(2.8)
-    zahnerZennium.setCVEndPotential(3)
+    zahnerZennium.setCVStartPotential(0)
+    zahnerZennium.setCVUpperReversingPotential(0.2)
+    zahnerZennium.setCVLowerReversingPotential(-0.2)
+    zahnerZennium.setCVEndPotential(0)
 
     zahnerZennium.setCVStartHoldTime(2)
     zahnerZennium.setCVEndHoldTime(2)
@@ -41,8 +41,8 @@ if __name__ == "__main__":
     zahnerZennium.setCVCycles(1.5)
     zahnerZennium.setCVSamplesPerCycle(400)
 
-    zahnerZennium.setCVMaximumCurrent(0.001)
-    zahnerZennium.setCVMinimumCurrent(-0.001)
+    zahnerZennium.setCVMaximumCurrent(0.0002)
+    zahnerZennium.setCVMinimumCurrent(-0.0002)
 
     zahnerZennium.setCVOhmicDrop(0)
 

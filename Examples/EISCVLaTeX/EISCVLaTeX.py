@@ -5,8 +5,8 @@ from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import ThalesRemoteScriptWrapper,PotentiostatMode
 from thales_remote.file_interface import ThalesFileInterface
 
-from thales_file_import.isc_import import IscImport
-from thales_file_import.ism_import import IsmImport
+from zahner_analysis.file_import.isc_import import IscImport
+from zahner_analysis.file_import.ism_import import IsmImport
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl

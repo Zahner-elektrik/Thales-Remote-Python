@@ -60,7 +60,7 @@ class ThalesRemoteConnection(object):
         self.connectionName = ""
         return
         
-    def connectToTerm(self, address, connectionName):
+    def connectToTerm(self, address, connectionName = "ScriptRemote"):
         """ Connect to Term Software.
         
         

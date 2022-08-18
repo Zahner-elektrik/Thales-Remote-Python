@@ -43,7 +43,7 @@ class PotentiostatMode(Enum):
 class ThalesRemoteScriptWrapper(object):
     """
     Wrapper that uses the ThalesRemoteConnection class.
-    The commands are explained in the `Remote2-Manual <https://doc.zahner.de/Remote.pdf>`_.
+    The commands are explained in the `Remote2-Manual <https://doc.zahner.de/manuals/remote2.pdf>`_.
     In the document you can also find a table with error numbers which are returned.
     
     :param remoteConnection: The connection object to the Thales software.
@@ -87,6 +87,15 @@ class ThalesRemoteScriptWrapper(object):
         :rtype: string
         """
         return self.setValue("Pset", potential)    
+     
+    def setVoltage(self, potential):
+        """ Set the output potential.
+         
+        :param potential: The output potential to set.
+        :returns: The response string from the device.
+        :rtype: string
+        """
+        return self.setPotential(potential)
      
     def setMaximumShunt(self, shunt):
         """ Set the maximum shunt for measurement.
@@ -1307,8 +1316,8 @@ class ThalesRemoteScriptWrapper(object):
         With the FRA Probe, external power potentiostats, signal generators, sources, sinks can be
         controlled analog for impedance measurements.
         
-        `FRA Product Page <https://www.zahner.de/products-details/probes/fra-probe>`_  
-        `FRA Manual <https://www.zahner.de/media-files/downloads_pdf/files/m_fra.pdf>`_  
+        `FRA Product Page <https://zahner.de/products-details/probes/fra-probe>`_  
+        `FRA Manual <https://doc.zahner.de/hardware/fra_probe.pdf>`_  
         
         Before this function is called, the analog interface to the external interface must be initialized
         with the correct factors. It may be necessary to use + or - as sign, this must be tested to ensure
@@ -1514,7 +1523,7 @@ class ThalesRemoteScriptWrapper(object):
     def getWorkstationHeartBeat(self, timeout=None):
         """ Query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
         
-        The complete documentation can be found in the `DevCli-Manual <https://doc.zahner.de/DevCli.pdf>`_ Page 8.
+        The complete documentation can be found in the `DevCli-Manual <https://doc.zahner.de/manuals/devcli.pdf>`_ Page 8.
          
         
         The timeout is not set by default and the command blocks indefinitely.

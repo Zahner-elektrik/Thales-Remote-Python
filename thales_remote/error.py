@@ -46,7 +46,7 @@ In the last line you can see what kind of error has occurred:
 ThalesRemoteError.ThalesRemoteError: ERROR;100;1
     ^                                       ^
     |                                       |
-    |        Error number from the Remote2 manual https://doc.zahner.de/Remote.pdf
+    |        Error number from the Remote2 manual https://doc.zahner.de/manuals/remote2.pdf
     |        You can see in the table in chapter 7 of the manual:
     |        100 | ERROR_PARAMETER_OUT_OF_RANGE | Sent value too low/high
     |
@@ -68,7 +68,7 @@ class ThalesRemoteError(Exception):
     This exception is thrown when an error is reported in the remote protocol, for example,
     when a parameter is out of range.
     In the following document the errors are explained.
-    https://doc.zahner.de/Remote.pdf
+    https://doc.zahner.de/manuals/remote2.pdf
     """
 
     def __init__(self, message):

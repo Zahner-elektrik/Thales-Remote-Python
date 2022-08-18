@@ -67,7 +67,7 @@ class ThalesFileInterface(object):
         self.remoteConnection.disconnectFromTerm()
         return            
         
-    def enableAutomaticFileExchange(self,enable = True, fileExtensions = "*.ism*.isc*.isw"):
+    def enableAutomaticFileExchange(self,enable = True, fileExtensions = "*.ism*.isc*.isw*.iss"):
         """ Turn on automatic file exchange.
         
         If automatic file exchange is enabled, the files configured with the fileExtensions variable are transferred automatically.

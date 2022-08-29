@@ -1,6 +1,6 @@
 ![Thales-Remote-Python](https://doc.zahner.de/github_resources/Thales-Remote-Python.png)
 
-Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](https://doc.zahner.de/Remote.pdf) to control [Zahner ZENNIUM Potentiostats](https://zahner.de/products#potentiostats).  
+Thales-Remote-Python is a Python extension which uses the Zahner [Remote2](https://doc.zahner.de/manuals/remote2.pdf) to control [Zahner ZENNIUM Potentiostats](https://zahner.de/products#potentiostats).  
 It was developed to **easily integrate** [Zahner ZENNIUM Potentiostats](https://zahner.de/products#potentiostats) into Python scripts for more **complex measurement** tasks and for **automation purposes**.
 
 The measurement methods **Impedance Spectroscopy (EIS)**, **Cyclic Voltammetry (CV)**, **Current–Voltage characteristic (IE)**,and **DC sequences** are supported. Also constant current or constant voltage can be output and current and voltage can be measured. Single frequency impedance measurement is also possible. Other supported functions are the remote control of the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) and the import of ism files in Python.  
@@ -121,10 +121,11 @@ In the examples only one method is explained and parameterized at a time for bet
 
 * Setting output file naming for IE measurements
 * Parametrizing an IE measurement
+* Importing the measurement results from the iss file into Python
 
 ## [DCSequencer.ipynb](Examples/DCSequencer/DCSequencer.ipynb)
 
-* The [Zahner sequencer](https://zahner.de/media-files/support_downloads/files/sequencer_1.pdf) outputs current and voltage curves defined in a text file.
+* The [Zahner sequencer](https://doc.zahner.de/manuals/sequencer.pdf) outputs current and voltage curves defined in a text file.
 * Setting output file naming for sequence measurements
 * Parametrizing an sequence measurement
 * Measurement with an external potentiostat (EPC-Device)

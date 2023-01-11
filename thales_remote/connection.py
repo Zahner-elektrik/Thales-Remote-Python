@@ -29,11 +29,9 @@ import time
 import struct
 import threading
 import queue
-from typing import Optional, Union, Any
+from typing import Optional, Union
 from _socket import SHUT_RD
 from thales_remote.error import TermConnectionError
-
-from datetime import datetime
 
 
 class ThalesRemoteConnection(object):

@@ -1,0 +1,9 @@
+# Byte-compiled, optimized
+__pycache__
+*.py[cod]
+
+# Project files
+/dist/
+/*.egg-info/
+
+# IDEs

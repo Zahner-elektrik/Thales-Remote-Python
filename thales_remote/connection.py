@@ -61,6 +61,15 @@ class ThalesRemoteConnection(object):
             self._queuesForChannels[channel] = queue.Queue()
 
         self._connectionName = ""
+    
+    # methods for context handler
+    # documentation: https://docs.python.org/3/reference/datamodel.html#context-managers
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._socket_handle is not None:
+            self.disconnectFromTerm()
 
     def connectToTerm(
         self, address: str, connection_name: str = "ScriptRemote"

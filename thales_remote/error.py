@@ -25,7 +25,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 
-
 """
 The following is an example for troubleshooting when an exception is thrown.
 
@@ -63,31 +62,32 @@ The first two lines of the traceback show the file and line number and the conte
 
 
 class ThalesRemoteError(Exception):
-    """ Thales Remote Exception Class
-    
+    """Thales Remote Exception Class
+
     This exception is thrown when an error is reported in the remote protocol, for example,
     when a parameter is out of range.
     In the following document the errors are explained.
     https://doc.zahner.de/manuals/remote2.pdf
     """
 
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-        
-        
-class TermConnectionError(Exception):
-    """ Term Connection Exception Class
-    
-    This exception is thrown when an error occurs with the term communication,
-    which has not yet been thrown by a socket exception.
-    
-    After this error the connection must be completely rebuilt.
-    """
+    message: str
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
-        
-        
-        
+
+
+class TermConnectionError(Exception):
+    """Term Connection Exception Class
+
+    This exception is thrown when an error occurs with the term communication,
+    which has not yet been thrown by a socket exception.
+
+    After this error the connection must be completely rebuilt.
+    """
+
+    message: str
+
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)

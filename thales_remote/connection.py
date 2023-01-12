@@ -61,7 +61,7 @@ class ThalesRemoteConnection(object):
             self._queuesForChannels[channel] = queue.Queue()
 
         self._connectionName = ""
-
+    
     # methods for context handler
     # documentation: https://docs.python.org/3/reference/datamodel.html#context-managers
     def __enter__(self):

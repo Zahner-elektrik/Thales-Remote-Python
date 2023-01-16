@@ -4,13 +4,8 @@ from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-        
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
 
@@ -33,7 +28,6 @@ if __name__ == "__main__":
     zahnerZennium.runSequenceFile(r"C:\Users\XXX\Desktop\myZahnerSequence.seq")
 
     zahnerZennium.selectPotentiostat(0)
-    
+
     zenniumConnection.disconnectFromTerm()
     print("finish")
-

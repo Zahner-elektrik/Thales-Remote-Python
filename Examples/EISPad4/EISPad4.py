@@ -1,6 +1,6 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 
 from zahner_analysis.file_import.ism_import import IsmImport
 import matplotlib.pyplot as plt
@@ -9,16 +9,11 @@ from matplotlib.ticker import EngFormatter
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-    
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
-    
+
     zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISNaming("counter")
@@ -39,8 +34,8 @@ if __name__ == "__main__":
     zahnerZennium.setScanDirection("startToMax")
     zahnerZennium.setScanStrategy("single")
 
-    zahnerZennium.setupPAD4(1,1,1)
-    zahnerZennium.setupPAD4(1,2,1)
+    zahnerZennium.setupPAD4(1, 1, 1)
+    zahnerZennium.setupPAD4(1, 2, 1)
     zahnerZennium.enablePAD4()
 
     zahnerZennium.enablePotentiostat()
@@ -54,13 +49,13 @@ if __name__ == "__main__":
     impedanceAbsoluteStack = ismFileStack.getImpedanceArray()
     impedancePhaseStack = ismFileStack.getPhaseArray()
     impedanceComplexStack = ismFileStack.getComplexImpedanceArray()
-    
+
     ismFileCell1 = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser01.ism")
     impedanceFrequenciesCell1 = ismFileCell1.getFrequencyArray()
     impedanceAbsoluteCell1 = ismFileCell1.getImpedanceArray()
     impedancePhaseCell1 = ismFileCell1.getPhaseArray()
     impedanceComplexCell1 = ismFileCell1.getComplexImpedanceArray()
-    
+
     ismFileCell2 = IsmImport(r"C:\THALES\temp\test1\spectra_cells_0001_ser02.ism")
     impedanceFrequenciesCell2 = ismFileCell2.getFrequencyArray()
     impedanceAbsoluteCell2 = ismFileCell2.getImpedanceArray()
@@ -69,19 +64,36 @@ if __name__ == "__main__":
 
     figNyquist, (nyquistAxis) = plt.subplots(1, 1)
     figNyquist.suptitle("Nyquist")
-    
-    nyquistAxis.plot(np.real(impedanceComplexStack), -np.imag(impedanceComplexStack), marker="x", markersize=5, label="Stack")
-    nyquistAxis.plot(np.real(impedanceComplexCell1), -np.imag(impedanceComplexCell1), marker="x", markersize=5, label="Cell 1")
-    nyquistAxis.plot(np.real(impedanceComplexCell2), -np.imag(impedanceComplexCell2), marker="x", markersize=5, label="Cell 2")
-    
+
+    nyquistAxis.plot(
+        np.real(impedanceComplexStack),
+        -np.imag(impedanceComplexStack),
+        marker="x",
+        markersize=5,
+        label="Stack",
+    )
+    nyquistAxis.plot(
+        np.real(impedanceComplexCell1),
+        -np.imag(impedanceComplexCell1),
+        marker="x",
+        markersize=5,
+        label="Cell 1",
+    )
+    nyquistAxis.plot(
+        np.real(impedanceComplexCell2),
+        -np.imag(impedanceComplexCell2),
+        marker="x",
+        markersize=5,
+        label="Cell 2",
+    )
+
     nyquistAxis.grid(which="both")
     nyquistAxis.set_aspect("equal")
     nyquistAxis.xaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
     nyquistAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
     nyquistAxis.set_xlabel(r"$Z_{\rm re}$")
     nyquistAxis.set_ylabel(r"$-Z_{\rm im}$")
-    nyquistAxis.legend(fontsize = "large")
+    nyquistAxis.legend(fontsize="large")
     figNyquist.set_size_inches(20, 8)
     plt.show()
     figNyquist.savefig("nyquist.svg")
-

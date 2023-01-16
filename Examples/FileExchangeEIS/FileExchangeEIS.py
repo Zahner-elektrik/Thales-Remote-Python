@@ -1,6 +1,6 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 from thales_remote.file_interface import ThalesFileInterface
 from zahner_analysis.file_import.ism_import import IsmImport
 
@@ -14,13 +14,8 @@ if __name__ == "__main__":
     remoteIP = "192.168.2.66"
 
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm(remoteIP, "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-    
+    zenniumConnection.connectToTerm(remoteIP, "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
 
@@ -48,35 +43,41 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
 
     zahnerZennium.measureEIS()
-    
+
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setAmplitude(0)
-    
 
     file = fileInterface.aquireFile(r"C:\THALES\temp\myeis.ism")
 
-    fileHandle = open(r"D:\myLocalDirectory\asdf.ism","wb")
-    fileHandle.write(file["binary_data"])
+    fileHandle = open(r"D:\myLocalDirectory\asdf.ism", "wb")
+    fileHandle.write(file.binaryData)
     fileHandle.close()
 
-    ismFile = IsmImport(file["binary_data"])
-    
+    ismFile = IsmImport(file.binaryData)
+
     impedanceFrequencies = ismFile.getFrequencyArray()
-    
+
     impedanceAbsolute = ismFile.getImpedanceArray()
     impedancePhase = ismFile.getPhaseArray()
-    
+
     figBode, (impedanceAxis, phaseAxis) = plt.subplots(2, 1, sharex=True)
     figBode.suptitle("Bode")
-    
-    impedanceAxis.loglog(impedanceFrequencies, impedanceAbsolute, marker="+", markersize=5)
+
+    impedanceAxis.loglog(
+        impedanceFrequencies, impedanceAbsolute, marker="+", markersize=5
+    )
     impedanceAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
     impedanceAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
     impedanceAxis.set_xlabel(r"$f$")
     impedanceAxis.set_ylabel(r"$|Z|$")
     impedanceAxis.grid(which="both")
-    
-    phaseAxis.semilogx(impedanceFrequencies, np.abs(impedancePhase * (360 / (2 * np.pi))), marker="+", markersize=5)
+
+    phaseAxis.semilogx(
+        impedanceFrequencies,
+        np.abs(impedancePhase * (360 / (2 * np.pi))),
+        marker="+",
+        markersize=5,
+    )
     phaseAxis.xaxis.set_major_formatter(EngFormatter(unit="Hz"))
     phaseAxis.yaxis.set_major_formatter(EngFormatter(unit="$°$", sep=""))
     phaseAxis.set_xlabel(r"$f$")
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     plt.show()
 
     localDirectory = r"D:\myLocalDirectory"
-    
+
     # Delete the entire contents of the directory.
     for file in os.listdir(localDirectory):
         fileWithPath = os.path.join(localDirectory, file)
@@ -99,34 +100,35 @@ if __name__ == "__main__":
         except:
             pass
 
-    fileInterface.enableSaveReceivedFilesToDisk(path = localDirectory)
+    fileInterface.enableSaveReceivedFilesToDisk(path=localDirectory)
     fileInterface.enableKeepReceivedFilesInObject()
     fileInterface.enableAutomaticFileExchange()
 
     zahnerZennium.setEISNaming("counter")
     zahnerZennium.setEISCounter(13)
     zahnerZennium.setEISOutputFileName("spectra")
-    
-    zahnerZennium.setupPAD4(1,1,1)
-    zahnerZennium.setupPAD4(1,2,1)
+
+    zahnerZennium.setupPAD4(1, 1, 1)
+    zahnerZennium.setupPAD4(1, 2, 1)
     zahnerZennium.enablePAD4()
 
     zahnerZennium.measureEIS()
     fileInterface.disableAutomaticFileExchange()
 
     zahnerZennium.measureEIS()
-    
+
     fileInterface.enableAutomaticFileExchange()
     zahnerZennium.measureEIS()
     zahnerZennium.setAmplitude(0)
 
     for file in fileInterface.getReceivedFiles():
-        ismFile = IsmImport(file["binary_data"])
-        print(f"{file['name']} measurement finished at {ismFile.getMeasurementEndDateTime()}")
+        ismFile = IsmImport(file.binaryData)
+        print(
+            f"{file.name} measurement finished at {ismFile.getMeasurementEndDateTime()}"
+        )
 
     for file in os.listdir(localDirectory):
         print(file)
 
     zenniumConnection.disconnectFromTerm()
     fileInterface.close()
-

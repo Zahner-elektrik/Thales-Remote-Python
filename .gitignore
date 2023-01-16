@@ -7,3 +7,13 @@ __pycache__
 /*.egg-info/
 
 # IDEs
+/deploy/
+/.vscode/
+/.vs/
+/.settings/
+/.ipynb_checkpoints/
+/docs/
+/source/_build/
+*__pycache__
+/.project
+/.pydevproject

@@ -1,25 +1,20 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 
 from zahner_analysis.file_import.ism_import import IsmImport
-from zahner_analysis.plotting.impedance_plot import nyquistPlotter,bodePlotter
+from zahner_analysis.plotting.impedance_plot import nyquistPlotter, bodePlotter
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-          
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
-    
+
     zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISNaming("counter")
@@ -43,24 +38,24 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
     zahnerZennium.measureEIS()
     zahnerZennium.disablePotentiostat()
-    
+
     zahnerZennium.setAmplitude(0)
-    
+
     zenniumConnection.disconnectFromTerm()
 
     ismFile = IsmImport(r"C:\THALES\temp\test1\spectra_0001.ism")
-    
+
     impedanceFrequencies = ismFile.getFrequencyArray()
-    
+
     impedanceAbsolute = ismFile.getImpedanceArray()
     impedancePhase = ismFile.getPhaseArray()
-    
+
     impedanceComplex = ismFile.getComplexImpedanceArray()
 
     print("Measurement end time: " + str(ismFile.getMeasurementEndDateTime()))
 
     (figNyquist, nyquistAxis) = nyquistPlotter(impedanceObject=ismFile)
-    
+
     figNyquist.suptitle("Nyquist")
     figNyquist.set_size_inches(18, 18)
 
@@ -69,11 +64,10 @@ if __name__ == "__main__":
     figNyquist.savefig("nyquist.svg")
 
     (figBode, (impedanceAxis, phaseAxis)) = bodePlotter(impedanceObject=ismFile)
-    
+
     figBode.suptitle("Bode")
     figBode.set_size_inches(18, 12)
-    
-    plt.show()
-    
-    figBode.savefig("bode.svg")
 
+    plt.show()
+
+    figBode.savefig("bode.svg")

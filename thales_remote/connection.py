@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2022 Zahner-Elektrik GmbH & Co. KG
+Copyright 2023 Zahner-Elektrik GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -32,6 +32,8 @@ import queue
 from typing import Optional, Union
 from _socket import SHUT_RD
 from thales_remote.error import TermConnectionError
+
+from datetime import datetime
 
 
 class ThalesRemoteConnection(object):
@@ -61,7 +63,7 @@ class ThalesRemoteConnection(object):
             self._queuesForChannels[channel] = queue.Queue()
 
         self._connectionName = ""
-    
+
     # methods for context handler
     # documentation: https://docs.python.org/3/reference/datamodel.html#context-managers
     def __enter__(self):
@@ -77,9 +79,6 @@ class ThalesRemoteConnection(object):
         """
         Connect to Term Software.
 
-        TODO:
-            - should raise exception on failure – returning bools is C-style error handling
-
         :param address: hostname or ip-address of the host running "Term" application
         :param connection_name: name of the connection ScriptRemote for Remote and Logging as Online Display
         :returns: True on success, False on failure
@@ -88,8 +87,7 @@ class ThalesRemoteConnection(object):
         try:
             self._socket_handle.connect((address, self._term_port))
         except:
-            self._socket_handle = None
-            return False
+            raise TermConnectionError("Connection to the Term not possible.")
 
         self._startTelegramListener()
 

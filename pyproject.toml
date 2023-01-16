@@ -1,18 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "thales_remote"
-version = "5.7.0"
 authors = [{ name = "Maximilian Krapp", email = "maximilian.krapp@zahner.de" }]
-description = "library to control Zahner Zennium potentiostats"
+description = "Library to control Zahner Zennium potentiostats"
 keywords = [
-    "potentiostat, electrochemistry, chemistry, eis, cyclic voltammetry, fuel-cell, battery",
+    "potentiostat", "electrochemistry", "chemistry", "eis", "cyclic voltammetry", "fuel-cell", "battery",
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
-requires_python = ">=3.9"
+requires-python = ">=3.9"
 dependencies = [
-    "matplotlib",
-    "pyserial",
-    "numpy"
+    "zahner_analysis",
+    "zahner_potentiostat",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -28,17 +30,23 @@ classifiers = [
 
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dynamic = ["version"]
 
 [project.urls]
-"Documentation"= "https://doc.zahner.de/zahner_potentiostat/index.html"
-"Examples"= "https://github.com/Zahner-elektrik/Zahner-Remote-Python"
-"Source Code"= "https://github.com/Zahner-elektrik/zahner_potentiostat"
-"Bug Tracker"= "https://github.com/Zahner-elektrik/zahner_potentiostat/issues"
+"Documentation"= "https://doc.zahner.de/thales_remote/"
+"Examples"= "https://github.com/Zahner-elektrik/Thales-Remote-Python"
+"Source Code"= "https://github.com/Zahner-elektrik/Thales-Remote-Python"
+"Bug Tracker"= "https://github.com/Zahner-elektrik/Thales-Remote-Python/issues"
 "Homepage" = "https://zahner.de/"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.setuptools_scm]
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["thales_remote*"]  # package names should match these glob patterns (["*"] by default)
+
+

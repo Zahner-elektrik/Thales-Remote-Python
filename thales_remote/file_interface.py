@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
 
-Copyright 2022 Zahner-Elektrik GmbH & Co. KG
+Copyright 2023 Zahner-Elektrik GmbH & Co. KG
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -28,9 +28,17 @@ import os
 import threading
 import time
 from queue import Empty
-from typing import Optional, Union
+from typing import Optional, Union, ByteString
 
 from thales_remote.connection import ThalesRemoteConnection
+from dataclasses import dataclass
+
+
+@dataclass
+class FileData:
+    name: str
+    path: str
+    binaryData: ByteString
 
 
 class ThalesFileInterface(object):
@@ -53,7 +61,7 @@ class ThalesFileInterface(object):
     _receiver_is_running: bool
     _automatic_file_exchange: bool
     _files_to_skip: list[str]
-    receivedFiles: list[dict[str, Union[str, bytearray]]]
+    receivedFiles: list[FileData]
     pathToSave: str
     _save_received_files_to_disk: bool
     _keep_files_in_object: bool
@@ -95,14 +103,12 @@ class ThalesFileInterface(object):
         the received files as an array with :func:`~thales_remote.file_interface.ThalesFileInterface.getReceivedFiles`.
         The standard setting is that the files remain in the object.
 
-        TODO:
-            - The `fileExtensions` parameter looks flimsy; consider using sth. more robust
-
         :param enable: Enable automatic file exchange. Default = True.
         :param fileExtensions: File extensions that will be exchanged. You can see the default paramter.
             But you can also specify only one type of file or more.
         :type fileExtensions: string
         :returns: The response string from the device.
+        :rtype: string
         """
         if enable:
             retval = self.remoteConnection.sendStringAndWaitForReplyString(
@@ -130,10 +136,7 @@ class ThalesFileInterface(object):
 
         Files with these names are not saved to disk by Python and do not remain in the object.
 
-        TODO:
-            - not sure if the `+=` operator works for both `str` and `list[str]`
-
-        :param file: filename or list with filenames to be filtered
+        :param file: Filename or list with filenames to be filtered.
         """
         if isinstance(file, list):
             self._files_to_skip.extend(file)
@@ -148,7 +151,7 @@ class ThalesFileInterface(object):
         """
         return self.enableAutomaticFileExchange(False)
 
-    def aquireFile(self, filename: str) -> Optional[dict[str, Union[str, bytearray]]]:
+    def aquireFile(self, filename: str) -> Union[FileData, None]:
         """
         transfer a single file
 
@@ -157,17 +160,10 @@ class ThalesFileInterface(object):
         The parameter filename is used to specify the full path of the file, on the computer running
         the Thales software, to be transferred e.g. r"C:\\THALES\\temp\\test1\\myeis.ism".
 
-        The function returns the file as dictionary. The dictionary has the following keys:
-
-        * "name": Filename without path.
-        * "path": Filename with path on the Thales computer.
-        * "binary_data": Data as bytearray.
-
-        If the file does not exist, the key "binary_data" contains an empty byte array.
+        The function returns the file as dataclass.
 
         :param filename: Filename with path on the Thales computer.
-        :type filename: string
-        :returns: A dictionary with the file or None if this command is called when automatic file
+        :returns: A dataclass with the file or None if this command is called when automatic file
             exchange is activated.
         """
         if self._receiver_is_running:
@@ -186,7 +182,6 @@ class ThalesFileInterface(object):
         The path must be accessible by Python, otherwise there are no restrictions on the path.
 
         :param path: Path where the files should be saved. For example r"D:\\myLocalDirectory".
-        :type path: string
         """
         self.pathToSave = path
         os.makedirs(self.pathToSave, exist_ok=True)
@@ -205,11 +200,11 @@ class ThalesFileInterface(object):
 
         :param enable: Enable automatic file saving to the hard disk. Default = True.
         :param path: Optional path where the files should be saved. For example r"D:\\myLocalDirectory".
-        :type path: string
         """
         if path is not None:
             self.setSavePath(path)
         self._save_received_files_to_disk = enable
+        return
 
     def disableSaveReceivedFilesToDisk(self) -> None:
         """
@@ -217,7 +212,7 @@ class ThalesFileInterface(object):
         """
         return self.enableSaveReceivedFilesToDisk(False)
 
-    def enableKeepReceivedFilesInObject(self, enable: bool = True):
+    def enableKeepReceivedFilesInObject(self, enable: bool = True) -> None:
         """Enable that the files remain in the Python object.
 
         If you perform many measurements, the Python object would grow larger and larger due to the
@@ -235,7 +230,7 @@ class ThalesFileInterface(object):
         """
         return self.enableKeepReceivedFilesInObject(False)
 
-    def getReceivedFiles(self) -> list[dict[str, Union[str, bytearray]]]:
+    def getReceivedFiles(self) -> list[FileData]:
         """
         read all files from the Python object
 
@@ -246,7 +241,7 @@ class ThalesFileInterface(object):
         """
         return self.receivedFiles
 
-    def getLatestReceivedFile(self) -> dict[str, Union[str, bytearray]]:
+    def getLatestReceivedFile(self) -> FileData:
         """
         read the latest files from the Python object
 
@@ -264,34 +259,22 @@ class ThalesFileInterface(object):
     # The following methods should not be called by the user.
     # They are marked with the prefix '_' after the Python convention for proteced.
 
-    def _saveReceivedFile(self, fileToWrite: str) -> None:
+    def _saveReceivedFile(self, fileToWrite: FileData) -> None:
         """
-        saves the passed file to disk ONLY IF self._save_received_files_to_disk is enabled
-
-        TODO:
-            - if not self._save_received_files_to_disk, then this method seems to fail silently
+        saves the passed file to disk.
         """
-        if self._save_received_files_to_disk:
-            fileNameWithPath = os.path.join(self.pathToSave, fileToWrite["name"])
+        fileNameWithPath = os.path.join(self.pathToSave, fileToWrite.name)
 
-            with open(fileNameWithPath, "wb") as file:
-                file.write(fileToWrite["binary_data"])
-                file.close()
+        with open(fileNameWithPath, "wb") as file:
+            file.write(fileToWrite.binaryData)
         return
 
-    def _receiveFile(
-        self, timeout: Optional[float] = None
-    ) -> dict[str, Union[str, bytearray]]:
+    def _receiveFile(self, timeout: Optional[float] = None) -> Union[FileData, None]:
         """
         receive one file with optional timeout
 
-        TODO:
-            - do not return a dict but a struct; this will prevent bugs in the future
-
-        :returns: a dict with these key-value-pairs:
-            - "name": file name as `str`
-            - "path": file path as `str`
-            - "binary_data": binary data as `bytearray`
+        :param timeout: receive timeout
+        :returns: structure with the file
         """
 
         try:
@@ -310,10 +293,10 @@ class ThalesFileInterface(object):
             fileData += receivedBytes
             bytesToReceive -= len(receivedBytes)
 
-        file_split = filePath.split("\\")
-        file_name = file_split[-1]
+        fileSplit = filePath.split("\\")
+        fileName = fileSplit[-1]
 
-        return {"name": file_name, "path": filePath, "binary_data": fileData}
+        return FileData(fileName, filePath, fileData)
 
     def _startWorker(self) -> None:
         """
@@ -334,7 +317,7 @@ class ThalesFileInterface(object):
             self.receivingWorker.join()
         return
 
-    def _fileReceiverJob(self):
+    def _fileReceiverJob(self) -> None:
         """
         method running in a separate thread; manages the received files
         """
@@ -342,7 +325,7 @@ class ThalesFileInterface(object):
             try:
                 file = self._receiveFile(1)
                 if file is not None:
-                    if file["name"] not in self._files_to_skip:
+                    if file.name not in self._files_to_skip:
                         if self._keep_files_in_object:
                             self.receivedFiles.append(file)
 

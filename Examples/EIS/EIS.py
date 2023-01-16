@@ -1,16 +1,11 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-        
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
 
@@ -35,9 +30,9 @@ if __name__ == "__main__":
     zahnerZennium.setScanStrategy("single")
 
     zahnerZennium.enablePotentiostat()
-    
+
     zahnerZennium.measureEIS()
-        
+
     zahnerZennium.disablePotentiostat()
 
     zahnerZennium.selectPotentiostat(1)
@@ -48,14 +43,14 @@ if __name__ == "__main__":
 
     zahnerZennium.setAmplitude(50e-3)
     zahnerZennium.setScanDirection("startToMin")
-    
+
     zahnerZennium.measureEIS()
 
     zahnerZennium.setEISNaming("individual")
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test3")
-    
+
     AmplitudesIn_mV_forMeasurement = [5, 10, 20, 50]
-    
+
     for amplitude in AmplitudesIn_mV_forMeasurement:
         zahnerZennium.setEISOutputFileName("spectraAmplitude{}mV".format(amplitude))
         zahnerZennium.setAmplitude(amplitude / 1000)
@@ -64,7 +59,6 @@ if __name__ == "__main__":
     zahnerZennium.setAmplitude(0)
 
     zahnerZennium.selectPotentiostat(0)
-    
+
     zenniumConnection.disconnectFromTerm()
     print("finish")
-

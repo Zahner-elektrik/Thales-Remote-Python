@@ -2,34 +2,36 @@ import sys
 import math
 import cmath
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+
 
 def printImpedance(impedance):
-    print(f"Impedance: {abs(impedance):>10.3e} ohm {cmath.phase(impedance)/cmath.pi*180.0:>10.2f} degree")
+    print(
+        f"Impedance: {abs(impedance):>10.3e} ohm {cmath.phase(impedance)/cmath.pi*180.0:>10.2f} degree"
+    )
     return
+
 
 def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
     log_lower_frequency = math.log(lower_frequency)
     log_upper_frequency = math.log(upper_frequency)
-    log_interval_spacing = (log_upper_frequency - log_lower_frequency) / (number_of_points - 1)
-    
+    log_interval_spacing = (log_upper_frequency - log_lower_frequency) / (
+        number_of_points - 1
+    )
+
     for i in range(number_of_points):
         current_frequency = math.exp(log_lower_frequency + log_interval_spacing * i)
         print(f"Frequency: {current_frequency:e} Hz")
         printImpedance(scriptHandle.getImpedance(current_frequency))
-        
+
     return
+
 
 TARGET_HOST = "localhost"
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
+    zenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
 
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
@@ -59,7 +61,7 @@ if __name__ == "__main__":
     zahnerZennium.enablePotentiostat()
     zahnerZennium.setFrequency(2000)
     zahnerZennium.setNumberOfPeriods(3)
-    
+
     zahnerZennium.enablePotentiostat()
     zahnerZennium.getCurrent()
 
@@ -76,4 +78,3 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     print("finish")
-

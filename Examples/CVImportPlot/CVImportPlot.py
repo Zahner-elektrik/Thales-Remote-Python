@@ -12,13 +12,7 @@ from matplotlib.ticker import EngFormatter
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm(
-        "localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
 
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
@@ -67,7 +61,7 @@ if __name__ == "__main__":
         Determine the maximum current for the next measurement
         from the maximum current of the last CV measurement.
         """
-        latestMeasurement = IscImport(fileInterface.getLatestReceivedFile()["binary_data"])
+        latestMeasurement = IscImport(fileInterface.getLatestReceivedFile().binaryData)
         maximumCurrent = max(abs(latestMeasurement.getCurrentArray()))
 
         zahnerZennium.setCVMaximumCurrent(maximumCurrent * 3)
@@ -75,21 +69,25 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     fileInterface.close()
-    
 
     iscFileFromDisc = IscImport(r"C:\THALES\temp\cv\cv_1000mVs.isc")
 
-    iscFiles = [IscImport(file["binary_data"]) for file in fileInterface.getReceivedFiles()]
+    iscFiles = [IscImport(file.binaryData) for file in fileInterface.getReceivedFiles()]
 
     for iscFile in iscFiles:
-        print(f"{iscFile.getScanRate()} V/s\tmeasurement finished at {iscFile.getMeasurementEndDateTime()}")
-    
+        print(
+            f"{iscFile.getScanRate()} V/s\tmeasurement finished at {iscFile.getMeasurementEndDateTime()}"
+        )
 
     figCV, (axis) = plt.subplots(1, 1)
     figCV.suptitle("Cyclic Voltammetry at different scan rates")
 
     for iscFile in iscFiles:
-        axis.plot(iscFile.getVoltageArray(), iscFile.getCurrentArray(),label=f"{iscFile.getScanRate()} $\\frac{{V}}{{s}}$")
+        axis.plot(
+            iscFile.getVoltageArray(),
+            iscFile.getCurrentArray(),
+            label=f"{iscFile.getScanRate()} $\\frac{{V}}{{s}}$",
+        )
 
     axis.grid(which="both")
     axis.xaxis.set_major_formatter(EngFormatter(unit="$V$"))
@@ -101,4 +99,3 @@ if __name__ == "__main__":
     figCV.set_size_inches(18, 18)
     plt.show()
     figCV.savefig("CV.svg")
-

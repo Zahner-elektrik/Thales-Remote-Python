@@ -9,13 +9,8 @@ from matplotlib.ticker import EngFormatter
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-        
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
 
@@ -24,7 +19,7 @@ if __name__ == "__main__":
     zahnerZennium.setIENaming("individual")
 
     zahnerZennium.calibrateOffsets()
-    
+
     zahnerZennium.setIEFirstEdgePotential(0)
     zahnerZennium.setIEFirstEdgePotentialRelation("absolute")
     zahnerZennium.setIESecondEdgePotential(0.4)
@@ -33,14 +28,14 @@ if __name__ == "__main__":
     zahnerZennium.setIEThirdEdgePotentialRelation("absolute")
     zahnerZennium.setIEFourthEdgePotential(0)
     zahnerZennium.setIEFourthEdgePotentialRelation("absolute")
-    
+
     zahnerZennium.setIEPotentialResolution(0.005)
     zahnerZennium.setIEMinimumWaitingTime(0.1)
     zahnerZennium.setIEMaximumWaitingTime(3)
-    zahnerZennium.setIERelativeTolerance(0.01)  #1 %
-    zahnerZennium.setIEAbsoluteTolerance(0.001) #1 mA
+    zahnerZennium.setIERelativeTolerance(0.01)  # 1 %
+    zahnerZennium.setIEAbsoluteTolerance(0.001)  # 1 mA
     zahnerZennium.setIEOhmicDrop(0)
-    
+
     zahnerZennium.setIEScanRate(0.05)
     zahnerZennium.setIEMaximumCurrent(3)
     zahnerZennium.setIEMinimumCurrent(-3)
@@ -50,33 +45,36 @@ if __name__ == "__main__":
 
     zahnerZennium.checkIESetup()
     print(zahnerZennium.readIESetup())
-    
+
     zahnerZennium.measureIE()
 
     zahnerZennium.setIESweepMode("dynamic scan")
     zahnerZennium.setIEOutputFileName("ie_dynamic")
-    
+
     zahnerZennium.checkIESetup()
     print(zahnerZennium.readIESetup())
-    
+
     zahnerZennium.measureIE()
 
     zahnerZennium.setIESweepMode("fixed sampling")
     zahnerZennium.setIEOutputFileName("ie_fixed")
-    
+
     zahnerZennium.checkIESetup()
     print(zahnerZennium.readIESetup())
-    
+
     zahnerZennium.measureIE()
 
     zenniumConnection.disconnectFromTerm()
 
     measurementData = IssImport(r"C:\THALES\temp\ie\ie_steady.iss")
 
-
     fig, (axis) = plt.subplots(1, 1)
-    axis.semilogy(measurementData.getVoltageArray(), abs(measurementData.getCurrentArray()), color = "red")
-    
+    axis.semilogy(
+        measurementData.getVoltageArray(),
+        abs(measurementData.getCurrentArray()),
+        color="red",
+    )
+
     axis.grid(which="both")
     axis.xaxis.set_major_formatter(EngFormatter(unit="V"))
     axis.yaxis.set_major_formatter(EngFormatter(unit="A"))
@@ -86,4 +84,3 @@ if __name__ == "__main__":
     plt.show()
 
     print("finish")
-

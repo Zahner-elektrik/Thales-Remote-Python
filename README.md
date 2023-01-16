@@ -24,7 +24,7 @@ Or add the path of the directory [thales_remote](thales_remote) on your computer
 
 # 🔬 Measurement Data Analysis
 
-There is a [separate Python package on GitHub](https://github.com/Zahner-elektrik/Zahner-Analysis-Python) for analyzing measurement data.
+There is a separate Python package on [GitHub](https://github.com/Zahner-elektrik/Zahner-Analysis-Python) and [PyPI/pip](https://pypi.org/project/zahner-analysis/) for analyzing measurement data.
 
 In this repository there are examples of how to fit equivalent electrical circuit models to electrochemical impedance spectra, also known as EIS equivalent circuit fitting. The model parameters can be further processed after the fit with Python, for example for the comparison of serial measurements.
 
@@ -107,7 +107,8 @@ In the examples only one method is explained and parameterized at a time for bet
 * Measure cylic voltammetry measurement
 * Setting output file naming for CV measurements
 * Parametrizing an CV measurement
-* Measurement with an external potentiostat (EPC-Device)
+* Importing the measurement results from the isc file into Python
+* **Acquiring the measurement files with Python via network**
 
 ## [CVImportPlot.ipynb](Examples/CVImportPlot/CVImportPlot.ipynb)
 
@@ -128,13 +129,13 @@ In the examples only one method is explained and parameterized at a time for bet
 * The [Zahner sequencer](https://doc.zahner.de/manuals/sequencer.pdf) outputs current and voltage curves defined in a text file.
 * Setting output file naming for sequence measurements
 * Parametrizing an sequence measurement
-* Measurement with an external potentiostat (EPC-Device)
+* Measurement with an [external potentiostat](https://zahner.de/products#external-potentiostats) or [external load](https://zahner.de/products#electronic-loads) ([EPC-Device](https://zahner.de/products-details/addon-cards/epc42))
 
 ## [EISCVLaTeX.ipynb](Examples/EISCVLaTeX/EISCVLaTeX.ipynb)
 
 * Measure impedance specta and cyclic voltammetry
 * Plotting the measurement data.
-* Create a PDF with the measurement data using LaTeX.
+* Create a PDF with the measurement data using [LaTeX](https://www.latex-project.org/zah)
 
 ## [EISPad4.ipynb](Examples/EISPad4/EISPad4.ipynb)
 
@@ -161,20 +162,26 @@ In the examples only one method is explained and parameterized at a time for bet
 * **Acquiring the measurement files with Python via network**
 * **Plotting the spectrum in bode representation with the matplotlib library**
 
-## [ImpedanceMultiCellCycle.ipynb](https://github.com/Zahner-elektrik/Zahner-Remote-Python/blob/master/Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
+## [ImpedanceMultiCellCycle.ipynb](Examples/ImpedanceMultiCellCycle/ImpedanceMultiCellCycle.ipynb)
 
-* Multichannel operation with several external potentiostats, of the latest generation, type **PP212, PP222, PP242 or XPOT2**.
-* Control of standalone operation of external potentiostats with the [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat) library.
-* Shared [Zennium series](https://zahner.de/products#potentiostats) device for impedance measurements.
+* Multichannel operation with several external potentiostats, of the latest generation, type **PP2x2, XPOT2 or EL1002**
+* Shared [Zennium series](https://zahner.de/products#potentiostats) device for impedance measurements
+* Operation of the power potentiostats standalone without thales with the Python package [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat)
+
+## [ImpedanceRampHotSwap.ipynb](Examples/ImpedanceRampHotSwap/ImpedanceRampHotSwap.ipynb)
+
+* Switch between Thales/EPC and SCPI/standalone operation of the external potentiostats (PP2x2, XPOT2 or EL1002) **without switching off the potentiostat**
+* Shared [Zennium series](https://zahner.de/products#potentiostats) device for impedance measurements
+* Operation of the power potentiostats standalone without thales with the Python package [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat)
 
 ## [BCMuxInterface.ipynb](Examples/BCMuxInterface/BCMuxInterface.ipynb)
 
-* Remote control of the BC-MUX.
-* Class which realizes the remote control.
+* Remote control of the BC-MUX
+* Class which realizes the remote control
 
 # 📧 Haveing a question?
 
-Send an <a href="mailto:support@zahner.de?subject=Thales-Remote-Python Question&body=Your Message">mail</a> to our support team.
+Send a [mail](mailto:support@zahner.de?subject=Thales-Remote-Python%20Question&body=Your%20Message) to our support team.
 
 # ⁉️ Found a bug or missing a specific feature?
 
@@ -187,6 +194,8 @@ Programming is done with the latest Python version at the time of commit.
 
 For the [thales_remote](thales_remote) package only the Python standard library was used.
 If measurement data are imported and plotted, the package [zahner_analysis](https://github.com/Zahner-elektrik/Zahner-Analysis-Python) is used.
+
+For standalone communication without Thales with the PP2x2, XPOT2 or EL1002 devices the [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat) package is used.
 
 The packages [matplotlib](https://matplotlib.org/), [SciPy](https://scipy.org/) and [NumPy](https://numpy.org/) are used in some examples to display the measurement data graphically.
 Jupyter is not necessary, since each example is also available as a Python file.

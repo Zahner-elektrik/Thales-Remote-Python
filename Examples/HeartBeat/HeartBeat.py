@@ -1,6 +1,6 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode,ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
 import time
 import threading
 
@@ -13,7 +13,7 @@ def watchThreadFunction():
     global zenniumConnection
     global zahnerZennium
     global keepThreadRunning
-    
+
     while keepThreadRunning:
         time.sleep(1)
         active = zahnerZennium.getTermIsActive()
@@ -21,18 +21,14 @@ def watchThreadFunction():
         if active:
             print("beat count: " + str(zahnerZennium.getWorkstationHeartBeat()))
 
+
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    connectionSuccessful = zenniumConnection.connectToTerm("localhost", "ScriptRemote")
-    if connectionSuccessful:
-        print("connection successfull")
-    else:
-        print("connection not possible")
-        sys.exit()
-        
+    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
-    
+
     zahnerZennium.calibrateOffsets()
 
     testThread = threading.Thread(target=watchThreadFunction)
@@ -53,15 +49,15 @@ if __name__ == "__main__":
     zahnerZennium.setScanStrategy("single")
 
     zahnerZennium.enablePotentiostat()
-    
+
     zahnerZennium.setFrequency(1)
     zahnerZennium.setAmplitude(10e-3)
     zahnerZennium.setNumberOfPeriods(3)
-    
+
     print("measurement start")
     zahnerZennium.measureEIS()
     print("measurement end")
-    
+
     zahnerZennium.disablePotentiostat()
 
     print("thread kill")
@@ -71,4 +67,3 @@ if __name__ == "__main__":
 
     zenniumConnection.disconnectFromTerm()
     print("finish")
-

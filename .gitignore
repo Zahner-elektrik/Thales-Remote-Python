@@ -11,7 +11,7 @@ __pycache__
 /.vscode/
 /.vs/
 /.settings/
-/.ipynb_checkpoints/
+*.ipynb_checkpoints
 /docs/
 /source/_build/
 *__pycache__

@@ -47,7 +47,7 @@ if __name__ == "__main__":
     zahnerZennium.disablePotentiostat()
     zahnerZennium.setAmplitude(0)
 
-    file = fileInterface.aquireFile(r"C:\THALES\temp\myeis.ism")
+    file = fileInterface.acquireFile(r"C:\THALES\temp\myeis.ism")
 
     fileHandle = open(r"D:\myLocalDirectory\asdf.ism", "wb")
     fileHandle.write(file.binaryData)

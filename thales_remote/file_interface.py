@@ -32,6 +32,7 @@ from typing import Optional, Union, ByteString
 
 from thales_remote.connection import ThalesRemoteConnection
 from dataclasses import dataclass
+import warnings
 
 
 @dataclass
@@ -153,6 +154,28 @@ class ThalesFileInterface(object):
 
     def aquireFile(self, filename: str) -> Union[FileData, None]:
         """
+        transfer a single file, deprecated because misspelled.
+
+        This command transfers a single from Term to Python.
+        **This command can only be executed if automatic transfer is disabled.** If automatic transfer is enabled, None is returned.
+        The parameter filename is used to specify the full path of the file, on the computer running
+        the Thales software, to be transferred e.g. r"C:\\THALES\\temp\\test1\\myeis.ism".
+
+        The function returns the file as dataclass.
+
+        :param filename: Filename with path on the Thales computer.
+        :returns: A dataclass with the file or None if this command is called when automatic file
+            exchange is activated.
+        """
+        warnings.warn(
+            "This function is misspelled and will be removed, use acquireFile instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.acquireFile(filename)
+
+    def acquireFile(self, filename: str) -> Union[FileData, None]:
+        """
         transfer a single file
 
         This command transfers a single from Term to Python.
@@ -167,12 +190,12 @@ class ThalesFileInterface(object):
             exchange is activated.
         """
         if self._receiver_is_running:
+            return None
+        else:
             self.remoteConnection.sendTelegram(
                 f"3,{self._device_name},1,{filename}", message_type=128
             )
             return self._receiveFile()
-        else:
-            return None
 
     def setSavePath(self, path: str) -> None:
         """

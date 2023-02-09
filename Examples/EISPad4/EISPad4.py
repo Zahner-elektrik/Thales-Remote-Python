@@ -1,6 +1,13 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import (
+    PotentiostatMode,
+    ScanStrategy,
+    ScanDirection,
+    FileNaming,
+    Pad4Mode,
+    ThalesRemoteScriptWrapper,
+)
 
 from zahner_analysis.file_import.ism_import import IsmImport
 import matplotlib.pyplot as plt
@@ -16,7 +23,7 @@ if __name__ == "__main__":
 
     zahnerZennium.calibrateOffsets()
 
-    zahnerZennium.setEISNaming("counter")
+    zahnerZennium.setEISNaming(FileNaming.COUNTER)
     zahnerZennium.setEISCounter(1)
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
     zahnerZennium.setEISOutputFileName("spectra_cells")
@@ -24,19 +31,20 @@ if __name__ == "__main__":
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
     zahnerZennium.setAmplitude(100e-3)
     zahnerZennium.setPotential(0)
-    zahnerZennium.setLowerFrequencyLimit(0.1)
+    zahnerZennium.setLowerFrequencyLimit(1)
     zahnerZennium.setStartFrequency(1000)
-    zahnerZennium.setUpperFrequencyLimit(50000)
+    zahnerZennium.setUpperFrequencyLimit(10000)
     zahnerZennium.setLowerNumberOfPeriods(2)
     zahnerZennium.setLowerStepsPerDecade(5)
     zahnerZennium.setUpperNumberOfPeriods(20)
     zahnerZennium.setUpperStepsPerDecade(10)
-    zahnerZennium.setScanDirection("startToMax")
-    zahnerZennium.setScanStrategy("single")
+    zahnerZennium.setScanDirection(ScanDirection.START_TO_MAX)
+    zahnerZennium.setScanStrategy(ScanStrategy.SINGLE_SINE)
 
-    zahnerZennium.setupPAD4(1, 1, 1)
-    zahnerZennium.setupPAD4(1, 2, 1)
-    zahnerZennium.enablePAD4()
+    zahnerZennium.setupPad4Channel(1, 1, 1, voltageRange=4.0, shuntResistor=10e-3)
+    zahnerZennium.setupPad4Channel(1, 2, 1, voltageRange=4.0, shuntResistor=10e-3)
+    zahnerZennium.setupPad4ModeGlobal(Pad4Mode.VOLTAGE)  # or Pad4Mode.CURRENT
+    zahnerZennium.enablePad4Global()
 
     zahnerZennium.enablePotentiostat()
     zahnerZennium.measureEIS()

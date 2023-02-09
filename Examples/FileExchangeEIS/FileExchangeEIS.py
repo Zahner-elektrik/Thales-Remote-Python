@@ -1,6 +1,13 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import (
+    PotentiostatMode,
+    ScanStrategy,
+    ScanDirection,
+    FileNaming,
+    Pad4Mode,
+    ThalesRemoteScriptWrapper,
+)
 from thales_remote.file_interface import ThalesFileInterface
 from zahner_analysis.file_import.ism_import import IsmImport
 
@@ -24,7 +31,7 @@ if __name__ == "__main__":
     fileInterface = ThalesFileInterface(remoteIP)
 
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp")
-    zahnerZennium.setEISNaming("individual")
+    zahnerZennium.setEISNaming(FileNaming.INDIVIDUAL)
     zahnerZennium.setEISOutputFileName("myeis")
 
     zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
@@ -37,8 +44,8 @@ if __name__ == "__main__":
     zahnerZennium.setLowerStepsPerDecade(5)
     zahnerZennium.setUpperNumberOfPeriods(20)
     zahnerZennium.setUpperStepsPerDecade(5)
-    zahnerZennium.setScanDirection("startToMax")
-    zahnerZennium.setScanStrategy("single")
+    zahnerZennium.setScanDirection(ScanDirection.START_TO_MAX)
+    zahnerZennium.setScanStrategy(ScanStrategy.SINGLE_SINE)
 
     zahnerZennium.enablePotentiostat()
 
@@ -108,9 +115,10 @@ if __name__ == "__main__":
     zahnerZennium.setEISCounter(13)
     zahnerZennium.setEISOutputFileName("spectra")
 
-    zahnerZennium.setupPAD4(1, 1, 1)
-    zahnerZennium.setupPAD4(1, 2, 1)
-    zahnerZennium.enablePAD4()
+    zahnerZennium.setupPad4Channel(1, 1, 1, voltageRange=4.0, shuntResistor=10e-3)
+    zahnerZennium.setupPad4Channel(1, 2, 1, voltageRange=4.0, shuntResistor=10e-3)
+    zahnerZennium.setupPad4ModeGlobal(Pad4Mode.VOLTAGE)  # or Pad4Mode.CURRENT
+    zahnerZennium.enablePad4Global()
 
     zahnerZennium.measureEIS()
     fileInterface.disableAutomaticFileExchange()

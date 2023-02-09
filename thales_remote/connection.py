@@ -83,6 +83,7 @@ class ThalesRemoteConnection(object):
         :param connection_name: name of the connection ScriptRemote for Remote and Logging as Online Display
         :returns: True on success, False on failure
         """
+        time.sleep(0.4)
         self._socket_handle = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self._socket_handle.connect((address, self._term_port))
@@ -98,7 +99,7 @@ class ThalesRemoteConnection(object):
 
         registration_packet = bytearray()
         registration_packet += bytearray(struct.pack("<H", payload_length))
-        registration_packet += bytearray([0x02, 0xD0, 0xFF, 0xFF, 0xFF, 0xFF])
+        registration_packet += bytearray([0x12, 0xD0, 0xFF, 0xFF, 0xFF, 0xFF])
         registration_packet += bytearray(connection_name, "ASCII")
 
         # print("\n" + str(datetime.now().time()) + " send:")

@@ -1,6 +1,11 @@
 import sys
 from thales_remote.connection import ThalesRemoteConnection
-from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWrapper
+from thales_remote.script_wrapper import (
+    PotentiostatMode,
+    ThalesRemoteScriptWrapper,
+    ScanStrategy,
+    ScanDirection,
+)
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
@@ -26,8 +31,8 @@ if __name__ == "__main__":
     zahnerZennium.setLowerStepsPerDecade(2)
     zahnerZennium.setUpperNumberOfPeriods(20)
     zahnerZennium.setUpperStepsPerDecade(5)
-    zahnerZennium.setScanDirection("startToMax")
-    zahnerZennium.setScanStrategy("single")
+    zahnerZennium.setScanDirection(ScanDirection.START_TO_MAX)
+    zahnerZennium.setScanStrategy(ScanStrategy.SINGLE_SINE)
 
     zahnerZennium.enablePotentiostat()
 

@@ -101,8 +101,8 @@ class FileNaming(Enum):
     """
 
     DATE_TIME = 0
-    INDIVIDUAL = 1
-    COUNTER = 2
+    COUNTER = 1
+    INDIVIDUAL = 2
 
     @classmethod
     def stringToEnum(cls, string: str):
@@ -114,6 +114,17 @@ class FileNaming(Enum):
         if not string in stringEnumMap:
             raise ValueError("invalid string: " + string)
         return stringEnumMap.get(string)
+
+
+class Pad4Mode(Enum):
+    """
+    options for the PAD4 operating mode.
+
+    All channels can be either voltage or current. Individual setting is not possible.
+    """
+
+    VOLTAGE = 0
+    CURRENT = 1
 
 
 class ThalesRemoteScriptWrapper(object):
@@ -401,29 +412,58 @@ class ThalesRemoteScriptWrapper(object):
         """
         return self.enableRuleFileUsage(False)
 
-    def setupPAD4(self, card: int, channel: int, state: Union[int, bool]) -> str:
+    def setupPad4Channel(
+        self,
+        card: int,
+        channel: int,
+        state: Union[int, bool],
+        voltageRange: Optional[float] = None,
+        shuntResistor: Optional[float] = None,
+    ) -> None:
         """
         Setting a channel of a PAD4 card for an EIS measurement
+
+        Each PAD4 channel must be configured individually. Each channel can be switched on or off individually.
+        But the PAD4 measurements must still be switched on globally with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.enablePad4Global`.
+        Each channel can be given a different voltage range or shunt.
 
         :param card: index of the card starting at 1 and up to 4
         :param channel: index of the card starting at 1 and up to 4
         :param state: If `1` or `True` the channel is switched on else switched off
+        :param voltageRange: input voltage range, if this differs from 4 V
+        :param shuntResistor: shunt resistor, which is used. Only used if :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setupPad4ModeGlobal` is set to :class:`.Pad4Mode`.CURRENT
         :returns: reponse string from the device
         """
-        if isinstance(state, int):
-            state = state == 1
-        reply = self.executeRemoteCommand(
-            "PAD4=" + str(card) + ";" + ("1" if state else "0")
-        )
+        commands = [f"PAD4={card};{channel};{1 if state else 0}"]
+        if voltageRange:
+            commands.append(f"PAD4_PRANGE={card};{channel};{voltageRange}")
+        if shuntResistor:
+            commands.append(f"PAD4_RSHUNT={card};{channel};{shuntResistor}")
 
-        if "ERROR" in reply:
-            raise ThalesRemoteError(
-                reply.rstrip("\r")
-                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
-            )
-        return reply
+        for command in commands:
+            if isinstance(state, int):
+                state = state == 1
+            reply = self.executeRemoteCommand(command)
 
-    def enablePAD4(self, state: bool = True) -> str:
+            if "ERROR" in reply:
+                raise ThalesRemoteError(
+                    reply.rstrip("\r")
+                    + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+                )
+        return
+
+    def setupPad4ModeGlobal(self, mode: Pad4Mode) -> str:
+        """
+        Switch between current and voltage measurement
+
+        The user can switch the type of PAD4 channels between voltage sense (standard configuration) and current sense (with additional shunt resistor).
+
+        :param mode: :class:`.Pad4Mode`.VOLTAGE or :class:`.Pad4Mode`.CURRENT
+        :returns: reponse string from the device
+        """
+        return self.executeRemoteCommand(f"PAD4MOD={mode.value}")
+
+    def enablePad4Global(self, state: bool = True) -> str:
         """
         switch on the set PAD4 channels
 
@@ -435,7 +475,7 @@ class ThalesRemoteScriptWrapper(object):
         """
         return self.setValue("PAD4ENA", 1 if state else 0)
 
-    def disablePAD4(self) -> str:
+    def disablePad4Global(self) -> str:
         """
         switch off the set PAD4 channels
 
@@ -443,7 +483,7 @@ class ThalesRemoteScriptWrapper(object):
         """
         return self.enablePAD4(False)
 
-    def readPAD4Setup(self) -> str:
+    def readPad4SetupGlobal(self) -> str:
         """
         read the currently set parameters
 
@@ -806,6 +846,7 @@ class ThalesRemoteScriptWrapper(object):
         set the maximum current
 
         The maximum positive current at which the measurement is interrupted.
+        This is also the current which is used to determine the shunt. This cannot be deactivated.
 
         :param current: The maximum current for measurement in A at which the measurement is interrupted
         :returns: reponse string from the device
@@ -817,6 +858,7 @@ class ThalesRemoteScriptWrapper(object):
         set the minimum current
 
         The maximum negative current at which the measurement is interrupted.
+        This is also the current which is used to determine the shunt. This cannot be deactivated.
 
         :param current: The minimum current for measurement in A.
         :returns: reponse string from the device

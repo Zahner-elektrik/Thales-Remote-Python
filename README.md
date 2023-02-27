@@ -17,6 +17,10 @@ The package can be installed via pip.
 pip install thales_remote
 ```
 
+> ⚠️ Since v1.1.0 works only with Thales ≥ 5.8.5. For previous versions of thales sofware download older version of the package.
+> 
+> For example: ``` pip install thales_remote==1.0.1 ```
+
 The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
 
 # 🔬 Measurement Data Analysis

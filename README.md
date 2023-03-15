@@ -17,7 +17,7 @@ The package can be installed via pip.
 pip install thales_remote
 ```
 
-> ⚠️ Since v1.1.0 works only with Thales ≥ 5.8.5. For previous versions of thales sofware download older version of the package.
+> ⚠️ Since v1.1.0 works only with Thales ≥ 5.8.5. For previous versions of Thales Software, please download an older version of the package.
 > 
 > For example: ``` pip install thales_remote==1.0.1 ```
 

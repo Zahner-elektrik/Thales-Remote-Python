@@ -27,6 +27,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import json
 import os
 import pathlib
+from multiprocessing import Pool
 
 """
 This module contains internally required functions to automatically convert Jupyter notebooks into
@@ -50,6 +51,7 @@ def notebookCodeToPython(jupyterNotebookName):
     :param jupyterNotebookName: The notebook file name.
     """
     notebookText = ""
+    print(jupyterNotebookName)
     with open(jupyterNotebookName, "r", encoding="utf-8") as f:
         notebookJson = json.load(f)
         for cell in notebookJson["cells"]:
@@ -100,8 +102,7 @@ if __name__ == "__main__":
         if "checkpoint" not in str(file)
     ]
 
-    for notebook in notebooks:
-        print(notebook)
-        notebookCodeToPython(notebook)
+    with Pool(max(16, len(notebooks))) as p:
+        results = p.map(notebookCodeToPython, notebooks)
 
     print("finish")

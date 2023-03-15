@@ -46,7 +46,7 @@ class PotentiostatMode(Enum):
 
 class ScanStrategy(Enum):
     """
-    options for the EIS scan strategy.
+    options for the EIS scan strategy
 
     * SINGLE_SINE: single frequency sweep
     * MULTI_SINE: multi sine

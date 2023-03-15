@@ -77,10 +77,14 @@ class ThalesRemoteConnection(object):
         self, address: str, connection_name: str = "ScriptRemote"
     ) -> bool:
         """
-        Connect to Term Software.
+        Connect to the Term Software with a IP address and an optional connection name.
+
+        *connection_name* cannot be chosen completely freely.
+        If you want to send Remote2 commands with the connection,
+        then the name **ScriptRemote** must be used and if you want to receive the online display data, then the name **Logging** must be used.
 
         :param address: hostname or ip-address of the host running "Term" application
-        :param connection_name: name of the connection ScriptRemote for Remote and Logging as Online Display
+        :param connection_name: name of the connection. *ScriptRemote* for Remote2 and *Logging* as Online Display are fixed.
         :returns: True on success, False on failure
         """
         time.sleep(0.4)

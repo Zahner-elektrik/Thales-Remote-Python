@@ -56,7 +56,7 @@ class ThalesRemoteConnection(object):
         self._receiving_worker = None
         self._send_mutex = threading.Semaphore(1)
         self._receiving_worker_is_running = False
-        self._available_channels = [2, 128, 129, 130, 131, 132]
+        self._available_channels = [2, 42, 128, 129, 130, 131, 132]
         self._queuesForChannels = dict()
 
         for channel in self._available_channels:

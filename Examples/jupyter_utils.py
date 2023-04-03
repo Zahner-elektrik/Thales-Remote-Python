@@ -93,7 +93,6 @@ def executionInNotebook():
 
 
 if __name__ == "__main__":
-
     notebooks = [
         str(file)
         for file in list(

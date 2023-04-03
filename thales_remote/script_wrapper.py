@@ -30,8 +30,14 @@ import shutil
 import os
 from typing import Optional, Union, Any
 
-from thales_remote.error import ThalesRemoteError
+from thales_remote.error import ThalesRemoteError, TermConnectionError
 from thales_remote.connection import ThalesRemoteConnection
+
+MINIMUM_THALES_VERSION = "5.8.6"
+
+
+def versiontuple(v):
+    return tuple(map(int, (v.split("."))))
 
 
 class PotentiostatMode(Enum):
@@ -141,6 +147,25 @@ class ThalesRemoteScriptWrapper(object):
 
     def __init__(self, remoteConnection: ThalesRemoteConnection):
         self._remote_connection = remoteConnection
+        try:
+            versionReply = self.getThalesVersion(timeout=1)
+        except TermConnectionError as err:
+            raise ThalesRemoteError("Please update your Thales version.")
+
+        if "devel" in versionReply:
+            print("devel version")
+        elif "" == versionReply:
+            # timeout
+            raise ThalesRemoteError("Please update your Thales version.")
+        else:
+            match = re.search(r"(\d+.\d+.\d+)", versionReply)
+            versionString = match.group(1)
+            versionComp = versiontuple(versionString) < versiontuple(
+                MINIMUM_THALES_VERSION
+            )
+            if versionComp:
+                raise ThalesRemoteError("Please update your Thales version.")
+        return
 
     def getCurrent(self) -> float:
         """
@@ -1615,7 +1640,8 @@ class ThalesRemoteScriptWrapper(object):
         return reply
 
     def executeRemoteCommand(self, command: str) -> str:
-        """Directly execute a query to Remote Script.
+        """
+        directly execute a query to Remote Script.
 
         :param command: The command query string, e.g. "IMPEDANCE" or "Pset=0".
         :returns: reponse string from the device
@@ -1625,7 +1651,8 @@ class ThalesRemoteScriptWrapper(object):
         )
 
     def forceThalesIntoRemoteScript(self) -> str:
-        """Prompts Thales to start the Remote Script.
+        """
+        prompts Thales to start the Remote Script.
 
         Will switch a running Thales from anywhere like the main menu after
         startup to running measurements into Remote Script so it can process
@@ -1646,8 +1673,47 @@ class ThalesRemoteScriptWrapper(object):
             f"2,{self._remote_connection.getConnectionName()}", 128
         )
 
+    def hideWindow(self):
+        """
+        hide Thales window.
+
+        This is for remote integrations to prevent operation of the GUI.
+        Thales is still visible in the taskbar but can no longer be maximized.
+
+        :returns: reponse string from the device
+        """
+        return self._remote_connection.sendStringAndWaitForReplyString(
+            f"3,{self._remote_connection.getConnectionName()},5,off", 128
+        )
+
+    def showWindow(self):
+        """
+        show Thales window.
+
+        If the Thales window has been hidden, it can be displayed again with this command.
+
+        :returns: reponse string from the device
+        """
+        return self._remote_connection.sendStringAndWaitForReplyString(
+            f"3,{self._remote_connection.getConnectionName()},5,on", 128
+        )
+
+    def getThalesVersion(self, timeout: Optional[float] = None):
+        """
+        get Thales Version.
+
+        Reads the current Thales version. Same version as in the application title line.
+
+        :param timeout: The time in seconds in which the term must provide the answer.
+        :returns: serialnumber as string.
+        """
+        return self._remote_connection.sendStringAndWaitForReplyString(
+            f"3,{self._remote_connection.getConnectionName()},7", 128, timeout
+        ).split(",")[2]
+
     def getWorkstationHeartBeat(self, timeout: Optional[float] = None) -> float:
-        """Query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
+        """
+        query the heartbeat time from the Term software for the workstation and the Thales software accordingly.
 
         The complete documentation can be found in the `DevCli-Manual <https://doc.zahner.de/manuals/devcli.pdf>`_ Page 8.
 
@@ -1665,7 +1731,8 @@ class ThalesRemoteScriptWrapper(object):
         return float(retval.split(",")[2])
 
     def getSerialNumberFromTerm(self) -> str:
-        """Get the serial number of the workstation via the Term software.
+        """
+        get the serial number of the workstation via the Term software.
 
         The serial number of the active potentiostat with EPC devices can be read with the
         :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.getSerialNumber` function.
@@ -1679,7 +1746,8 @@ class ThalesRemoteScriptWrapper(object):
         return retval.split(",")[2]
 
     def getTermIsActive(self, timeout: float = 2) -> bool:
-        """Check if the Term still responds to requests.
+        """
+        check if the Term still responds to requests.
 
         Whether the term is still active is checked by sending a heartbeat command.
         If the term does not respond after the timeout, an exception is thrown and this is caught with the except block.

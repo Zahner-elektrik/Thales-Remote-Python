@@ -31,7 +31,7 @@ TARGET_HOST = "localhost"
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    zenniumConnection.connectToTerm(TARGET_HOST, "ScriptRemote")
+    zenniumConnection.connectToTerm(TARGET_HOST)
 
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()

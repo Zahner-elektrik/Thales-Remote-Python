@@ -5,11 +5,12 @@ from thales_remote.script_wrapper import (
     ThalesRemoteScriptWrapper,
     ScanStrategy,
     ScanDirection,
+    FileNaming,
 )
 
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
-    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+    zenniumConnection.connectToTerm("localhost")
 
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
@@ -17,7 +18,7 @@ if __name__ == "__main__":
     zahnerZennium.calibrateOffsets()
 
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test1")
-    zahnerZennium.setEISNaming("counter")
+    zahnerZennium.setEISNaming(FileNaming.COUNTER)
     zahnerZennium.setEISCounter(13)
     zahnerZennium.setEISOutputFileName("spectra")
 
@@ -42,22 +43,22 @@ if __name__ == "__main__":
 
     zahnerZennium.selectPotentiostat(1)
 
-    zahnerZennium.setEISNaming("dateTime")
+    zahnerZennium.setEISNaming(FileNaming.DATE_TIME)
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test2")
     zahnerZennium.setEISOutputFileName("spectra")
 
     zahnerZennium.setAmplitude(50e-3)
-    zahnerZennium.setScanDirection("startToMin")
+    zahnerZennium.setScanDirection(ScanDirection.START_TO_MAX)
 
     zahnerZennium.measureEIS()
 
-    zahnerZennium.setEISNaming("individual")
+    zahnerZennium.setEISNaming(FileNaming.INDIVIDUAL)
     zahnerZennium.setEISOutputPath(r"C:\THALES\temp\test3")
 
     AmplitudesIn_mV_forMeasurement = [5, 10, 20, 50]
 
     for amplitude in AmplitudesIn_mV_forMeasurement:
-        zahnerZennium.setEISOutputFileName("spectraAmplitude{}mV".format(amplitude))
+        zahnerZennium.setEISOutputFileName(f"spectraAmplitude{amplitude}mV")
         zahnerZennium.setAmplitude(amplitude / 1000)
         zahnerZennium.measureEIS()
 

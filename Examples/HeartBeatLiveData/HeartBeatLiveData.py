@@ -74,6 +74,7 @@ if __name__ == "__main__":
 
     zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
     zahnerZennium.forceThalesIntoRemoteScript()
+    zahnerZennium.hideWindow()
 
     zahnerZennium.calibrateOffsets()
 
@@ -114,6 +115,7 @@ if __name__ == "__main__":
     keepThreadRunning = False
 
     print("disconnect connections")
+    zahnerZennium.showWindow()
     zenniumConnection.disconnectFromTerm()
     zenniumConnectionLiveData.disconnectFromTerm()
 

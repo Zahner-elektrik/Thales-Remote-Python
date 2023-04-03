@@ -1,0 +1,21 @@
+start_cycle	
+  samples(10)
+  ocp(TIM2)
+  hold_cur(CUR1,TIM1)
+end_cycle
+	
+start_variables
+  TIM1=\PYVAR{dc_time}
+  TIM2=\PYVAR{ocp_time}
+  CUR1=\PYVAR{dc_current}
+end_variables
+
+start_online
+ cur_hi=3
+ cur_lo=-3
+ pot_hi=4
+ pot_lo=-4
+ pot_of=2
+ cur_of=2
+ end_on=1
+end_online

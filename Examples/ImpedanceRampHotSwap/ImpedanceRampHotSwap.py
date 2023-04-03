@@ -62,7 +62,6 @@ if __name__ == "__main__":
     ]
 
     for setting in measurementSettings:
-
         deviceHandler.scpiInterface.setCurrentValue(
             deviceHandler.scpiInterface.getCurrent()
         )

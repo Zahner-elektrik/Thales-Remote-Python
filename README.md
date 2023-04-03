@@ -17,8 +17,8 @@ The package can be installed via pip.
 pip install thales_remote
 ```
 
-> ⚠️ Since v1.1.0 works only with Thales ≥ 5.8.5. For previous versions of Thales Software, please download an older version of the package.
-> 
+> ⚠️ Since v1.1.1 works only with Thales ≥ 5.8.6. For previous versions of Thales Software, please download an older version of the package.
+>
 > For example: ``` pip install thales_remote==1.0.1 ```
 
 The class [BCMuxInterface](https://doc.zahner.de/thales_remote/bc_mux_interface.html) to control the [BC-MUX](https://zahner.de/products-details/multiplexer/bc-mux) is located in the Python file [BCMuxInterface.py](Examples/BCMuxInterface/BCMuxInterface.py), from this file the class can be imported.
@@ -90,6 +90,13 @@ In the examples only one method is explained and parameterized at a time for bet
 * Measurement of an impedance spectrum - EIS
 * **Importing the measurement results from the ism file into Python**
 * **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
+
+## [DynamicDCSequenceEIS.ipynb](Examples/DynamicDCSequenceEIS/DynamicDCSequenceEIS.ipynb)
+
+* [Zahner DC Sequencer](https://doc.zahner.de/manuals/sequencer.pdf) measurement
+* Sequencer file generation with [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/) template engine
+* Measurements at different current strengths or current densities
+* EIS measurement
 
 ## [FileExchangeEIS.ipynb](Examples/FileExchangeEIS/FileExchangeEIS.ipynb)
 

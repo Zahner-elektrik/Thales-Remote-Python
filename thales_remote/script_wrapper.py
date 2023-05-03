@@ -186,6 +186,14 @@ class ThalesRemoteScriptWrapper(object):
         return self._requestValueAndParseUsingRegexp(
             "POTENTIAL", "potential=\s*(.*?)V?[\r\n]{0,2}$"
         )
+      
+    def getVoltage(self) -> float:
+        """
+        fead the measured potential from the device
+
+        :returns: the measured potential value
+        """
+        return self.getPotential()
 
     def setCurrent(self, current: float) -> str:
         """

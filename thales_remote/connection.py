@@ -102,7 +102,7 @@ class ThalesRemoteConnection(object):
         payload_length = len(connection_name)
 
         registration_packet = bytearray()
-        registration_packet += bytearray(struct.pack("<H", payload_length))
+        registration_packet += bytearray(struct.pack(">H", payload_length))
         registration_packet += bytearray([0x12, 0xD0, 0xFF, 0xFF, 0xFF, 0xFF])
         registration_packet += bytearray(connection_name, "ASCII")
 

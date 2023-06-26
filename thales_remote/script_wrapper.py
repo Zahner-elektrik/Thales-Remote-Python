@@ -186,7 +186,7 @@ class ThalesRemoteScriptWrapper(object):
         return self._requestValueAndParseUsingRegexp(
             "POTENTIAL", "potential=\s*(.*?)V?[\r\n]{0,2}$"
         )
-      
+
     def getVoltage(self) -> float:
         """
         fead the measured potential from the device
@@ -375,6 +375,27 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand("ALLNUM")
         match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
         return match.group(3)
+
+    def readSetup(self) -> str:
+        """
+        read the currently set parameters
+
+        A string containing the configuration is returned.
+        For Example:
+
+        .. code-block::
+
+            OK;SETUP;Pset=1.0000e-05;Cset=1.0000e-06;Frq=1.0000e+03;Ampl=0.0000e+00;Nw=1;Pot=0;Gal=0;GAL=0;Cmin=-3.0000e+00;Cmax=3.0000e+00;Pmin=-5.2377e+00;Pmax=5.2377e+00;DEV=0;EPC=0;MAXDEV=4;ENDSETUP
+
+        :returns: reponse string from the device
+        """
+        reply = self.executeRemoteCommand("SENDSETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        return reply
 
     def calibrateOffsets(self) -> str:
         """

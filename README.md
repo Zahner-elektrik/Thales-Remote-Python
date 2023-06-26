@@ -187,7 +187,7 @@ In the examples only one method is explained and parameterized at a time for bet
 * Remote control of the BC-MUX
 * Class which realizes the remote control
 
-# 📧 Haveing a question?
+# 📧 Having a question?
 
 Send a [mail](mailto:support@zahner.de?subject=Thales-Remote-Python%20Question&body=Your%20Message) to our support team.
 

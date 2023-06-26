@@ -65,6 +65,7 @@ def notebookCodeToPython(jupyterNotebookName):
         f.write(notebookText.encode(encoding="UTF-8"))
 
     os.system(f"python -m black {jupyterName}")
+    os.system(f"python -m black {jupyterNotebookName}")
     return
 
 

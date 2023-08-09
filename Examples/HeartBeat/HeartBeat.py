@@ -4,15 +4,16 @@ from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWra
 import time
 import threading
 
-zenniumConnection = None
-zahnerZennium = None
 keepThreadRunning = True
 
 
 def watchThreadFunction():
-    global zenniumConnection
-    global zahnerZennium
     global keepThreadRunning
+
+    zenniumConnection = ThalesRemoteConnection()
+    zenniumConnection.connectToTerm("localhost", "Watch")
+
+    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
 
     while keepThreadRunning:
         time.sleep(1)
@@ -20,6 +21,8 @@ def watchThreadFunction():
         print("active state: " + str(active))
         if active:
             print("beat count: " + str(zahnerZennium.getWorkstationHeartBeat()))
+    zenniumConnection.disconnectFromTerm()
+    return
 
 
 if __name__ == "__main__":
@@ -31,39 +34,39 @@ if __name__ == "__main__":
 
     zahnerZennium.calibrateOffsets()
 
-    testThread = threading.Thread(target=watchThreadFunction)
-    testThread.start()
-    print("heartbeat thread started")
+testThread = threading.Thread(target=watchThreadFunction)
+testThread.start()
+print("heartbeat thread started")
 
-    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    zahnerZennium.setAmplitude(10e-3)
-    zahnerZennium.setPotential(0)
-    zahnerZennium.setLowerFrequencyLimit(500)
-    zahnerZennium.setStartFrequency(1000)
-    zahnerZennium.setUpperFrequencyLimit(10000)
-    zahnerZennium.setLowerNumberOfPeriods(5)
-    zahnerZennium.setLowerStepsPerDecade(2)
-    zahnerZennium.setUpperNumberOfPeriods(20)
-    zahnerZennium.setUpperStepsPerDecade(20)
-    zahnerZennium.setScanDirection("startToMax")
-    zahnerZennium.setScanStrategy("single")
+zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setPotential(0)
+zahnerZennium.setLowerFrequencyLimit(500)
+zahnerZennium.setStartFrequency(1000)
+zahnerZennium.setUpperFrequencyLimit(10000)
+zahnerZennium.setLowerNumberOfPeriods(5)
+zahnerZennium.setLowerStepsPerDecade(2)
+zahnerZennium.setUpperNumberOfPeriods(20)
+zahnerZennium.setUpperStepsPerDecade(20)
+zahnerZennium.setScanDirection("startToMax")
+zahnerZennium.setScanStrategy("single")
 
-    zahnerZennium.enablePotentiostat()
+zahnerZennium.enablePotentiostat()
 
-    zahnerZennium.setFrequency(1)
-    zahnerZennium.setAmplitude(10e-3)
-    zahnerZennium.setNumberOfPeriods(3)
+zahnerZennium.setFrequency(1)
+zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setNumberOfPeriods(3)
 
-    print("measurement start")
-    zahnerZennium.measureEIS()
-    print("measurement end")
+print("measurement start")
+zahnerZennium.measureEIS()
+print("measurement end")
 
-    zahnerZennium.disablePotentiostat()
+zahnerZennium.disablePotentiostat()
 
-    print("thread kill")
-    keepThreadRunning = False
-    testThread.join()
-    print("thread killed")
+print("thread kill")
+keepThreadRunning = False
+testThread.join()
+print("thread killed")
 
-    zenniumConnection.disconnectFromTerm()
-    print("finish")
+zenniumConnection.disconnectFromTerm()
+print("finish")

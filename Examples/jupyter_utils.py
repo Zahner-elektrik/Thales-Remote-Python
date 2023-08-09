@@ -51,6 +51,7 @@ def notebookCodeToPython(jupyterNotebookName):
     :param jupyterNotebookName: The notebook file name.
     """
     notebookText = ""
+    os.system(f"python -m black {jupyterNotebookName}")
     print(jupyterNotebookName)
     with open(jupyterNotebookName, "r", encoding="utf-8") as f:
         notebookJson = json.load(f)
@@ -65,7 +66,6 @@ def notebookCodeToPython(jupyterNotebookName):
         f.write(notebookText.encode(encoding="UTF-8"))
 
     os.system(f"python -m black {jupyterName}")
-    os.system(f"python -m black {jupyterNotebookName}")
     return
 
 

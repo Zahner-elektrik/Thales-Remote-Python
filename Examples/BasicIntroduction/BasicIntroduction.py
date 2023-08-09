@@ -29,52 +29,51 @@ def spectrum(scriptHandle, lower_frequency, upper_frequency, number_of_points):
 
 TARGET_HOST = "localhost"
 
-if __name__ == "__main__":
-    zenniumConnection = ThalesRemoteConnection()
-    zenniumConnection.connectToTerm(TARGET_HOST)
+zenniumConnection = ThalesRemoteConnection()
+zenniumConnection.connectToTerm(TARGET_HOST)
 
-    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
-    zahnerZennium.forceThalesIntoRemoteScript()
+zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
+zahnerZennium.forceThalesIntoRemoteScript()
 
-    zahnerZennium.calibrateOffsets()
+zahnerZennium.calibrateOffsets()
 
-    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    zahnerZennium.setPotential(1.0)
-    zahnerZennium.enablePotentiostat()
+zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+zahnerZennium.setPotential(1.0)
+zahnerZennium.enablePotentiostat()
 
-    for i in range(5):
-        print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
-        print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
+for i in range(5):
+    print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
+    print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
 
-    zahnerZennium.disablePotentiostat()
-    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_GALVANOSTATIC)
-    zahnerZennium.setCurrent(20e-9)
-    zahnerZennium.enablePotentiostat()
+zahnerZennium.disablePotentiostat()
+zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_GALVANOSTATIC)
+zahnerZennium.setCurrent(20e-9)
+zahnerZennium.enablePotentiostat()
 
-    for i in range(5):
-        print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
-        print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
+for i in range(5):
+    print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
+    print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
 
-    zahnerZennium.disablePotentiostat()
-    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    zahnerZennium.setPotential(1.0)
-    zahnerZennium.enablePotentiostat()
-    zahnerZennium.setFrequency(2000)
-    zahnerZennium.setNumberOfPeriods(3)
+zahnerZennium.disablePotentiostat()
+zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+zahnerZennium.setPotential(1.0)
+zahnerZennium.enablePotentiostat()
+zahnerZennium.setFrequency(2000)
+zahnerZennium.setNumberOfPeriods(3)
 
-    zahnerZennium.enablePotentiostat()
-    zahnerZennium.getCurrent()
+zahnerZennium.enablePotentiostat()
+zahnerZennium.getCurrent()
 
-    zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setAmplitude(10e-3)
 
-    printImpedance(zahnerZennium.getImpedance())
-    printImpedance(zahnerZennium.getImpedance(2000))
-    printImpedance(zahnerZennium.getImpedance(2000, 10e-3, 3))
+printImpedance(zahnerZennium.getImpedance())
+printImpedance(zahnerZennium.getImpedance(2000))
+printImpedance(zahnerZennium.getImpedance(2000, 10e-3, 3))
 
-    spectrum(zahnerZennium, 1000, 2e5, 10)
+spectrum(zahnerZennium, 1000, 2e5, 10)
 
-    zahnerZennium.disablePotentiostat()
-    zahnerZennium.setAmplitude(0)
+zahnerZennium.disablePotentiostat()
+zahnerZennium.setAmplitude(0)
 
-    zenniumConnection.disconnectFromTerm()
-    print("finish")
+zenniumConnection.disconnectFromTerm()
+print("finish")

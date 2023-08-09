@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter
 
-
 if __name__ == "__main__":
     zenniumConnection = ThalesRemoteConnection()
     zenniumConnection.connectToTerm("localhost", "ScriptRemote")
@@ -19,53 +18,53 @@ if __name__ == "__main__":
 
     zahnerZennium.calibrateOffsets()
 
-    fileInterface = ThalesFileInterface("localhost")
-    fileInterface.disableSaveReceivedFilesToDisk()
-    fileInterface.enableKeepReceivedFilesInObject()
-    fileInterface.enableAutomaticFileExchange(fileExtensions="*.isc")
+fileInterface = ThalesFileInterface("localhost")
+fileInterface.disableSaveReceivedFilesToDisk()
+fileInterface.enableKeepReceivedFilesInObject()
+fileInterface.enableAutomaticFileExchange(fileExtensions="*.isc")
 
-    zahnerZennium.setCVStartPotential(0)
-    zahnerZennium.setCVUpperReversingPotential(0.2)
-    zahnerZennium.setCVLowerReversingPotential(-0.2)
-    zahnerZennium.setCVEndPotential(0)
+zahnerZennium.setCVStartPotential(0)
+zahnerZennium.setCVUpperReversingPotential(0.2)
+zahnerZennium.setCVLowerReversingPotential(-0.2)
+zahnerZennium.setCVEndPotential(0)
 
-    zahnerZennium.setCVStartHoldTime(2)
-    zahnerZennium.setCVEndHoldTime(2)
+zahnerZennium.setCVStartHoldTime(2)
+zahnerZennium.setCVEndHoldTime(2)
 
-    zahnerZennium.setCVCycles(1.5)
-    zahnerZennium.setCVSamplesPerCycle(400)
+zahnerZennium.setCVCycles(1.5)
+zahnerZennium.setCVSamplesPerCycle(400)
 
-    zahnerZennium.setCVMaximumCurrent(0.0002)
-    zahnerZennium.setCVMinimumCurrent(-0.0002)
+zahnerZennium.setCVMaximumCurrent(0.0002)
+zahnerZennium.setCVMinimumCurrent(-0.0002)
 
-    zahnerZennium.setCVOhmicDrop(0)
+zahnerZennium.setCVOhmicDrop(0)
 
-    zahnerZennium.disableCVAutoRestartAtCurrentOverflow()
-    zahnerZennium.disableCVAutoRestartAtCurrentUnderflow()
-    zahnerZennium.disableCVAnalogFunctionGenerator()
+zahnerZennium.disableCVAutoRestartAtCurrentOverflow()
+zahnerZennium.disableCVAutoRestartAtCurrentUnderflow()
+zahnerZennium.disableCVAnalogFunctionGenerator()
 
-    zahnerZennium.setCVNaming("individual")
-    zahnerZennium.setCVOutputPath(r"C:\THALES\temp\cv")
+zahnerZennium.setCVNaming("individual")
+zahnerZennium.setCVOutputPath(r"C:\THALES\temp\cv")
 
-    scanRatesForMeasurement = [0.5, 1, 2]
+scanRatesForMeasurement = [0.5, 1, 2]
 
-    for scanRate in scanRatesForMeasurement:
-        zahnerZennium.setCVOutputFileName("cv_{:d}mVs".format(int(scanRate * 1000)))
-        zahnerZennium.setCVScanRate(scanRate)
+for scanRate in scanRatesForMeasurement:
+    zahnerZennium.setCVOutputFileName("cv_{:d}mVs".format(int(scanRate * 1000)))
+    zahnerZennium.setCVScanRate(scanRate)
 
-        zahnerZennium.checkCVSetup()
+    zahnerZennium.checkCVSetup()
 
-        zahnerZennium.measureCV()
+    zahnerZennium.measureCV()
 
-        """
-        Determine the maximum current for the next measurement
-        from the maximum current of the last CV measurement.
-        """
-        latestMeasurement = IscImport(fileInterface.getLatestReceivedFile().binaryData)
-        maximumCurrent = max(abs(latestMeasurement.getCurrentArray()))
+    """
+    Determine the maximum current for the next measurement
+    from the maximum current of the last CV measurement.
+    """
+    latestMeasurement = IscImport(fileInterface.getLatestReceivedFile().binaryData)
+    maximumCurrent = max(abs(latestMeasurement.getCurrentArray()))
 
-        zahnerZennium.setCVMaximumCurrent(maximumCurrent * 3)
-        zahnerZennium.setCVMinimumCurrent(maximumCurrent * -3)
+    zahnerZennium.setCVMaximumCurrent(maximumCurrent * 3)
+    zahnerZennium.setCVMinimumCurrent(maximumCurrent * -3)
 
     zenniumConnection.disconnectFromTerm()
     fileInterface.close()
@@ -79,23 +78,24 @@ if __name__ == "__main__":
             f"{iscFile.getScanRate()} V/s\tmeasurement finished at {iscFile.getMeasurementEndDateTime()}"
         )
 
-    figCV, (axis) = plt.subplots(1, 1)
-    figCV.suptitle("Cyclic Voltammetry at different scan rates")
 
-    for iscFile in iscFiles:
-        axis.plot(
-            iscFile.getVoltageArray(),
-            iscFile.getCurrentArray(),
-            label=f"{iscFile.getScanRate()} $\\frac{{V}}{{s}}$",
-        )
+figCV, (axis) = plt.subplots(1, 1)
+figCV.suptitle("Cyclic Voltammetry at different scan rates")
 
-    axis.grid(which="both")
-    axis.xaxis.set_major_formatter(EngFormatter(unit="$V$"))
-    axis.yaxis.set_major_formatter(EngFormatter(unit="$A$"))
-    axis.set_xlabel(r"$Voltage$")
-    axis.set_ylabel(r"$Current$")
-    axis.legend()
+for iscFile in iscFiles:
+    axis.plot(
+        iscFile.getVoltageArray(),
+        iscFile.getCurrentArray(),
+        label=f"{iscFile.getScanRate()} $\\frac{{V}}{{s}}$",
+    )
 
-    figCV.set_size_inches(18, 18)
-    plt.show()
-    figCV.savefig("CV.svg")
+axis.grid(which="both")
+axis.xaxis.set_major_formatter(EngFormatter(unit="$V$"))
+axis.yaxis.set_major_formatter(EngFormatter(unit="$A$"))
+axis.set_xlabel(r"$Voltage$")
+axis.set_ylabel(r"$Current$")
+axis.legend()
+
+figCV.set_size_inches(18, 18)
+plt.show()
+figCV.savefig("CV.svg")

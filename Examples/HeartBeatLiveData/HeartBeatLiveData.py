@@ -4,8 +4,6 @@ from thales_remote.script_wrapper import PotentiostatMode, ThalesRemoteScriptWra
 import time
 import threading
 
-zenniumConnection = None
-zahnerZennium = None
 zenniumConnectionLiveData = None
 
 keepThreadRunning = True
@@ -13,21 +11,19 @@ keepThreadRunning = True
 
 def watchThreadFunction():
     global keepThreadRunning
-    global zenniumConnection
-    global zahnerZennium
 
-    print("watch thread started")
+    zenniumConnection = ThalesRemoteConnection()
+    zenniumConnection.connectToTerm("localhost", "Watch")
+
+    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
+
     while keepThreadRunning:
         time.sleep(1)
-        try:
-            beat = zahnerZennium.getWorkstationHeartBeat(2)
-        except:
-            print("term error watch thread")
-            keepThreadRunning = False
-        else:
-            print("Heartbeat: " + str(beat) + " ms")
-
-    print("watch thread left")
+        active = zahnerZennium.getTermIsActive()
+        print("active state: " + str(active))
+        if active:
+            print("beat count: " + str(zahnerZennium.getWorkstationHeartBeat()))
+    zenniumConnection.disconnectFromTerm()
     return
 
 
@@ -69,58 +65,59 @@ if __name__ == "__main__":
     liveThread = threading.Thread(target=liveDataThreadFunction)
     liveThread.start()
 
-    zenniumConnection = ThalesRemoteConnection()
-    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+zenniumConnection = ThalesRemoteConnection()
+zenniumConnection.connectToTerm("localhost", "ScriptRemote")
 
-    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
-    zahnerZennium.forceThalesIntoRemoteScript()
-    zahnerZennium.hideWindow()
+zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
+zahnerZennium.forceThalesIntoRemoteScript()
+zahnerZennium.hideWindow()
 
-    zahnerZennium.calibrateOffsets()
+zahnerZennium.calibrateOffsets()
 
-    watchThread = threading.Thread(target=watchThreadFunction)
-    watchThread.start()
+watchThread = threading.Thread(target=watchThreadFunction)
+watchThread.start()
 
-    zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
-    zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setPotentiostatMode(PotentiostatMode.POTMODE_POTENTIOSTATIC)
+zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setPotential(0)
+zahnerZennium.setLowerFrequencyLimit(750)
+zahnerZennium.setStartFrequency(1000)
+zahnerZennium.setUpperFrequencyLimit(1500)
+zahnerZennium.setLowerNumberOfPeriods(2)
+zahnerZennium.setLowerStepsPerDecade(2)
+zahnerZennium.setUpperNumberOfPeriods(2)
+zahnerZennium.setUpperStepsPerDecade(20)
+zahnerZennium.setScanDirection("startToMax")
+zahnerZennium.setScanStrategy("single")
+
+zahnerZennium.enablePotentiostat()
+
+
+zahnerZennium.setFrequency(1)
+zahnerZennium.setAmplitude(10e-3)
+zahnerZennium.setNumberOfPeriods(3)
+
+print("measurement start")
+
+zahnerZennium.measureEIS()
+for i in range(20):
+    zahnerZennium.getPotential()
     zahnerZennium.setPotential(0)
-    zahnerZennium.setLowerFrequencyLimit(750)
-    zahnerZennium.setStartFrequency(1000)
-    zahnerZennium.setUpperFrequencyLimit(1500)
-    zahnerZennium.setLowerNumberOfPeriods(2)
-    zahnerZennium.setLowerStepsPerDecade(2)
-    zahnerZennium.setUpperNumberOfPeriods(2)
-    zahnerZennium.setUpperStepsPerDecade(20)
-    zahnerZennium.setScanDirection("startToMax")
-    zahnerZennium.setScanStrategy("single")
 
-    zahnerZennium.enablePotentiostat()
+print("measurement end")
 
-    zahnerZennium.setFrequency(1)
-    zahnerZennium.setAmplitude(10e-3)
-    zahnerZennium.setNumberOfPeriods(3)
+zahnerZennium.disablePotentiostat()
 
-    print("measurement start")
+print("set thread kill flag")
+keepThreadRunning = False
 
-    zahnerZennium.measureEIS()
-    for i in range(20):
-        zahnerZennium.getPotential()
-        zahnerZennium.setPotential(0)
+print("disconnect connections")
+zahnerZennium.showWindow()
+zenniumConnection.disconnectFromTerm()
+zenniumConnectionLiveData.disconnectFromTerm()
 
-    print("measurement end")
+print("join the threads")
+liveThread.join()
+watchThread.join()
 
-    zahnerZennium.disablePotentiostat()
-
-    print("set thread kill flag")
-    keepThreadRunning = False
-
-    print("disconnect connections")
-    zahnerZennium.showWindow()
-    zenniumConnection.disconnectFromTerm()
-    zenniumConnectionLiveData.disconnectFromTerm()
-
-    print("join the threads")
-    liveThread.join()
-    watchThread.join()
-
-    print("finish")
+print("finish")

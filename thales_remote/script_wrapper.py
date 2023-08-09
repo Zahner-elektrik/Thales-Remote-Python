@@ -33,7 +33,7 @@ from typing import Optional, Union, Any
 from thales_remote.error import ThalesRemoteError, TermConnectionError
 from thales_remote.connection import ThalesRemoteConnection
 
-MINIMUM_THALES_VERSION = "5.8.6"
+MINIMUM_THALES_VERSION = "5.9.0"
 
 
 def versiontuple(v):
@@ -389,13 +389,7 @@ class ThalesRemoteScriptWrapper(object):
 
         :returns: reponse string from the device
         """
-        reply = self.executeRemoteCommand("SENDSETUP")
-        if reply.find("ERROR") >= 0:
-            raise ThalesRemoteError(
-                reply.rstrip("\r")
-                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
-            )
-        return reply
+        return self.executeRemoteCommand("SENDSETUP")
 
     def calibrateOffsets(self) -> str:
         """
@@ -465,6 +459,10 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         return self.enableRuleFileUsage(False)
+
+    """
+    Section with PAD4 commands
+    """
 
     def setupPad4Channel(
         self,
@@ -539,7 +537,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def readPad4SetupGlobal(self) -> str:
         """
-        read the currently set parameters
+        read the currently set PAD4 parameters
 
         Reading the set PAD4 configuration.
         A string containing the configuration is returned.
@@ -662,7 +660,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("Nwl", periods)
 
     def setScanStrategy(self, strategy: Union[ScanStrategy, str]) -> str:
-        """Set the scan strategy for EIS measurements.
+        """
+        set the scan strategy for EIS measurements.
 
         strategy = "single": single sine.
         strategy = "multi": multi sine.
@@ -677,7 +676,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("ScanStrategy", strat.value)
 
     def setScanDirection(self, direction: Union[ScanDirection, str]) -> str:
-        """Set the scan direction for EIS measurements.
+        """
+        set the scan direction for EIS measurements.
 
         direction = "startToMax": Scan at first from start to maximum frequency.
         direction = "startToMin": Scan at first from start to lower frequency.
@@ -733,7 +733,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setEISNaming(self, naming: Union[str, FileNaming]) -> str:
         """
-        set the EIS measurement naming rule
+        Set the EIS measurement naming rule.
 
         naming = "dateTime": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setEISOutputFileName` with date and time.
         naming = "counter": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setEISOutputFileName` with an sequential number.
@@ -749,7 +749,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setEISCounter(self, number: int) -> str:
         """
-        set the current number of EIS measurement for filename
+        Set the current number of EIS measurement for filename.
 
         Current number for the file name for EIS measurements which is used next and then incremented.
 
@@ -760,7 +760,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setEISOutputPath(self, path: str) -> str:
         """
-        set the path where the EIS measurements should be stored
+        Set the path where the EIS measurements should be stored.
 
         The results must be stored on the C hard disk.
         If an error occurs test an alternative path or c:\THALES\temp.
@@ -774,7 +774,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setEISOutputFileName(self, name: str) -> str:
         """
-        set the basic EIS output filename
+        Set the basic EIS output filename.
 
         The basic name of the file, which is extended by a sequential number or the date and time.
         Only numbers, underscores and letters from a-Z may be used.
@@ -789,7 +789,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def measureEIS(self) -> str:
         """
-        take an EIS measurement
+        Make an EIS measurement.
 
         For the measurement all parameters must be specified before.
 
@@ -807,7 +807,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVStartPotential(self, potential: float) -> str:
         """
-        set the start potential of a CV measurment
+        Set the start potential of a CV measurement.
 
         :param potential: the start potential to set
         :returns: reponse string from the device
@@ -816,7 +816,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVUpperReversingPotential(self, potential: float) -> str:
         """
-        set the upper reversal potential of a CV measurement
+        Set the upper reversal potential of a CV measurement.
 
         :param potential: the upper reversal potential to set
         :returns: reponse string from the device
@@ -825,7 +825,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVLowerReversingPotential(self, potential: float) -> str:
         """
-        set the lower reversal potential of a CV measurement
+        Set the lower reversal potential of a CV measurement.
 
         :param potential: the lower reversal potential to set
         :returns: reponse string from the device
@@ -834,7 +834,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVEndPotential(self, potential: float) -> str:
         """
-        set the end potential of a CV measurment
+        Set the end potential of a CV measurement.
 
         :param potential: the end potential to set
         :returns: reponse string from the device
@@ -843,7 +843,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVStartHoldTime(self, time: float) -> str:
         """
-        setting the holding time at the start potential
+        Setting the holding time at the start potential.
 
         The time must be given in seconds.
 
@@ -854,7 +854,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVEndHoldTime(self, time: float) -> str:
         """
-        setting the holding time at the end potential
+        Setting the holding time at the end potential.
 
         The time must be given in seconds.
 
@@ -865,7 +865,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVScanRate(self, scanRate: float) -> str:
         """
-        set the scan rate
+        Set the scan rate.
 
         The scan rate must be specified in V/s.
 
@@ -876,7 +876,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVCycles(self, cycles: int) -> str:
         """
-        set the number of cycles
+        Set the number of cycles.
 
         At least 0.5 cycles are necessary.
         The number of cycles must be a multiple of 0.5. 3.5 are also possible, for example.
@@ -888,7 +888,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVSamplesPerCycle(self, samples: int) -> str:
         """
-        set the number of measurements per CV cycle
+        Set the number of measurements per CV cycle.
 
         :param samples: the number of measurments per cycle to set
         :returns: reponse string from the device
@@ -897,7 +897,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVMaximumCurrent(self, current: float) -> str:
         """
-        set the maximum current
+        Set the maximum current.
 
         The maximum positive current at which the measurement is interrupted.
         This is also the current which is used to determine the shunt. This cannot be deactivated.
@@ -909,7 +909,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVMinimumCurrent(self, current: float) -> str:
         """
-        set the minimum current
+        Set the minimum current.
 
         The maximum negative current at which the measurement is interrupted.
         This is also the current which is used to determine the shunt. This cannot be deactivated.
@@ -921,7 +921,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVOhmicDrop(self, ohmicdrop: float) -> str:
         """
-        Set the ohmic drop for CV measurement
+        Set the ohmic drop for CV measurement.
 
         :param ohmicdrop: The ohmic drop for measurement.
         :returns: reponse string from the device
@@ -929,7 +929,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("CV_Odrop", ohmicdrop)
 
     def enableCVAutoRestartAtCurrentOverflow(self, state: bool = True) -> str:
-        """Automatically restart if current is exceeded.
+        """
+        Automatically restart if current is exceeded.
 
         A new measurement is automatically started with a different
         reverse potential at which the current limit is not exceeded.
@@ -941,14 +942,15 @@ class ThalesRemoteScriptWrapper(object):
 
     def disableCVAutoRestartAtCurrentOverflow(self) -> str:
         """
-        disable automatic restart if current is exceeded
+        Disable automatic restart if current is exceeded.
 
         :returns: reponse string from the device
         """
         return self.enableCVAutoRestartAtCurrentOverflow(False)
 
     def enableCVAutoRestartAtCurrentUnderflow(self, state: bool = True) -> str:
-        """Restart automatically if the current drops below the limit.
+        """
+        Restart automatically if the current drops below the limit.
 
         A new measurement is automatically started with a smaller
         current range than that determined by the minimum and maximum current.
@@ -960,7 +962,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def disableCVAutoRestartAtCurrentUnderflow(self) -> str:
         """
-        disable automatically restart if the current drops below the limit
+        Disable automatically restart if the current drops below the limit.
 
         :returns: reponse string from the device
         """
@@ -968,7 +970,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def enableCVAnalogFunctionGenerator(self, state: bool = True) -> str:
         """
-        switch on the analog function generator (AFG)
+        Switch on the analog function generator (AFG).
 
         The analog function generator can only be used if it was purchased with the device.
         If the device has the AFG function, you will see a button in the CV software to activate this function.
@@ -980,14 +982,15 @@ class ThalesRemoteScriptWrapper(object):
 
     def disableCVAnalogFunctionGenerator(self) -> str:
         """
-        disable the analog function generator (AFG)
+        Disable the analog function generator (AFG).
 
         :returns: reponse string from the device
         """
         return self.enableCVAnalogFunctionGenerator(False)
 
     def setCVNaming(self, naming: Union[str, FileNaming]) -> str:
-        """Set the CV measurement naming rule.
+        """
+        Set the CV measurement naming rule.
 
         naming = "dateTime": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setCVOutputFileName` with date and time.
         naming = "counter": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setCVOutputFileName` with an sequential number.
@@ -1003,7 +1006,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVCounter(self, number: int) -> str:
         """
-        set the current number of CV measurement for filename
+        Set the current number of CV measurement for filename.
 
         Current number for the file name for CV measurements which is used next and then incremented.
 
@@ -1014,7 +1017,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVOutputPath(self, path: str) -> str:
         """
-        set the path where the CV measurements should be stored.
+        Set the path where the CV measurements should be stored.
 
         The results must be stored on the C hard disk.
         If an error occurs test an alternative path or c:\THALES\temp.
@@ -1028,7 +1031,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def setCVOutputFileName(self, name: str) -> str:
         """
-        set the basic CV output filename
+        Set the basic CV output filename.
 
         The basic name of the file, which is extended by a sequential number or the date and time.
         Only numbers, underscores and letters from a-Z may be used.
@@ -1043,7 +1046,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def checkCVSetup(self) -> str:
         """
-        check the set parameters
+        Check the set parameters.
 
         With the error number the wrong parameter can be found.
         The error numbers are listed in the Remote2 manual.
@@ -1060,7 +1063,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def readCVSetup(self) -> str:
         """
-        read the set parameters
+        Read the set parameters.
 
         After checking with checkCVSetup() the parameters can be read back from the workstation.
         This command returns a list of all set parameters.
@@ -1077,7 +1080,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def measureCV(self) -> str:
         """
-        take a CV (cyclic voltammetry) measurement
+        Make a CV (cyclic voltammetry) measurement.
 
         Note:
             Before starting the measurement, all parameters must be checked with
@@ -1093,11 +1096,15 @@ class ThalesRemoteScriptWrapper(object):
             )
         return reply
 
-    # Section with settings for IE measurements.
-    # Additional informations can be found in the IE manual.
+    """
+    Section with settings for IE measurements.
+    
+    Additional informations can be found in the remote and IE manual.
+    """
 
     def setIEFirstEdgePotential(self, potential: float) -> str:
-        """Set the first edge potential.
+        """
+        Set the first edge potential.
 
         :param potential: The potential of the first edge in V.
         :returns: reponse string from the device
@@ -1105,7 +1112,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot1", potential)
 
     def setIESecondEdgePotential(self, potential: float) -> str:
-        """Set the second edge potential.
+        """
+        Set the second edge potential.
 
         :param potential: The potential of the second edge in V.
         :returns: reponse string from the device
@@ -1113,7 +1121,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot2", potential)
 
     def setIEThirdEdgePotential(self, potential: float) -> str:
-        """Set the third edge potential.
+        """
+        Set the third edge potential.
 
         :param potential: The potential of the third edge in V.
         :returns: reponse string from the device
@@ -1121,7 +1130,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot3", potential)
 
     def setIEFourthEdgePotential(self, potential: float) -> str:
-        """Set the fourth edge potential.
+        """
+        Set the fourth edge potential.
 
         :param potential: The potential of the fourth edge in V.
         :returns: reponse string from the device
@@ -1129,7 +1139,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot4", potential)
 
     def setIEFirstEdgePotentialRelation(self, relation: float) -> str:
-        """Set the relation of the first edge potential.
+        """
+        Set the relation of the first edge potential.
 
         relation = "absolute": Absolute relation of the potential.
         relation = "relative": Relative relation of the potential.
@@ -1144,7 +1155,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot1rel", relation)
 
     def setIESecondEdgePotentialRelation(self, relation) -> str:
-        """Set the relation of the second edge potential.
+        """
+        Set the relation of the second edge potential.
 
         relation = "absolute": Absolute relation of the potential.
         relation = "relative": Relative relation of the potential.
@@ -1159,7 +1171,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot2rel", relation)
 
     def setIEThirdEdgePotentialRelation(self, relation) -> str:
-        """Set the relation of the third edge potential.
+        """
+        Set the relation of the third edge potential.
 
         relation = "absolute": Absolute relation of the potential.
         relation = "relative": Relative relation of the potential.
@@ -1174,7 +1187,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot3rel", relation)
 
     def setIEFourthEdgePotentialRelation(self, relation) -> str:
-        """Set the relation of the fourth edge potential.
+        """
+        Set the relation of the fourth edge potential.
 
         relation = "absolute": Absolute relation of the potential.
         relation = "relative": Relative relation of the potential.
@@ -1189,7 +1203,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_EckPot4rel", relation)
 
     def setIEPotentialResolution(self, resolution: float) -> str:
-        """Set the potential resolution.
+        """
+        Set the potential resolution.
 
         The potential step size for IE measurements in V.
 
@@ -1199,7 +1214,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Resolution", resolution)
 
     def setIEMinimumWaitingTime(self, time: float) -> str:
-        """Set the minimum waiting time.
+        """
+        Set the minimum waiting time.
 
         The minimum waiting time on each step of the IE measurement.
         This time is at least waited, even if the tolerance abort criteria are met.
@@ -1210,7 +1226,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_WZmin", time)
 
     def setIEMaximumWaitingTime(self, time: float) -> str:
-        """Set the maximum waiting time.
+        """
+        Set the maximum waiting time.
 
         The maximum waiting time on each step of the IE measurement.
         After this time the measurement is stopped at this potential
@@ -1222,7 +1239,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_WZmax", time)
 
     def setIERelativeTolerance(self, tolerance: float) -> str:
-        """Set the relative tolerance criteria.
+        """
+        Set the relative tolerance criteria.
 
         This parameter is only used in sweep mode steady state.
         The relative tolerance to wait in percent.
@@ -1234,7 +1252,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Torel", tolerance)
 
     def setIEAbsoluteTolerance(self, tolerance: float) -> str:
-        """Set the absolute tolerance criteria.
+        """
+        Set the absolute tolerance criteria.
 
         This parameter is only used in sweep mode steady state.
         The absolute tolerance to wait in A.
@@ -1246,7 +1265,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Toabs", tolerance)
 
     def setIEOhmicDrop(self, ohmicdrop: float) -> str:
-        """Set the ohmic drop for IE measurement.
+        """
+        Set the ohmic drop for IE measurement.
 
         :param ohmicdrop: The ohmic drop for measurement.
         :returns: reponse string from the device
@@ -1254,7 +1274,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Odrop", ohmicdrop)
 
     def setIESweepMode(self, mode) -> str:
-        """Set the sweep mode.
+        """
+        Set the sweep mode.
 
         The explanation of the modes can be found in the IE manual.
         mode="steady state"
@@ -1273,7 +1294,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_SweepMode", mode)
 
     def setIEScanRate(self, scanRate: float) -> str:
-        """Set the scan rate.
+        """
+        Set the scan rate.
 
         This parameter is only used in sweep mode dynamic scan.
         The scan rate must be specified in V/s.
@@ -1284,7 +1306,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Srate", scanRate)
 
     def setIEMaximumCurrent(self, current: float) -> str:
-        """Set the maximum current.
+        """
+        Set the maximum current.
 
         The maximum positive current at which the measurement is interrupted.
 
@@ -1294,7 +1317,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Ima", current)
 
     def setIEMinimumCurrent(self, current: float) -> str:
-        """Set the minimum current.
+        """
+        Set the minimum current.
 
         The maximum negative current at which the measurement is interrupted.
 
@@ -1304,7 +1328,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_Imi", current)
 
     def setIENaming(self, naming: Union[str, FileNaming]) -> str:
-        """Set the IE measurement naming rule.
+        """
+        Set the IE measurement naming rule.
 
         naming = "dateTime": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setIEOutputFileName` with date and time.
         naming = "counter": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setIEOutputFileName` with an sequential number.
@@ -1320,7 +1345,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_MOD", nameingType.value)
 
     def setIECounter(self, number: int) -> str:
-        """Set the current number of IE measurement for filename.
+        """
+        Set the current number of IE measurement for filename.
 
         Current number for the file name for EIS measurements which is used next and then incremented.
 
@@ -1330,7 +1356,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_NUM", number)
 
     def setIEOutputPath(self, path: str) -> str:
-        """Set the path where the IE measurements should be stored.
+        """
+        Set the path where the IE measurements should be stored.
 
         The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
         The directory must exist.
@@ -1342,7 +1369,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_PATH", path)
 
     def setIEOutputFileName(self, name: str) -> str:
-        """Set the basic IE output filename.
+        """
+        Set the basic IE output filename.
 
         The basic name of the file, which is extended by a sequential number or the date and time.
         Only numbers, underscores and letters from a-Z may be used.
@@ -1356,7 +1384,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("IE_ROOT", name)
 
     def checkIESetup(self) -> str:
-        """Check the set parameters.
+        """
+        Check the set parameters.
 
         With the error number the wrong parameter can be found.
         The error numbers are listed in the Remote2 manual.
@@ -1372,7 +1401,8 @@ class ThalesRemoteScriptWrapper(object):
         return reply
 
     def readIESetup(self) -> str:
-        """Read the set parameters.
+        """
+        Read the set parameters.
 
         After checking with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.checkIESetup` the parameters can be read back from the workstation.
 
@@ -1387,7 +1417,8 @@ class ThalesRemoteScriptWrapper(object):
         return reply
 
     def measureIE(self) -> str:
-        """Measure IE.
+        """
+        Measure IE.
 
         Before measurement, all parameters must be checked with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.checkIESetup`.
 
@@ -1409,7 +1440,11 @@ class ThalesRemoteScriptWrapper(object):
     """
 
     def selectSequence(self, number: int) -> str:
-        """Select the sequence to run with runSequence().
+        """
+        Select the sequence to run with runSequence().
+
+        **If this method gives an error message that the sequence does not exist, then check the ZTrace.
+        This error message can also mean that a wrong character occurs or a parameter is out of range.**
 
         The sequences must be stored under "C:\THALES\script\sequencer\sequences".
         Sequences from 0 to 9 can be created.
@@ -1420,13 +1455,12 @@ class ThalesRemoteScriptWrapper(object):
         """
         reply = self.executeRemoteCommand("SELSEQ=" + str(number))
         if reply != "SELOK\r":
-            raise ThalesRemoteError(
-                reply.rstrip("\r") + " The selected sequence does not exist."
-            )
+            raise ThalesRemoteError(reply.rstrip("\r") + " Check ZTrace.")
         return reply
 
     def setSequenceNaming(self, naming: Union[str, FileNaming]) -> str:
-        """Set the sequence measurement naming rule.
+        """
+        Set the sequence measurement naming rule.
 
         naming = "dateTime": extend the setSequenceOutputFileName(name) with date and time.
         naming = "counter": extend the setSequenceOutputFileName(name) with an sequential number.
@@ -1442,7 +1476,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("SEQ_MOD", nameingType.value)
 
     def setSequenceCounter(self, number: int) -> str:
-        """Set the current number of sequence measurement for filename.
+        """
+        Set the current number of sequence measurement for filename.
 
         Current number for the file name for EIS measurements which is used next and then incremented.
 
@@ -1452,7 +1487,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("SEQ_NUM", number)
 
     def setSequenceOutputPath(self, path: str) -> str:
-        """Set the path where the sequence measurements should be stored.
+        """
+        Set the path where the sequence measurements should be stored.
 
         The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
         The directory must exist.
@@ -1464,7 +1500,8 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("SEQ_PATH", path)
 
     def setSequenceOutputFileName(self, name: str) -> str:
-        """Set the basic sequence output filename.
+        """
+        Set the basic sequence output filename.
 
         The basic name of the file, which is extended by a sequential number or the date and time.
         Only numbers, underscores and letters from a-Z may be used.
@@ -1476,6 +1513,70 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         return self.setValue("SEQ_ROOT", name)
+
+    def enableSequenceAcqGlobal(self, state: bool = True) -> str:
+        """
+        Switch on that up to 8 ACQ channels are used in the sequencer.
+
+        In the ACQ setup, the display channels must be set before they can be allowed.
+        Then the individual channels must be activated with a separate command.
+
+        :param state: If state = True ACQ channels are enabled.
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_ACQENA", -1 if state else 0)
+
+    def disableSequenceAcqGlobal(self) -> str:
+        """
+        Switch off that up to 8 ACQ channels are used in the sequencer.
+
+        :returns: reponse string from the device
+        """
+        return self.enableSequenceAcqGlobal(False)
+
+    def enableSequenceAcqChannel(self, channel: int, state: bool = True) -> str:
+        """
+        Switch on the set sequence ACQ channel
+
+        The channel index for the ACQ channel results from the ACQ setup index plus 1.
+        This means that in the ACQ, for example, the set display channel 2 becomes channel 3 in the sequencer.
+
+        :param channel: index of the ACQ channel.
+        :param state: If state = True ACQ channel is enabled.
+        :returns: reponse string from the device
+        """
+        command = f"SEQ_ACQ={channel};{1 if state else 0}"
+        reply = self.executeRemoteCommand(command)
+
+        if "ERROR" in reply:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        return reply
+
+    def disableSequenceAcqChannel(self, channel) -> str:
+        """
+        Switch off the set sequence ACQ channel
+
+        :param channel: index of the ACQ channel.
+        :returns: reponse string from the device
+        """
+        return self.enableSequenceAcqChannel(channel, False)
+
+    def readSequenceAcqSetup(self) -> str:
+        """
+        Read the currently set sequencer ACQ Setup
+
+        :returns: reponse string from the device
+        """
+        reply = self.executeRemoteCommand("SENDSEQACQSETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        return reply
 
     def runSequence(self) -> str:
         """Run the selected sequence.
@@ -1492,6 +1593,189 @@ class ThalesRemoteScriptWrapper(object):
             )
         return reply
 
+    def runSequenceFile(
+        self,
+        filepath: str,
+        sequence_folder: str = "C:/THALES/script/sequencer/sequences",
+        sequence_number: int = 9,
+    ) -> str:
+        """
+        Run the sequence at filepath.
+
+        The file from the specified path is copied as sequence sequence_number=9 to the correct location in the Thales directory and then selected and executed.
+        The default sequence number is 9 and does not need to be changed.
+        The old sequence sequence_number is overwritten.
+
+        The variable sequence_folder is ONLY NECESSARY if python is running on ANOTHER COMPUTER like the one connected to the Zennium.
+        For this the controlling computer must have access to the hard disk of the computer with the Zennium to access the THALES folder.
+        In this case the path to the sequences folder in sequence_folder must be set to "C:/THALES/script/sequencer/sequences" on the computer with the zennium.
+
+        :param filepath: Filepath of the sequence.
+        :param sequence_folder: The filepath to the THALES sequence folder.
+            Does not normally need to be transferred and changed. Explanation see in the text before.
+        :param sequence_number: The number in the THALES sequence directory.
+            Does not normally need to be transferred and changed.
+        :returns: reponse string from the device
+        """
+        if sequence_number > 9 or sequence_number < 0:
+            raise ThalesRemoteError("Wrong sequence number.")
+
+        sequence_folder = sequence_folder + "/sequence{:02d}.seq".format(
+            sequence_number
+        )
+
+        if filepath.find(".seq") < 0:
+            raise ThalesRemoteError("Wrong sequence file extension.")
+        if os.path.exists(sequence_folder):
+            os.remove(sequence_folder)
+        shutil.copy2(filepath, sequence_folder)
+
+        self.selectSequence(sequence_number)
+        return self.runSequence()
+
+    def setSequenceOhmicDrop(self, value: float) -> str:
+        """
+        Set the Ohmic Drop or IR Drop for the sequencer.
+
+        0 to 1 tera ohm.
+
+        Parameter name in sequence file: ``rodrop``
+
+        :param value: Ohmic Drop in Ohm
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_RODROP", value)
+
+    def setSequenceMaximumRuntime(self, value: float) -> str:
+        """
+        Set the maximum runtime in hours
+
+        0.1 to 1000 hours.
+
+        Parameter name in sequence file: ``max_ti``
+
+        :param value: maximum runtime in hours
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_MAXTIME", value)
+
+    def setSequenceUpperPotentialLimit(self, value: float) -> str:
+        """
+        Set the upper potential limit
+
+        Parameter name in sequence file: ``pot_hi``
+
+        :param value: upper potential limit
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_EUPPER", value)
+
+    def setSequenceLowerPotentialLimit(self, value: float) -> str:
+        """
+        Set the lower potential limit
+
+        Parameter name in sequence file: ``pot_lo``
+
+        :param value: lower potential limit
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_ELOWER", value)
+
+    def setSequenceUpperCurrentLimit(self, value: float) -> str:
+        """
+        Set the upper current limit
+
+        Parameter name in sequence file: ``cur_hi``
+
+        :param value: upper current limit
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_IUPPER", value)
+
+    def setSequenceLowerCurrentLimit(self, value: float) -> str:
+        """
+        Set the lower current limit
+
+        Parameter name in sequence file: ``cur_lo``
+
+        :param value: lower current limit
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_ILOWER", value)
+
+    def setSequenceCurrentRange(self, value: float) -> str:
+        """
+        Set the current range
+
+        Parameter name in sequence file: ``cur_ra``
+
+        :param value: current range in ampere.
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_IRANGE", value)
+
+    def setSequencePotentialLatencyWindow(self, value: float) -> str:
+        """
+        Set the potential latency window
+
+        This defines what happens when a limit value is exceeded.
+        The values from the following table are possible.
+
+        .. list-table:: Latency Window Values
+            :widths: 10 40
+            :header-rows: 1
+
+            * - Value
+              - Meaning
+            * - -1
+              - potentiostat is not switched off
+            * - t
+              - potentiostat is switched off after t seconds, maximum 30
+            * - 2
+              - potentiostat is switched off after 2 seconds
+            * - 0
+              - potentiostat is switched off immediately
+
+        Parameter name in sequence file: ``pot_of``
+
+        :param value: values meaning see in the table
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_POTOFLO", value)
+
+    def setSequenceCurrentLatencyWindow(self, value: float) -> str:
+        """
+        Set the current latency window
+
+        This defines what happens when a limit value is exceeded.
+        The values from the following table are possible.
+
+        .. list-table:: Latency Window Values
+            :widths: 10 40
+            :header-rows: 1
+
+            * - Value
+              - Meaning
+            * - -1
+              - potentiostat is not switched off
+            * - t
+              - potentiostat is switched off after t seconds, maximum 30
+            * - 2
+              - potentiostat is switched off after 2 seconds
+            * - 0
+              - potentiostat is switched off immediately
+
+        Parameter name in sequence file: ``cur_of``
+
+        :param value: values meaning see in the table
+        :returns: reponse string from the device
+        """
+        return self.setValue("SEQ_CUROFLO", value)
+
+    """
+    Section with commands for FRA mode
+    """
+
     def enableFraMode(self, state: bool = True) -> str:
         """Enables the use of the FRA probe.
 
@@ -1499,6 +1783,7 @@ class ThalesRemoteScriptWrapper(object):
         controlled analog for impedance measurements.
 
         `FRA Product Page <https://zahner.de/products-details/probes/fra-probe>`_
+
         `FRA Manual <https://doc.zahner.de/hardware/fra_probe.pdf>`_
 
         Before this function is called, the analog interface to the external interface must be initialized
@@ -1516,6 +1801,23 @@ class ThalesRemoteScriptWrapper(object):
         else:
             state = 0
         return self.setValue("FRA", state)
+
+    def readFraSetup(self) -> str:
+        """
+        read the currently set FRA parameters
+
+        Reading the set FRA configuration.
+        A string containing the configuration is returned.
+
+        :returns: reponse string from the device
+        """
+        reply = self.executeRemoteCommand("SENDFRASETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        return reply
 
     def disableFraMode(self) -> str:
         return self.enableFraMode(False)
@@ -1610,44 +1912,71 @@ class ThalesRemoteScriptWrapper(object):
             )
         return self.executeRemoteCommand(command)
 
-    def runSequenceFile(
-        self,
-        filepath: str,
-        sequence_folder: str = "C:/THALES/script/sequencer/sequences",
-        sequence_number: int = 9,
-    ) -> str:
-        """Run the sequence at filepath.
+    """
+    Section with methods for the ACQ channels
+    """
 
-        The file from the specified path is copied as sequence sequence_number=9 to the correct location in the Thales directory and then selected and executed.
-        The default sequence number is 9 and does not need to be changed.
-        The old sequence sequence_number is overwritten.
+    def readAcqSetup(self) -> str:
+        """
+        Read the currently set ACQ parameters
 
-        The variable sequence_folder is ONLY NECESSARY if python is running on ANOTHER COMPUTER like the one connected to the Zennium.
-        For this the controlling computer must have access to the hard disk of the computer with the Zennium to access the THALES folder.
-        In this case the path to the sequences folder in sequence_folder must be set to "C:/THALES/script/sequencer/sequences" on the computer with the zennium.
+        Reading the set FRA configuration.
+        A string containing the configuration is returned.
 
-        :param filepath: Filepath of the sequence.
-        :param sequence_folder: The filepath to the THALES sequence folder.
-            Does not normally need to be transferred and changed. Explanation see in the text before.
-        :param sequence_number: The number in the THALES sequence directory.
-            Does not normally need to be transferred and changed.
         :returns: reponse string from the device
         """
-        if sequence_number > 9 or sequence_number < 0:
-            raise ThalesRemoteError("Wrong sequence number.")
+        reply = self.executeRemoteCommand("SENDACQSETUP")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        return reply
 
-        sequence_folder = sequence_folder + "/sequence{:02d}.seq".format(
-            sequence_number
-        )
+    def readAllAcqChannels(self) -> dict[str, float]:
+        """
+        read all active ACQ channels.
 
-        if filepath.find(".seq") < 0:
-            raise ThalesRemoteError("Wrong sequence file extension.")
-        if os.path.exists(sequence_folder):
-            os.remove(sequence_folder)
-        shutil.copy2(filepath, sequence_folder)
+        A string is read from Thales which contains the ACQ channels as follows.
+        .. code-block::
 
-        self.selectSequence(sequence_number)
-        return self.runSequence()
+            ACQVAL(0)= 2.632052e-01;ACQVAL(1)= 8.413594e-02;ACQVAL(2)= 5.338292e+01
+
+        :returns: Dict which contains the ACQ channel index as key and the value as value.
+        """
+        reply = self.executeRemoteCommand("ANALOGALL")
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+
+        result_dict = {}
+
+        pairs = reply.split(";")
+
+        for pair in pairs:
+            key = re.search("\((.*?)\)", pair).group(1)
+            value = re.search("=[\s]*(.*)", pair).group(1)
+            result_dict[int(key)] = float(value)
+
+        return result_dict
+
+    def readAcqChannel(self, channel: int) -> float:
+        """
+        read the ACQ channel to the passed index.
+
+        :param channel: index of the ACQ channel
+        :returns: value of the channel
+        """
+        self.setValue("CHANNEL", channel)
+        value = self._requestValueAndParseUsingRegexp("ANALOGIN", "=[\s]*(.*)")
+        return value
+
+    """
+    Internal basic functions, which are used by the other methods.
+    Could be private. But if a remote command is not implemented, you can implement it yourself.
+    """
 
     def setValue(self, name: str, value: Union[int, float, str, Any]) -> str:
         """

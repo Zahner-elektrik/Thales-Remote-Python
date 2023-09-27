@@ -112,12 +112,23 @@ class ThalesRemoteConnection(object):
         # print("complete packet:" + str(registration_packet))
 
         self._send_mutex.acquire()
-        self._socket_handle.sendall(registration_packet)
+        self.sendall(registration_packet)
         self._send_mutex.release()
 
         time.sleep(0.8)
 
         return True
+
+    def sendall(self, data: bytearray):
+        return self._socket_handle.sendall(data)
+
+    def readall(self, numBytes: int) -> bytes:
+        bytesToRead = numBytes
+        readBytes = bytes()
+        while bytesToRead > 0:
+            readBytes += self._socket_handle.recv(bytesToRead)
+            bytesToRead = numBytes - len(readBytes)
+        return readBytes
 
     def getConnectionName(self) -> str:
         """
@@ -198,7 +209,7 @@ class ThalesRemoteConnection(object):
                 # print(f"payload: {data}")
                 # print("complete packet:" + str(packet))
 
-                self._socket_handle.sendall(packet)
+                self.sendall(packet)
             finally:
                 self._socket_handle.settimeout(None)
                 self._send_mutex.release()
@@ -315,14 +326,12 @@ class ThalesRemoteConnection(object):
         exception in the threads waiting at the queue.
         """
         try:
-            header_len: bytes = self._socket_handle.recv(2)
-            header_type_bytes: bytes = self._socket_handle.recv(1)
+            header_len: bytes = self.readall(2)
+            header_type_bytes: bytes = self.readall(1)
             header_type: str = struct.unpack("<B", header_type_bytes)[
                 0
             ]  # actually a character, not a str
-            incoming_packet: int = self._socket_handle.recv(
-                struct.unpack("<H", header_len)[0]
-            )
+            incoming_packet: int = self.readall(struct.unpack("<H", header_len)[0])
 
             # print("\n" + str(datetime.now().time()) + " read:")
             # print(f"payload_length: {struct.unpack('<H', header_len)[0]} message_type: {header_type}")

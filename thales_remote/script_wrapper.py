@@ -24,7 +24,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from enum import Enum
+from enum import Enum, IntEnum
 import re
 import shutil
 import os
@@ -33,14 +33,14 @@ from typing import Optional, Union, Any
 from thales_remote.error import ThalesRemoteError, TermConnectionError
 from thales_remote.connection import ThalesRemoteConnection
 
-MINIMUM_THALES_VERSION = "5.9.0"
+MINIMUM_THALES_VERSION = "5.9.1"
 
 
 def versiontuple(v):
     return tuple(map(int, (v.split("."))))
 
 
-class PotentiostatMode(Enum):
+class PotentiostatMode(IntEnum):
     """
     working modes for the potentiostat
     """
@@ -50,7 +50,7 @@ class PotentiostatMode(Enum):
     POTMODE_PSEUDOGALVANOSTATIC = 3
 
 
-class ScanStrategy(Enum):
+class ScanStrategy(IntEnum):
     """
     options for the EIS scan strategy
 
@@ -75,7 +75,7 @@ class ScanStrategy(Enum):
         return stringEnumMap.get(string)
 
 
-class ScanDirection(Enum):
+class ScanDirection(IntEnum):
     """
     set the scan direction for EIS measurements.
 
@@ -97,7 +97,7 @@ class ScanDirection(Enum):
         return stringEnumMap.get(string)
 
 
-class FileNaming(Enum):
+class FileNaming(IntEnum):
     """
     options for the file names in Thales.
 
@@ -122,7 +122,7 @@ class FileNaming(Enum):
         return stringEnumMap.get(string)
 
 
-class Pad4Mode(Enum):
+class Pad4Mode(IntEnum):
     """
     options for the PAD4 operating mode.
 
@@ -150,21 +150,27 @@ class ThalesRemoteScriptWrapper(object):
         try:
             versionReply = self.getThalesVersion(timeout=1)
         except TermConnectionError as err:
-            raise ThalesRemoteError("Please update your Thales version.")
+            raise ThalesRemoteError(
+                "Please update the Thales software, it is too old for this package version."
+            )
 
         if "devel" in versionReply:
             print("devel version")
         elif "" == versionReply:
             # timeout
-            raise ThalesRemoteError("Please update your Thales version.")
+            raise ThalesRemoteError(
+                "Please update the Thales software, it is too old for this package version."
+            )
         else:
             match = re.search(r"(\d+.\d+.\d+)", versionReply)
             versionString = match.group(1)
-            versionComp = versiontuple(versionString) < versiontuple(
+            thalesToOld = versiontuple(versionString) < versiontuple(
                 MINIMUM_THALES_VERSION
             )
-            if versionComp:
-                raise ThalesRemoteError("Please update your Thales version.")
+            if thalesToOld:
+                raise ThalesRemoteError(
+                    f"Please update the Thales software. This package requires at least version {MINIMUM_THALES_VERSION}, but version {versionString} is installed."
+                )
         return
 
     def getCurrent(self) -> float:
@@ -179,7 +185,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def getPotential(self) -> float:
         """
-        fead the measured potential from the device
+        read the measured potential from the device
 
         :returns: the measured potential value
         """
@@ -189,7 +195,7 @@ class ThalesRemoteScriptWrapper(object):
 
     def getVoltage(self) -> float:
         """
-        fead the measured potential from the device
+        read the measured potential from the device
 
         :returns: the measured potential value
         """

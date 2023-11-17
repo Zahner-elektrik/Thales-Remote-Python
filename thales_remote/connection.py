@@ -304,7 +304,9 @@ class ThalesRemoteConnection(object):
         starts the thread handling the asyncronously incoming data
         """
         self._receiving_worker_is_running = True
-        self._receiving_worker = threading.Thread(target=self._telegramListenerJob)
+        self._receiving_worker = threading.Thread(
+            target=self._telegramListenerJob, daemon=True
+        )
         self._receiving_worker.start()
         return
 

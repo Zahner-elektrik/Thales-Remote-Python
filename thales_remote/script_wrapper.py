@@ -776,6 +776,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         path = path.lower()  # c: has to be lower case
+        self._checkForForbiddenCharactersInPath(path)
         return self.setValue("EIS_PATH", path)
 
     def setEISOutputFileName(self, name: str) -> str:
@@ -791,6 +792,7 @@ class ThalesRemoteScriptWrapper(object):
         :param name: basic name of the file
         :returns: reponse string from the device
         """
+        self._checkForForbiddenCharactersInFilename(name)
         return self.setValue("EIS_ROOT", name)
 
     def measureEIS(self) -> str:
@@ -1033,6 +1035,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         path = path.lower()  # c: has to be lower case
+        self._checkForForbiddenCharactersInPath(path)
         return self.setValue("CV_PATH", path)
 
     def setCVOutputFileName(self, name: str) -> str:
@@ -1048,6 +1051,7 @@ class ThalesRemoteScriptWrapper(object):
         :param name: basic name of the file to set
         :returns: reponse string from the device
         """
+        self._checkForForbiddenCharactersInFilename(name)
         return self.setValue("CV_ROOT", name)
 
     def checkCVSetup(self) -> str:
@@ -1372,6 +1376,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         path = path.lower()  # c: has to be lower case
+        self._checkForForbiddenCharactersInPath(path)
         return self.setValue("IE_PATH", path)
 
     def setIEOutputFileName(self, name: str) -> str:
@@ -1387,6 +1392,7 @@ class ThalesRemoteScriptWrapper(object):
         :param name: The basic name of the file.
         :returns: reponse string from the device
         """
+        self._checkForForbiddenCharactersInFilename(name)
         return self.setValue("IE_ROOT", name)
 
     def checkIESetup(self) -> str:
@@ -1503,6 +1509,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: reponse string from the device
         """
         path = path.lower()  # c: has to be lower case
+        self._checkForForbiddenCharactersInPath(path)
         return self.setValue("SEQ_PATH", path)
 
     def setSequenceOutputFileName(self, name: str) -> str:
@@ -1518,6 +1525,7 @@ class ThalesRemoteScriptWrapper(object):
         :param name: The basic name of the file.
         :returns: reponse string from the device
         """
+        self._checkForForbiddenCharactersInFilename(name)
         return self.setValue("SEQ_ROOT", name)
 
     def enableSequenceAcqGlobal(self, state: bool = True) -> str:
@@ -2149,3 +2157,29 @@ class ThalesRemoteScriptWrapper(object):
             )
         match = re.search(pattern, reply)
         return float(match.group(1))
+
+    def _checkForForbiddenCharactersInPath(self, string:str):
+        """
+        This function ensures that only the permitted characters appear in the path to:
+        https://doc.zahner.de/manuals/remote2.pdf
+
+        :param string: string to check.
+        """
+        pattern = re.compile(r"(^[a-k]{1}[:]{1}[\/\\0-9a-zA-Z_\+-]+$)")
+        match = pattern.fullmatch(string)
+        if match is None:
+            raise ValueError(f"invalid path: \"{string}\"")
+        return
+
+    def _checkForForbiddenCharactersInFilename(self, string:str):
+        """
+        This function ensures that only the permitted characters appear in the filename to:
+        https://doc.zahner.de/manuals/remote2.pdf
+
+        :param string: string to check.
+        """
+        pattern = re.compile(r"(^[0-9a-zA-Z_\+-]+$)")
+        match = pattern.fullmatch(string)
+        if match is None:
+            raise ValueError(f"invalid filename: \"{string}\"")
+        return

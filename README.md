@@ -182,6 +182,10 @@ In the examples only one method is explained and parameterized at a time for bet
 * Shared [Zennium series](https://zahner.de/products#potentiostats) device for impedance measurements
 * Operation of the power potentiostats standalone without thales with the Python package [zahner_potentiostat](https://github.com/Zahner-elektrik/zahner_potentiostat)
 
+## [LabVIEW.ipynb](Examples/LabVIEW/LabVIEW.ipynb)
+
+* Using the **thales_remote** Python package with the [LabVIEW Python Node](https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/menus/categories/computer/python-node-mnu.html)
+
 ## [BCMuxInterface.ipynb](Examples/BCMuxInterface/BCMuxInterface.ipynb)
 
 * Remote control of the BC-MUX

@@ -1,4 +1,3 @@
-import sys
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import (
     PotentiostatMode,
@@ -14,14 +13,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import EngFormatter
 
-if __name__ == "__main__":
-    zenniumConnection = ThalesRemoteConnection()
-    zenniumConnection.connectToTerm("localhost", "ScriptRemote")
+zenniumConnection = ThalesRemoteConnection()
+zenniumConnection.connectToTerm("192.168.2.47", "ScriptRemote")
 
-    zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
-    zahnerZennium.forceThalesIntoRemoteScript()
+zahnerZennium = ThalesRemoteScriptWrapper(zenniumConnection)
+zahnerZennium.forceThalesIntoRemoteScript()
 
-    zahnerZennium.calibrateOffsets()
+zahnerZennium.calibrateOffsets()
 
 zahnerZennium.setEISNaming(FileNaming.COUNTER)
 zahnerZennium.setEISCounter(1)
@@ -41,10 +39,34 @@ zahnerZennium.setUpperStepsPerDecade(10)
 zahnerZennium.setScanDirection(ScanDirection.START_TO_MAX)
 zahnerZennium.setScanStrategy(ScanStrategy.SINGLE_SINE)
 
+zahnerZennium.setPotential(1)
+zahnerZennium.enablePotentiostat()
+
+print(f"ACQ-Setup: {zahnerZennium.readAcqSetup()}")
+
+for i in range(2):
+    print(f"Current:\t{zahnerZennium.getCurrent():>10.3e} A")
+    print(f"Potential:\t{zahnerZennium.getPotential():>10.6f} V")
+    print(zahnerZennium.readAllAcqChannels())
+    print(f"PAD4 Channel: {0} = {zahnerZennium.readAcqChannel(0)}")
+    print(f"PAD4 Channel: {1} = {zahnerZennium.readAcqChannel(1)}")
+
+
+zahnerZennium.setPotential(0)
+
 zahnerZennium.setupPad4Channel(1, 1, 1, voltageRange=4.0, shuntResistor=10e-3)
 zahnerZennium.setupPad4Channel(1, 2, 1, voltageRange=4.0, shuntResistor=10e-3)
+zahnerZennium.setupPad4Channel(1, 3, 0)
+zahnerZennium.setupPad4Channel(1, 4, 0)
 zahnerZennium.setupPad4ModeGlobal(Pad4Mode.VOLTAGE)  # or Pad4Mode.CURRENT
 zahnerZennium.enablePad4Global()
+
+for frequency in [100, 300, 1000]:
+    print(f"frequency: {frequency}")
+    impedanceResult = zahnerZennium.getImpedancePad4(frequency=frequency)
+
+    for key, val in impedanceResult.items():
+        print(f"{key}: {val}")
 
 zahnerZennium.enablePotentiostat()
 zahnerZennium.measureEIS()
@@ -97,8 +119,8 @@ nyquistAxis.plot(
 
 nyquistAxis.grid(which="both")
 nyquistAxis.set_aspect("equal")
-nyquistAxis.xaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
-nyquistAxis.yaxis.set_major_formatter(EngFormatter(unit="$\Omega$"))
+nyquistAxis.xaxis.set_major_formatter(EngFormatter(unit=r"$\Omega$"))
+nyquistAxis.yaxis.set_major_formatter(EngFormatter(unit=r"$\Omega$"))
 nyquistAxis.set_xlabel(r"$Z_{\rm re}$")
 nyquistAxis.set_ylabel(r"$-Z_{\rm im}$")
 nyquistAxis.legend(fontsize="large")

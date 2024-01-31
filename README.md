@@ -91,6 +91,12 @@ In the examples only one method is explained and parameterized at a time for bet
 * **Importing the measurement results from the ism file into Python**
 * **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
 
+## [EISPad4.ipynb](Examples/EISPad4/EISPad4.ipynb)
+
+* Measurement of an impedance spectrum on a stack with single cells connected to the [PAD4](https://zahner.de/products-details/addon-cards/pad4) card
+* DC measurement using PAD4 as ACQ channel
+* Single frequency impedance measurement with PAD4 channels
+
 ## [DynamicDCSequenceEIS.ipynb](Examples/DynamicDCSequenceEIS/DynamicDCSequenceEIS.ipynb)
 
 * [Zahner DC Sequencer](https://doc.zahner.de/manuals/sequencer.pdf) measurement
@@ -143,13 +149,7 @@ In the examples only one method is explained and parameterized at a time for bet
 
 * Measure impedance specta and cyclic voltammetry
 * Plotting the measurement data.
-* Create a PDF with the measurement data using [LaTeX](https://www.latex-project.org/zah)
-
-## [EISPad4.ipynb](Examples/EISPad4/EISPad4.ipynb)
-
-* Measurement of an impedance spectrum on a stack with single cells connected to the [PAD4](https://zahner.de/products-details/addon-cards/pad4) card.
-* **Importing the measurement results from the ism file into Python**
-* **Plotting the spectrum in bode and nyquist representation with the matplotlib library**
+* Create a PDF with the measurement data using [LaTeX](https://www.latex-project.org/)
 
 ## [EISvsParameter.ipynb](Examples/EISvsParameter/EISvsParameter.ipynb)
 

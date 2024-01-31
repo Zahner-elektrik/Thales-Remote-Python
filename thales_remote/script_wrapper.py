@@ -4,7 +4,7 @@
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
  /___/\_,_/_//_/_//_/\__/_/      \__/_/\__/_/\_\\__/_/ /_/_/\_\
  
-Copyright 2023 Zahner-Elektrik GmbH & Co. KG
+Copyright 2024 Zahner-Elektrik GmbH & Co. KG
  
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -33,7 +33,7 @@ from typing import Optional, Union, Any
 from thales_remote.error import ThalesRemoteError, TermConnectionError
 from thales_remote.connection import ThalesRemoteConnection
 
-MINIMUM_THALES_VERSION = "5.9.1"
+MINIMUM_THALES_VERSION = "5.9.2"
 
 
 def versiontuple(v):
@@ -180,7 +180,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: the measured current value
         """
         return self._requestValueAndParseUsingRegexp(
-            "CURRENT", "current=\s*(.*?)A?[\r\n]{0,2}$"
+            "CURRENT", r"current=\s*(.*?)A?[\r\n]{0,2}$"
         )
 
     def getPotential(self) -> float:
@@ -190,7 +190,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: the measured potential value
         """
         return self._requestValueAndParseUsingRegexp(
-            "POTENTIAL", "potential=\s*(.*?)V?[\r\n]{0,2}$"
+            "POTENTIAL", r"potential=\s*(.*?)V?[\r\n]{0,2}$"
         )
 
     def getVoltage(self) -> float:
@@ -359,7 +359,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: the device serial number
         """
         reply = self.executeRemoteCommand("ALLNUM")
-        match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
+        match = re.search(r"(.*);(.*);([a-zA-Z]*)", reply)
         return match.group(2)
 
     def getDeviceInformation(self) -> tuple[str, str]:
@@ -369,7 +369,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: tuple with the information about the selected potentiostat. (Name, Serialnumber).
         """
         reply = self.executeRemoteCommand("DEVINF")
-        match = re.search("(.*);(.*);(.*);([0-9]*)", reply)
+        match = re.search(r"(.*);(.*);(.*);([0-9]*)", reply)
         return match.group(3), match.group(4)
 
     def getDeviceName(self) -> str:
@@ -379,7 +379,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: the device name
         """
         reply = self.executeRemoteCommand("ALLNUM")
-        match = re.search("(.*);(.*);([a-zA-Z]*)", reply)
+        match = re.search(r"(.*);(.*);([a-zA-Z]*)", reply)
         return match.group(3)
 
     def readSetup(self) -> str:
@@ -715,7 +715,7 @@ class ThalesRemoteScriptWrapper(object):
         :param frequency: The frequency to measure the impedance at.
         :param amplitude: The amplitude to measure the impedance with. In Volt if potentiostatic mode or Ampere for galvanostatic mode.
         :param number_of_periods: The number of periods / waves to average.
-        :returns: The complex impedance at the measured point.
+        :returns: Dict
         :rtype: complex
         """
         if frequency != None:
@@ -737,8 +737,50 @@ class ThalesRemoteScriptWrapper(object):
         match = re.search("impedance=\\s*(.*?),\\s*(.*?)$", reply)
         return complex(float(match.group(1)), float(match.group(2)))
 
-    def setEISNaming(self, naming: Union[str, FileNaming]) -> str:
+    def getImpedancePad4(
+        self,
+        frequency: Optional[float] = None,
+        amplitude: Optional[float] = None,
+        number_of_periods: Optional[int] = None,
+    ) -> dict[int, complex]:
+        r"""
+        measure the impedance with PAD4 channels
+
+        Measure the impedance and activated PAD4 channels with the parameters. If the parameters are omitted the last will be used.
+        The method returns a dictionary containing the channels as keys and the complex impedance as value.
+        The MAIN channel has index 0. Switched off PAD4 channels have an impedance of 0.
+
+        \param [in] frequency the frequency to measure the impedance at.
+        \param [in] amplitude the amplitude to measure the impedance with. In Volt if potentiostatic mode or Ampere for galvanostatic mode.
+        \param [in] number_of_periods the number of periods / waves to average.
+
+        :param frequency: The frequency to measure the impedance at.
+        :param amplitude: The amplitude to measure the impedance with. In Volt if potentiostatic mode or Ampere for galvanostatic mode.
+        :param number_of_periods: The number of periods / waves to average.
+        :returns: A dictionary with channel index as key and the complex impedance as value.
         """
+        if frequency != None:
+            self.setFrequency(frequency)
+
+        if amplitude != None:
+            self.setAmplitude(amplitude)
+
+        if number_of_periods != None:
+            self.setNumberOfPeriods(number_of_periods)
+
+        reply = self.executeRemoteCommand("PAD4IMP")
+
+        if reply.find("ERROR") >= 0:
+            raise ThalesRemoteError(
+                reply.rstrip("\r")
+                + ThalesRemoteScriptWrapper.undefindedStandardErrorString
+            )
+        
+        matches = re.finditer(r"=\s*(?P<real>.*?),\s*(?P<imag>.*?)(?:;|$)", reply)
+        return dict( (key, complex(float(val.group("real")), float(val.group("imag"))) ) for key, val in enumerate(matches) )
+
+    def setEISNaming(self, naming: Union[str, FileNaming]) -> str:
+        r"""
         Set the EIS measurement naming rule.
 
         naming = "dateTime": extend the :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.setEISOutputFileName` with date and time.
@@ -754,7 +796,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("EIS_MOD", nameingType.value)
 
     def setEISCounter(self, number: int) -> str:
-        """
+        r"""
         Set the current number of EIS measurement for filename.
 
         Current number for the file name for EIS measurements which is used next and then incremented.
@@ -765,7 +807,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("EIS_NUM", number)
 
     def setEISOutputPath(self, path: str) -> str:
-        """
+        r"""
         Set the path where the EIS measurements should be stored.
 
         The results must be stored on the C hard disk.
@@ -1499,7 +1541,7 @@ class ThalesRemoteScriptWrapper(object):
         return self.setValue("SEQ_NUM", number)
 
     def setSequenceOutputPath(self, path: str) -> str:
-        """
+        r"""
         Set the path where the sequence measurements should be stored.
 
         The results must be stored on the C hard disk. If an error occurs test an alternative path or c:\THALES\temp.
@@ -1961,7 +2003,7 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand("ANALOGALL")
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(
-                reply.rstrip("\r")
+                reply.rstrip(r"\r")
                 + ThalesRemoteScriptWrapper.undefindedStandardErrorString
             )
 
@@ -1970,8 +2012,8 @@ class ThalesRemoteScriptWrapper(object):
         pairs = reply.split(";")
 
         for pair in pairs:
-            key = re.search("\((.*?)\)", pair).group(1)
-            value = re.search("=[\s]*(.*)", pair).group(1)
+            key = re.search(r"\((.*?)\)", pair).group(1)
+            value = re.search(r"=[\s]*(.*)", pair).group(1)
             result_dict[int(key)] = float(value)
 
         return result_dict
@@ -1984,7 +2026,7 @@ class ThalesRemoteScriptWrapper(object):
         :returns: value of the channel
         """
         self.setValue("CHANNEL", channel)
-        value = self._requestValueAndParseUsingRegexp("ANALOGIN", "=[\s]*(.*)")
+        value = self._requestValueAndParseUsingRegexp("ANALOGIN", r"=[\s]*(.*)")
         return value
 
     """
@@ -2006,7 +2048,7 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand(name + "=" + str(value))
         if "ERROR" in reply:
             raise ThalesRemoteError(
-                reply.rstrip("\r")
+                reply.rstrip(r"\r")
                 + ThalesRemoteScriptWrapper.undefindedStandardErrorString
             )
         return reply
@@ -2152,14 +2194,14 @@ class ThalesRemoteScriptWrapper(object):
         reply = self.executeRemoteCommand(command)
         if reply.find("ERROR") >= 0:
             raise ThalesRemoteError(
-                reply.rstrip("\r")
+                reply.rstrip(r"\r")
                 + ThalesRemoteScriptWrapper.undefindedStandardErrorString
             )
         match = re.search(pattern, reply)
         return float(match.group(1))
 
     def _checkForForbiddenCharactersInPath(self, string:str):
-        """
+        r"""
         This function ensures that only the permitted characters appear in the path to:
         https://doc.zahner.de/manuals/remote2.pdf
 

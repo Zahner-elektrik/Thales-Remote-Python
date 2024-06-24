@@ -48,7 +48,7 @@ def liveDataThreadFunction():
             if packetId in [1, 2, 4, 5, 6]:
                 print(data.decode("ASCII"))
         except:
-            """
+            r"""
             The connection to the term has an error or the socket has been closed.
             """
             print("term error live thread")

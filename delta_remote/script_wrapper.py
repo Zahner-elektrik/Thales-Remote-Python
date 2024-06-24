@@ -1,4 +1,4 @@
-"""
+r"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -29,7 +29,7 @@ import re
 
 
 class DeltaSCPIError(Exception):
-    """Delta Connection Exception Class
+    r"""Delta Connection Exception Class
 
     This exception is thrown when an error occurs with the communication,
     which has not yet been thrown by a socket exception.
@@ -43,7 +43,7 @@ class DeltaSCPIError(Exception):
 
 
 class DeltaSources(Enum):
-    """Delta Elektronika power supply source options.
+    r"""Delta Elektronika power supply source options.
 
     The class manages the possible sources to be used for setting the target voltage and current.
     """
@@ -61,7 +61,7 @@ class DeltaSources(Enum):
 
 
 class DeltaSCPIWrapper(object):
-    """Class containing the SCPI commands for the Delta Elektronika power supply.
+    r"""Class containing the SCPI commands for the Delta Elektronika power supply.
 
     This class wraps the SCPI commands in getter and setter methods.
 
@@ -78,7 +78,7 @@ class DeltaSCPIWrapper(object):
         return
 
     def setDefaultTimout(self, time):
-        """Set the default timeout.
+        r"""Set the default timeout.
 
         The command sets the default timeout that is used.
 
@@ -88,7 +88,7 @@ class DeltaSCPIWrapper(object):
         return
 
     def IDN(self):
-        """Querying the device identification.
+        r"""Querying the device identification.
 
         This is the standard SCPI command for requesting the identification.
 
@@ -97,7 +97,7 @@ class DeltaSCPIWrapper(object):
         return self.executeCommandAndWaitForReply("*IDN?")
 
     def setTargetVoltage(self, value):
-        """Set the target output voltage.
+        r"""Set the target output voltage.
 
         :param value: The output voltage.
         """
@@ -108,7 +108,7 @@ class DeltaSCPIWrapper(object):
         return
 
     def setTargetCurrent(self, value):
-        """Set the target output current.
+        r"""Set the target output current.
 
         :param value: The output current.
         """
@@ -119,42 +119,42 @@ class DeltaSCPIWrapper(object):
         return
 
     def getTargetVoltage(self):
-        """Read the target output voltage.
+        r"""Read the target output voltage.
 
         :returns: The value.
         """
         return self._requestFloatValue("SOUR:VOLT?")
 
     def getTargetCurrent(self):
-        """Read the target output current.
+        r"""Read the target output current.
 
         :returns: The value.
         """
         return self._requestFloatValue("SOUR:CUR?")
 
     def getMeasuredVoltage(self):
-        """Measure the actual output voltage.
+        r"""Measure the actual output voltage.
 
         :returns: The value.
         """
         return self._requestFloatValue("MEAS:VOLT?")
 
     def getMeasuredCurrent(self):
-        """Measure the actual output current.
+        r"""Measure the actual output current.
 
         :returns: The value.
         """
         return self._requestFloatValue("MEAS:CUR?")
 
     def getMeasuredPower(self):
-        """Measure the actual output power.
+        r"""Measure the actual output power.
 
         :returns: The value.
         """
         return self._requestFloatValue("MEAS:POW?")
 
     def setProgSourceVoltage(self, source: DeltaSources):
-        """Set the voltage source option.
+        r"""Set the voltage source option.
 
         Defines which interface defines the voltage to be applied.
 
@@ -165,7 +165,7 @@ class DeltaSCPIWrapper(object):
         return
 
     def setProgSourceCurrent(self, source: DeltaSources):
-        """Set the current source option.
+        r"""Set the current source option.
 
         Defines which interface defines the current to be applied.
 
@@ -176,7 +176,7 @@ class DeltaSCPIWrapper(object):
         return
 
     def enableOutput(self, enable=True):
-        """Enable the output of the supply.
+        r"""Enable the output of the supply.
 
         :param enable: True to turn the output on.
         """
@@ -187,12 +187,12 @@ class DeltaSCPIWrapper(object):
         return
 
     def disableOutput(self):
-        """Disable the output of the supply."""
+        r"""Disable the output of the supply."""
         self.enableOutput(False)
         return
 
     def executeCommand(self, command, timeout=None):
-        """Executes a command.
+        r"""Executes a command.
 
         :param command: The command.
         :param timeout: The timeout for sending data in seconds, blocking at None.
@@ -202,7 +202,7 @@ class DeltaSCPIWrapper(object):
         return self.connection.sendTelegram(command + "\n", timeout)
 
     def executeCommandAndWaitForReply(self, command, timeout=None):
-        """Executes a command and waits for the reply from the device.
+        r"""Executes a command and waits for the reply from the device.
 
         :param command: The command.
         :param timeout: The timeout for sending data in seconds, blocking at None.

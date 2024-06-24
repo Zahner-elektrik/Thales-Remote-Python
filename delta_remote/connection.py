@@ -1,4 +1,4 @@
-"""
+r"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -32,7 +32,7 @@ from datetime import datetime
 
 
 class DeltaConnectionError(Exception):
-    """Delta Connection Exception Class
+    r"""Delta Connection Exception Class
 
     This exception is thrown when an error occurs with the term communication,
     which has not yet been thrown by a socket exception.
@@ -46,7 +46,7 @@ class DeltaConnectionError(Exception):
 
 
 class DeltaConnection(object):
-    """
+    r"""
     Class to handle the connection to the Delta Elektronika power supply connection.
     """
 
@@ -62,7 +62,7 @@ class DeltaConnection(object):
         return
 
     def connect(self, ip, port):
-        """Connect to Delta Elektronika power supply.
+        r"""Connect to Delta Elektronika power supply.
 
         :param ip: The hostname or ip-address of the Delta Elektronika power supply.
         :param port: The port.
@@ -83,14 +83,14 @@ class DeltaConnection(object):
         return True
 
     def disconnect(self):
-        """Close the connection."""
+        r"""Close the connection."""
         self._stopTelegramListener()
         self._closeSocket()
         self.receiveQueue.put(None)
         return
 
     def isConnected(self):
-        """Check if the connection to the Delta Elektronika is open.
+        r"""Check if the connection to the Delta Elektronika is open.
 
         :returns: True if connected, False if not.
         :rtype: bool
@@ -98,7 +98,7 @@ class DeltaConnection(object):
         return self.socket_handle != None
 
     def sendTelegram(self, payload, timeout=None):
-        """Send a telegram/data.
+        r"""Send a telegram/data.
 
         :param payload: The actual data which is being sent. This can be a string or an bytearray.
         :param timeout: The timeout for sending data in seconds, blocking at None.
@@ -123,7 +123,7 @@ class DeltaConnection(object):
         return
 
     def waitForBinaryTelegram(self, timeout=None):
-        """Block infinitely until the next Telegram is arriving.
+        r"""Block infinitely until the next Telegram is arriving.
 
         If some Telegram has already arrived it will just return the last one from the queue.
 
@@ -137,7 +137,7 @@ class DeltaConnection(object):
         return retval
 
     def waitForStringTelegram(self, timeout=None):
-        """Block infinitely until the next Telegram is arriving.
+        r"""Block infinitely until the next Telegram is arriving.
 
         If some Telegram has already arrived it will just return the last one from the queue.
 
@@ -149,7 +149,7 @@ class DeltaConnection(object):
         return retval
 
     def sendStringAndWaitForReplyString(self, payload, timeout=None):
-        """Convenience function: Send a telegram and wait for it's reply.
+        r"""Convenience function: Send a telegram and wait for it's reply.
 
         If a timeout or a socket error occurs an exception is thrown.
 
@@ -167,7 +167,7 @@ class DeltaConnection(object):
     """
 
     def _telegramListenerJob(self):
-        """The method running in a separate thread, pushing the incomming packets into the queues."""
+        r"""The method running in a separate thread, pushing the incomming packets into the queues."""
         while self._receiving_worker_is_running:
             telegram = self._readTelegramFromSocket()
             self.receiveQueue.put(telegram)
@@ -176,21 +176,21 @@ class DeltaConnection(object):
         return
 
     def _startTelegramListener(self):
-        """Starts the thread handling the asyncronously incoming data."""
+        r"""Starts the thread handling the asyncronously incoming data."""
         self._receiving_worker_is_running = True
         self.receivingWorker = threading.Thread(target=self._telegramListenerJob)
         self.receivingWorker.start()
         return
 
     def _stopTelegramListener(self):
-        """Stops the thread handling the incoming data gracefully."""
+        r"""Stops the thread handling the incoming data gracefully."""
         self._receiving_worker_is_running = False
         self.socket_handle.shutdown(socket.SHUT_RDWR)
         self.receivingWorker.join()
         return
 
     def _readTelegramFromSocket(self):
-        """Reads the raw telegram structure from the socket stream.
+        r"""Reads the raw telegram structure from the socket stream.
 
         When a socket exception occurs, None and an empty byte array are returned.
         The caller of the function then passes the None to the queue to raise an
@@ -203,7 +203,7 @@ class DeltaConnection(object):
         return data
 
     def _closeSocket(self):
-        """Close the socket."""
+        r"""Close the socket."""
         self.socket_handle.close()
         self.socket_handle = None
         return

@@ -2,7 +2,7 @@ import socket
 
 
 class BCMuxInterface:
-    """BC-Mux control class.
+    r"""BC-Mux control class.
 
     With this class the `BC-MUX Multiplexer <https://zahner.de/products-details/multiplexer/bc-mux>`_ can
     be controlled remotely without the BC-Mux Controller software.
@@ -36,7 +36,7 @@ class BCMuxInterface:
         return
 
     def close(self):
-        """Closing the connection.
+        r"""Closing the connection.
 
         Disconnects the TCP/IP connection to the BC-MUX.
         """
@@ -44,7 +44,7 @@ class BCMuxInterface:
         return
 
     def connectChannel(self, channel):
-        """Connects the channel to the zennium.
+        r"""Connects the channel to the zennium.
 
         With this command, a channel is disconnected from the cyclizer and switched to the Zennium,
         for example for impedance measurements.
@@ -57,7 +57,7 @@ class BCMuxInterface:
         return self._executeCommandAndReadReply(command.format(channel))
 
     def disconnectChannel(self):
-        """Disconnects all channels from the zennium.
+        r"""Disconnects all channels from the zennium.
 
         All channels are disconnected from the Zennium and switched to the specific cyclizer channel.
 
@@ -68,7 +68,7 @@ class BCMuxInterface:
         return self._executeCommandAndReadReply(command)
 
     def setPulseLength(self, length):
-        """Setting the relais control.
+        r"""Setting the relais control.
 
         The BC-MUX supports switchboxes containing monostable or bistable relais. With this command,
         the control of the relais is set.
@@ -84,7 +84,7 @@ class BCMuxInterface:
         return self._executeCommandAndReadReply(command.format(length))
 
     def _executeCommandAndReadReply(self, command):
-        """Private function to send a command to the device and read a string.
+        r"""Private function to send a command to the device and read a string.
 
         This command sends the command to the device and returns the response from the device.
 

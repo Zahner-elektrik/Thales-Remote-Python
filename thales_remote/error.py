@@ -1,4 +1,4 @@
-"""
+r"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -24,8 +24,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-
-"""
+r"""
 The following is an example for troubleshooting when an exception is thrown.
 
 ----Example exception----
@@ -62,7 +61,7 @@ The first two lines of the traceback show the file and line number and the conte
 
 
 class ThalesRemoteError(Exception):
-    """Thales Remote Exception Class
+    r"""Thales Remote Exception Class
 
     This exception is thrown when an error is reported in the remote protocol, for example,
     when a parameter is out of range.
@@ -78,7 +77,7 @@ class ThalesRemoteError(Exception):
 
 
 class TermConnectionError(Exception):
-    """Term Connection Exception Class
+    r"""Term Connection Exception Class
 
     This exception is thrown when an error occurs with the term communication,
     which has not yet been thrown by a socket exception.

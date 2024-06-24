@@ -1,3 +1,10 @@
+import sys
+import os
+
+script_path = os.path.dirname(os.path.realpath(__file__))
+if script_path not in sys.path:
+    sys.path.append(script_path)
+
 from thales_remote.connection import ThalesRemoteConnection
 from thales_remote.script_wrapper import ThalesRemoteScriptWrapper
 
@@ -25,19 +32,19 @@ zennium_instance = ZenniumSingleton()
 
 
 def init(target="localhost", connectionName="ScriptRemote"):
-    """
+    r"""
     This function connects to the Term Software and creates the ThalesRemoteScriptWrapper object.
 
     :param target: IP address of the computer on which the term is running, defaults to "localhost".
     :param connectionName: Name of the connection, defaults to "ScriptRemote".
     """
     global zennium_instance
-    zennium_instance.init_zennium(target,connectionName)
+    zennium_instance.init_zennium(target, connectionName)
     return
 
 
 def disconnect():
-    """
+    r"""
     Disconnect the connection.
     """
     global zennium_instance
@@ -46,7 +53,7 @@ def disconnect():
 
 
 def _generate_function(method_name):
-    """
+    r"""
     Helper function that creates functions from the object's methods.
     """
 
@@ -56,8 +63,9 @@ def _generate_function(method_name):
 
     return function
 
+
 def transformMethodsToFunctions():
-    """
+    r"""
     After init() is called, the transformMethodsToFunctions() function must be called.
 
     init() creates the ThalesRemoteScriptWrapper object and transformMethodsToFunctions() converts the methods of this object into functions.

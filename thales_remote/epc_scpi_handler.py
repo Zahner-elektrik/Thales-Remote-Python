@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 
 class EpcScpiHandler:
-    """Class for the control objects.
+    r"""Class for the control objects.
 
     This class manages the object composed of a cennium and the external potentiostat.
     The object contains an instance of a :class:`~zahner_potentiostat.scpi_control.control.SCPIDevice`
@@ -56,7 +56,7 @@ class EpcScpiHandler:
         return
 
     def isSharedZenniumAvailable(self) -> bool:
-        """Check if the zennium is available.
+        r"""Check if the zennium is available.
 
         The method checks if the threading.lock for synchronizing access to the Zennium is available.
 
@@ -65,7 +65,7 @@ class EpcScpiHandler:
         return EpcScpiHandler.zenniumMutex.locked() == False
 
     def acquireSharedZennium(self, blocking: bool = True, timeout: int = -1) -> bool:
-        """Check if the Zennium is available.
+        r"""Check if the Zennium is available.
 
         Wrapper for the aquire method of the `Python lock object <https://docs.python.org/3/library/threading.html#lock-objects>`_.
         The parameters and return values are simply passed through.
@@ -82,7 +82,7 @@ class EpcScpiHandler:
         return EpcScpiHandler.zenniumMutex.acquire(blocking, timeout)
 
     def releaseSharedZennium(self) -> None:
-        """Release the Zennium object.
+        r"""Release the Zennium object.
 
         Wrapper for the aquire method of the `Python lock object <https://docs.python.org/3/library/threading.html#lock-objects>`_.
 
@@ -96,7 +96,7 @@ class EpcScpiHandler:
         return
 
     def connectSCPIDevice(self) -> None:
-        """Establish connection to the potentiostat.
+        r"""Establish connection to the potentiostat.
 
         This method establishes the connection to the potentiostat (PP2x2, XPOT2 and EL1002) and passes it to the internal data structure.
         When invoked on an unlocked lock, a RuntimeError is raised.
@@ -114,7 +114,7 @@ class EpcScpiHandler:
     def switchToSCPIAndReleaseSharedZennium(
         self, keepPotentiostatState: bool = False
     ) -> None:
-        """Switch from EPC to SCPI mode of the potentiostat and release the Zennium.
+        r"""Switch from EPC to SCPI mode of the potentiostat and release the Zennium.
 
         The switch from EPC to SCPI must be made from the EPC operation, both control options can
         only release control but cannot take control away from each other.
@@ -152,7 +152,7 @@ class EpcScpiHandler:
         return
 
     def switchToSCPI(self, keepPotentiostatState: bool = False) -> None:
-        """Switch from EPC to SCPI mode.
+        r"""Switch from EPC to SCPI mode.
 
         It is recommended to use :class:`~thales_remote.epc_scpi_handler.EpcScpiHandler.switchToSCPIAndReleaseSharedZennium` instead of this function.
 
@@ -184,7 +184,7 @@ class EpcScpiHandler:
         return
 
     def switchToEPC(self, keepPotentiostatState: bool = False) -> None:
-        """Switch from SCPI to EPC mode.
+        r"""Switch from SCPI to EPC mode.
 
         Before calling this method the Zennium must be locked with aquire.
 
@@ -224,7 +224,7 @@ class EpcScpiHandler:
         return self._serialNumber
 
     def close(self):
-        """Close the SCPI connection.
+        r"""Close the SCPI connection.
 
         The function is not required in epc mode.
         """
@@ -241,7 +241,7 @@ class HandlerDataItem:
 
 
 class EpcScpiHandlerFactory:
-    """Class for creating the control objects.
+    r"""Class for creating the control objects.
 
     This class initializes the connection to the zennium.
     The :func:`~epc_scpi_handler.EpcScpiHandlerFactory.createEpcScpiHandler` method can then be used
@@ -268,7 +268,7 @@ class EpcScpiHandlerFactory:
         return
 
     def getSharedZennium(self) -> ThalesRemoteScriptWrapper:
-        """Returns the zennium object.
+        r"""Returns the zennium object.
 
         Returns the Zennium object, which contains the Remote2 commands as methods.
 
@@ -277,7 +277,7 @@ class EpcScpiHandlerFactory:
         return self.sharedZenniumInterface
 
     def getZenniumConnection(self) -> ThalesRemoteConnection:
-        """Returns the zennium connection object.
+        r"""Returns the zennium connection object.
 
         Returns the object that manages the connection to the zennium.
 
@@ -288,7 +288,7 @@ class EpcScpiHandlerFactory:
     def createEpcScpiHandler(
         self, epcChannel: int, serialNumber: int
     ) -> EpcScpiHandler:
-        """Returns the zennium connection object.
+        r"""Returns the zennium connection object.
 
         This method initializes the external potentiostats and creates the objects.
 
@@ -337,7 +337,7 @@ class EpcScpiHandlerFactory:
         return newDevice
 
     def closeAll(self) -> None:
-        """Close connections to all devices.
+        r"""Close connections to all devices.
 
         This command closes all connections to the external potentiostats and to the Zennium.
         """

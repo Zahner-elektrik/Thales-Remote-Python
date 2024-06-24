@@ -1,4 +1,4 @@
-"""
+r"""
   ____       __                        __    __   __      _ __
  /_  / ___ _/ /  ___  ___ ___________ / /__ / /__/ /_____(_) /__
   / /_/ _ `/ _ \/ _ \/ -_) __/___/ -_) / -_)  '_/ __/ __/ /  '_/
@@ -43,7 +43,7 @@ class FileData:
 
 
 class ThalesFileInterface(object):
-    """Class which realizes the file transfer between Term software and Python.
+    r"""Class which realizes the file transfer between Term software and Python.
 
     The measurement files cannot be stored on network drives with the Term software, therefore
     this class was implemented. If Python runs on another computer and controls Thales via network,
@@ -81,7 +81,7 @@ class ThalesFileInterface(object):
         return
 
     def close(self) -> None:
-        """
+        r"""
         close the file interface
 
         The automatic file sending is disabled and the socket connection is closed.
@@ -93,7 +93,7 @@ class ThalesFileInterface(object):
     def enableAutomaticFileExchange(
         self, enable: bool = True, fileExtensions: str = "*.ism*.isc*.isw*.iss"
     ) -> str:
-        """
+        r"""
         turn on automatic file exchange
 
         If automatic file exchange is enabled, the files configured with the fileExtensions variable are transferred automatically.
@@ -132,7 +132,7 @@ class ThalesFileInterface(object):
         return retval
 
     def appendFilesToSkip(self, file: Union[str, list[str]]):
-        """
+        r"""
         set filenames to be filtered and not processed by Python
 
         Files with these names are not saved to disk by Python and do not remain in the object.
@@ -145,7 +145,7 @@ class ThalesFileInterface(object):
             self._files_to_skip.append(file)
 
     def disableAutomaticFileExchange(self) -> str:
-        """
+        r"""
         turn off automatic file exchange
 
         :returns: the response string from the device
@@ -153,7 +153,7 @@ class ThalesFileInterface(object):
         return self.enableAutomaticFileExchange(False)
 
     def aquireFile(self, filename: str) -> Union[FileData, None]:
-        """
+        r"""
         transfer a single file, deprecated because misspelled.
 
         This command transfers a single from Term to Python.
@@ -175,7 +175,7 @@ class ThalesFileInterface(object):
         return self.acquireFile(filename)
 
     def acquireFile(self, filename: str) -> Union[FileData, None]:
-        """
+        r"""
         transfer a single file
 
         This command transfers a single from Term to Python.
@@ -198,7 +198,7 @@ class ThalesFileInterface(object):
             return self._receiveFile()
 
     def setSavePath(self, path: str) -> None:
-        """
+        r"""
         set the path where the files should be saved on the local computer
 
         This command sets only the path. If the path does not exist, it will be created.
@@ -213,7 +213,7 @@ class ThalesFileInterface(object):
     def enableSaveReceivedFilesToDisk(
         self, enable: bool = True, path: Optional[str] = None
     ) -> None:
-        """
+        r"""
         enable the automatic saving of files to the hard disk
 
         This command configures that the files are automatically saved by Python.
@@ -230,13 +230,13 @@ class ThalesFileInterface(object):
         return
 
     def disableSaveReceivedFilesToDisk(self) -> None:
-        """
+        r"""
         disable the automatic saving of files to the hard disk
         """
         return self.enableSaveReceivedFilesToDisk(False)
 
     def enableKeepReceivedFilesInObject(self, enable: bool = True) -> None:
-        """Enable that the files remain in the Python object.
+        r"""Enable that the files remain in the Python object.
 
         If you perform many measurements, the Python object would grow larger and larger due to the
         number of files, so you can disable that the files are stored in the object as an array.
@@ -248,13 +248,13 @@ class ThalesFileInterface(object):
         return
 
     def disableKeepReceivedFilesInObject(self) -> None:
-        """
+        r"""
         disable that the files remain in the Python object
         """
         return self.enableKeepReceivedFilesInObject(False)
 
     def getReceivedFiles(self) -> list[FileData]:
-        """
+        r"""
         read all files from the Python object
 
         This function returns an array. Each element in the array is a dictionary as described in
@@ -265,7 +265,7 @@ class ThalesFileInterface(object):
         return self.receivedFiles
 
     def getLatestReceivedFile(self) -> FileData:
-        """
+        r"""
         read the latest files from the Python object
 
         :returns: latest file from the Python object
@@ -273,7 +273,7 @@ class ThalesFileInterface(object):
         return self.receivedFiles[-1]
 
     def deleteReceivedFiles(self) -> None:
-        """
+        r"""
         delete all files from the Python object
         """
         self.receivedFiles = []
@@ -283,7 +283,7 @@ class ThalesFileInterface(object):
     # They are marked with the prefix '_' after the Python convention for proteced.
 
     def _saveReceivedFile(self, fileToWrite: FileData) -> None:
-        """
+        r"""
         saves the passed file to disk.
         """
         fileNameWithPath = os.path.join(self.pathToSave, fileToWrite.name)
@@ -293,7 +293,7 @@ class ThalesFileInterface(object):
         return
 
     def _receiveFile(self, timeout: Optional[float] = None) -> Union[FileData, None]:
-        """
+        r"""
         receive one file with optional timeout
 
         :param timeout: receive timeout
@@ -322,7 +322,7 @@ class ThalesFileInterface(object):
         return FileData(fileName, filePath, fileData)
 
     def _startWorker(self) -> None:
-        """
+        r"""
         starts the thread handling the asyncronously incoming data
         """
         if not self._receiver_is_running:
@@ -332,7 +332,7 @@ class ThalesFileInterface(object):
         return
 
     def _stopWorker(self) -> None:
-        """
+        r"""
         stops the thread handling the incoming data gracefully
         """
         if self._receiver_is_running:
@@ -341,7 +341,7 @@ class ThalesFileInterface(object):
         return
 
     def _fileReceiverJob(self) -> None:
-        """
+        r"""
         method running in a separate thread; manages the received files
         """
         while self._receiver_is_running:

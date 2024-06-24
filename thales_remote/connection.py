@@ -37,7 +37,7 @@ from datetime import datetime
 
 
 class ThalesRemoteConnection(object):
-    """
+    r"""
     Class to handle the Thales remote connection.
     """
 
@@ -76,7 +76,7 @@ class ThalesRemoteConnection(object):
     def connectToTerm(
         self, address: str, connection_name: str = "ScriptRemote"
     ) -> bool:
-        """
+        r"""
         Connect to the Term Software with a IP address and an optional connection name.
 
         *connection_name* cannot be chosen completely freely.
@@ -131,7 +131,7 @@ class ThalesRemoteConnection(object):
         return readBytes
 
     def getConnectionName(self) -> str:
-        """
+        r"""
         get the connection name
 
         :returns: name of the connection
@@ -139,7 +139,7 @@ class ThalesRemoteConnection(object):
         return self._connectionName
 
     def disconnectFromTerm(self) -> None:
-        """
+        r"""
         close the connection to Term and cleanup
 
         Stops the thread used for receiving telegrams assynchronously and shuts down
@@ -160,7 +160,7 @@ class ThalesRemoteConnection(object):
         return
 
     def isConnectedToTerm(self) -> bool:
-        """
+        r"""
         check if the connection to Term is open
 
         :returns: True if connected, False otherwise
@@ -173,7 +173,7 @@ class ThalesRemoteConnection(object):
         message_type: int,
         timeout: Optional[float] = None,
     ) -> None:
-        """
+        r"""
         send a telegram (data) to Term
 
         Sending a telegram to the term.
@@ -224,7 +224,7 @@ class ThalesRemoteConnection(object):
     def waitForBinaryTelegram(
         self, message_type: int = 2, timeout: Optional[float] = None
     ) -> bytes:
-        """
+        r"""
         block infinitely until the next Telegram is arriving
 
         If some Telegram has already arrived it will just return the last one from the queue.
@@ -242,7 +242,7 @@ class ThalesRemoteConnection(object):
     def waitForStringTelegram(
         self, message_type: int = 2, timeout: Optional[float] = None
     ) -> str:
-        """
+        r"""
         block infinitely until the next Telegram is arriving
 
         If some Telegram has already arrived it will just return the last one from the queue.
@@ -262,7 +262,7 @@ class ThalesRemoteConnection(object):
         timeout: Optional[float] = None,
         answer_message_type: int = None,
     ) -> str:
-        """
+        r"""
         convenience function: send a telegram and wait for it's reply
 
         If a timeout or a socket error occurs an exception is thrown.
@@ -283,7 +283,7 @@ class ThalesRemoteConnection(object):
     # They are marked with the prefix '_' after the Python convention for proteced.
 
     def _telegramListenerJob(self) -> None:
-        """
+        r"""
         runs in a separate thread, pushing the incomming packets into the queues.
         """
         while self._receiving_worker_is_running:
@@ -300,7 +300,7 @@ class ThalesRemoteConnection(object):
         return
 
     def _startTelegramListener(self) -> None:
-        """
+        r"""
         starts the thread handling the asyncronously incoming data
         """
         self._receiving_worker_is_running = True
@@ -311,7 +311,7 @@ class ThalesRemoteConnection(object):
         return
 
     def _stopTelegramListener(self) -> None:
-        """
+        r"""
         stops the thread handling the incoming data gracefully
         """
         self._socket_handle.shutdown(SHUT_RD)
@@ -320,7 +320,7 @@ class ThalesRemoteConnection(object):
         return
 
     def _readTelegramFromSocket(self) -> tuple[Optional[str], bytearray]:
-        """
+        r"""
         reads the raw telegram structure from the socket stream
 
         When a socket exception occurs, None and an empty byte array are returned.
@@ -346,7 +346,7 @@ class ThalesRemoteConnection(object):
         return header_type, incoming_packet
 
     def _closeSocket(self) -> None:
-        """
+        r"""
         close the socket
         """
         self._socket_handle.close()

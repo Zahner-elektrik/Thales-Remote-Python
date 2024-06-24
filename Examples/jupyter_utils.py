@@ -40,7 +40,7 @@ jupyter environment.
 
 
 def notebookCodeToPython(jupyterNotebookName):
-    """Convert jupyter-notebook to python.
+    r"""Convert jupyter-notebook to python.
 
     This function extracts all code lines from a jupyter notebook and saves them as a file.
     With the standard jupyter export the whole documentation is inserted as a comment, but this is
@@ -70,7 +70,7 @@ def notebookCodeToPython(jupyterNotebookName):
 
 
 def executionInNotebook():
-    """Check if the code is executed in jupyter enviroment.
+    r"""Check if the code is executed in jupyter enviroment.
 
     This function checks if the execution of the code is done in python or in jupyter.
     The recognition is done via IPython and Python, it was only tested that it works on the

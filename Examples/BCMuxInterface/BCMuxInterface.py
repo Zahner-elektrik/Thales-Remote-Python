@@ -74,9 +74,9 @@ class BCMuxInterface:
         the control of the relais is set.
 
         If a number other than 0 is set, the relay is switched with a pulse.
-        The pulse is then the number in milliseconds long.
+        The pulse is then the number in 10 milliseconds long.
 
-        :param length: The length of the switching pulse in milliseconds. 0 for monostable relays.
+        :param length: The length of the switching pulse in 10 milliseconds. 0 for monostable relays. 1 for 10 ms. Maximum 255.
         :returns: The response string from the device.
         :rtype: string
         """
@@ -98,7 +98,7 @@ class BCMuxInterface:
 
 
 if __name__ == "__main__":
-    TCP_IP = "169.169.169.169"
+    TCP_IP = "192.168.2.143"
     TCP_PORT = 4223
 
     bcMux = BCMuxInterface(TCP_IP, TCP_PORT)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     for i in range(16):
         print(f"Channel: {i+1}")
-        bcMux.connectChannel(i + 1)
+        print(f"mux reply: {bcMux.connectChannel(i + 1)}")
         bcMux.disconnectChannel()
 
     bcMux.close()

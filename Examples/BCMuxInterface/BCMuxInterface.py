@@ -98,7 +98,7 @@ class BCMuxInterface:
 
 
 if __name__ == "__main__":
-    TCP_IP = "192.168.2.143"
+    TCP_IP = "169.169.169.169"
     TCP_PORT = 4223
 
     bcMux = BCMuxInterface(TCP_IP, TCP_PORT)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     for i in range(16):
         print(f"Channel: {i+1}")
-        print(f"mux reply: {bcMux.connectChannel(i + 1)}")
+        bcMux.connectChannel(i + 1)
         bcMux.disconnectChannel()
 
     bcMux.close()

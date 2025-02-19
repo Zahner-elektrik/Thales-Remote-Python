@@ -33,7 +33,7 @@ from typing import Optional, Union, Any, List
 from thales_remote.error import ThalesRemoteError, TermConnectionError
 from thales_remote.connection import ThalesRemoteConnection
 
-MINIMUM_THALES_VERSION = "5.9.2"
+MINIMUM_THALES_VERSION = "5.9.3"
 
 
 def versiontuple(v):
@@ -2129,6 +2129,26 @@ class ThalesRemoteScriptWrapper(object):
         self.setValue("CHANNEL", channel)
         value = self._requestValueAndParseUsingRegexp("ANALOGIN", r"=[\s]*(.*)")
         return value
+
+    def disableAcq(self) -> str:
+        r"""
+        Disable all configured ACQ channels.
+
+        :returns: reponse string from the device
+        """
+        return self.enableAcq(False)
+
+    def enableAcq(self, enabled: bool = True) -> str:
+        r"""
+        Enable configured ACQ channels.
+
+        With this command, the ACQ channels can only be used for the EIS, CV and IE methods.
+        The ACQ channels must first be set up via the GUI.
+
+        :param enabled: True to enable ACQ.
+        :returns: response string from the device
+        """
+        return self.executeRemoteCommand("ACQENA=" + ("1" if enabled else "0"))
 
     """
     Internal basic functions, which are used by the other methods.

@@ -33,9 +33,9 @@ class ThalesRemoteError(Exception):
 
     The error numbers can be found in the Remote2 manual in chapter 6 from page 37:
 
-    * Link without line number:
+    * Link without page number:
         * https://doc.zahner.de/manuals/remote2.pdf
-    * Link with line number (may not work with every browser/pdf reader):
+    * Link with page number (may not work with every browser/pdf reader):
         * https://doc.zahner.de/manuals/remote2.pdf#page=37
 
     The following is an example for troubleshooting when an exception is thrown.

@@ -540,7 +540,7 @@ class ThalesRemoteScriptWrapper(object):
 
         :returns: reponse string from the device
         """
-        return self.enablePAD4(False)
+        return self.enablePad4Global(False)
 
     def readPad4SetupGlobal(self) -> str:
         r"""

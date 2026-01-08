@@ -136,6 +136,7 @@ class Pad4Mode(IntEnum):
 class ThalesRemoteScriptWrapper(object):
     r"""
     Wrapper that uses the ThalesRemoteConnection class.
+
     The commands are explained in the `Remote2-Manual <https://doc.zahner.de/manuals/remote2.pdf>`_.
     In the document you can also find a table with error numbers which are returned.
 
@@ -349,6 +350,32 @@ class ThalesRemoteScriptWrapper(object):
         :returns: The response string from the device.
         """
         return self.executeRemoteCommand("HOT2USB")
+
+    def loadPotentiostatSettings(self, device: int) -> str:
+        r"""
+        Load the potentiostat settings for an external potentiostat.
+
+        This command loads the settings of the selected external potentiostat that have been saved
+        with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.savePotentiostatSettings`.
+        Afterwards the potentiostat must be selected with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.selectPotentiostat`.
+        This means that the potentiostat is not recalibrated when it is selected, even if Thales has been restarted, and the values that were previously saved are set.
+        If the values of the potentiostat are still the same, nothing happens.
+
+        :param device: Number of the device. 1 = EPC channel 1 and so on.
+        :returns: The response string from the device.
+        """
+        return self.setValue("LOADDEV%", device)
+
+    def savePotentiostatSettings(self) -> str:
+        r"""
+        Save the latest potentiostat settings.
+
+        This command saves the current settings of the selected external potentiostat so that they can be restored
+        with :func:`~thales_remote.script_wrapper.ThalesRemoteScriptWrapper.loadPotentiostatSettings`.
+
+        :returns: response string from the device
+        """
+        return self.executeRemoteCommand("SAVEDEV")
 
     def getSerialNumber(self) -> str:
         r"""
